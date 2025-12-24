@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datalys2 Reports - CDN Test</title>
+    <meta name="description" content="Test page for Datalys2 Reports library via CDN">
+    <meta name="author" content="Brooks, Kameron">
+    <meta name="support-email" content="support@example.com">
+    <meta name="gc-compressed-data" content="true">
+    <link rel="stylesheet" href="http://localhost:8080/dl2-style.css">
+</head>
+
+<body>
+    <script type="text/javascript">
+        window.printRandomNumber = function() {
+            return Math.random();
+        }
+    </script>
+    <script id="report-data" type="application/json">
+{
+    "pages" : [
+        {
+            "title": "Compression Test",
+            "description": "Testing gzip decompression of datasets.",
+            "rows": [
+                {
+                    "type": "layout",
+                    "children": [
+                        {
+                            "id": "compressed-table",
+                            "elementType": "visual",
+                            "type": "table",
+                            "datasetId": "compressedTest",
+                            "title": "Decompressed Data Table",
+                            "border": true,
+                            "shadow": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Overview",
+            "description": "This is the overview page of the report.",
+            "lastUpdated": "2024-06-15T10:00:00Z",
+            "rows" : [
+                {
+                    "type": "layout",
+                    "children": [
+                        {
+                            "type": "card",
+                            "title": "Welcome to the Report {{printRandomNumber1()}}",
+                            "content": "This report provides insights into the top 10 things. Explore the visualizations below to understand the data better.",
+                            "border": true,
+                            "shadow": true
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "children": [
+                        {
+                            "id": "kpi-revenue",
+                            "elementType": "visual",
+                            "type": "kpi",
+                            "datasetId": "kpiData",
+                            "rowIndex": 0,
+                            "valueColumn": "Value",
+                            "comparisonColumn": "Yesterday",
+                            "title": "Total Revenue",
+                            "format": "currency",
+                            "goodDirection": "higher",
+                            "breachValue": 140000,
+                            "border": true,
+                            "shadow": true
+                        },
+                        {
+                            "id": "kpi-users",
+                            "elementType": "visual",
+                            "type": "kpi",
+                            "datasetId": "kpiData",
+                            "rowIndex": 1,
+                            "valueColumn": "Value",
+                            "comparisonColumn": "Yesterday",
+                            "title": "Active Users",
+                            "format": "number",
+                            "goodDirection": "higher",
+                            "border": true,
+                            "shadow": true,
+                            "breachValue": 1300
+                        },
+                        {
+                            "id": "kpi-bounce",
+                            "elementType": "visual",
+                            "type": "kpi",
+                            "datasetId": "kpiData",
+                            "rowIndex": 2,
+                            "valueColumn": "Value",
+                            "comparisonColumn": "Yesterday",
+                            "title": "Bounce Rate",
+                            "format": "percent",
+                            "goodDirection": "lower",
+                            "breachValue": 0.6,
+                            "warningValue": 0.44,
+                            "border": true,
+                            "shadow": true
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "children": [
+                        {
+                            "id": "top10things-pie-1",
+                            "elementType": "pie",
+                            "type": "pie",
+                            "datasetId": "top10things",
+                            "title": "Top 10 Things (1)",
+                            "description": "A dataset showing the top 10 things.",
+                            "border": true,
+                            "shadow": true
+                        },
+                        {
+                            "id": "top10things-pie-2",
+                            "elementType": "pie",
+                            "type": "pie",
+                            "datasetId": "top10things",
+                            "title": "Top 10 Things (2)",
+                            "description": "A dataset showing the top 10 things.",
+                            "border": true,
+                            "shadow": true
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "children": [
+                        {
+                            "id": "sales-clustered-bar",
+                            "elementType": "visual",
+                            "type": "clusteredBar",
+                            "showLabels": true,
+                            "datasetId": "quarterlySales",
+                            "title": "Quarterly Sales by Category",
+                            "description": "Sales breakdown by quarter and category.",
+                            "xColumn": "Quarter",
+                            "yColumns": ["Electronics", "Clothing", "Home"],
+                            "border": true,
+                            "shadow": true,
+                            "height": 200,
+                            "otherElements": [
+                                {
+                                    "visualElementType": "xAxis",
+                                    "value": 4500,
+                                    "color": "green",
+                                    "lineStyle": "dashed",
+                                    "lineWidth": 2,
+                                    "label": "Target"
+                                }
+                            ]
+
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "children": [
+                        {
+                            "id": "ad-spend-scatter",
+                            "elementType": "visual",
+                            "type": "scatter",
+                            "datasetId": "adSpendVsSales",
+                            "title": "Ad Spend vs Sales Correlation",
+                            "description": "Analysis of how advertising spend impacts sales across regions.",
+                            "xColumn": "AdSpend",
+                            "yColumn": "Sales",
+                            "categoryColumn": "Region",
+                            "xAxisLabel": "Ad Spend ($)",
+                            "yAxisLabel": "Sales ($)",
+                            "showTrendline": true,
+                            "showCorrelation": true,
+                            "border": true,
+                            "shadow": true,
+                            "height": 400
+                        },
+                        {
+                            "id": "ad-spend-table",
+                            "elementType": "visual",
+                            "type": "table",
+                            "datasetId": "adSpendVsSales",
+                            "title": "Ad Spend vs Sales Data",
+                            "description": "Raw data for Ad Spend vs Sales.",
+                            "border": true,
+                            "shadow": true
+
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "children": [
+                        {
+                            "id": "overview-checklist",
+                            "elementType": "visual",
+                            "type": "checklist",
+                            "datasetId": "tasksData",
+                            "title": "Overview Checklist",
+                            "statusColumn": "Completed",
+                            "warningColumn": "DueDate",
+                            "warningThreshold": 5,
+                            "columns": ["Task", "State", "Assignee", "DueDate"],
+                            "border": true,
+                            "shadow": true
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "children": [
+                        {
+                            "id": "sales-histogram",
+                            "elementType": "visual",
+                            "type": "histogram",
+                            "datasetId": "adSpendVsSales",
+                            "title": "Sales Distribution",
+                            "description": "Histogram of sales data.",
+                            "column": "Sales",
+                            "bins": 10,
+                            "xAxisLabel": "Sales ($)",
+                            "yAxisLabel": "Frequency",
+                            "color": "#8884d8",
+                            "border": true,
+                            "shadow": true,
+                            "height": 300
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Tasks",
+            "description": "Project task tracking.",
+            "rows": [
+                {
+                    "type": "layout",
+                    "children": [
+                        {
+                            "id": "project-tasks",
+                            "elementType": "visual",
+                            "type": "checklist",
+                            "datasetId": "tasksData",
+                            "title": "Project Milestones",
+                            "statusColumn": "Completed",
+                            "warningColumn": "DueDate",
+                            "warningThreshold": 5,
+                            "columns": ["Task", "Assignee", "DueDate"],
+                            "border": true,
+                            "shadow": true
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "children": [
+                        {
+                            "id": "tasks-heatmap",
+                            "elementType": "visual",
+                            "type": "heatmap",
+                            "datasetId": "tasksHeatmap",
+                            "title": "Open Tasks by Assignee (Weekly)",
+                            "description": "Demo heatmap showing open task counts by assignee and week.",
+                            "xColumn": "Week",
+                            "yColumn": "Assignee",
+                            "valueColumn": "OpenTasks",
+                            "xAxisLabel": "Week",
+                            "yAxisLabel": "Assignee",
+                            "border": true,
+                            "shadow": true,
+                            "height": 340,
+                            "color": "cool"
+                        },
+                        {
+                            "id": "tasks-heatmap-2",
+                            "elementType": "visual",
+                            "type": "heatmap",
+                            "datasetId": "tasksHeatmap",
+                            "title": "Sequential Heatmap (Blues)",
+                            "description": "Same data using a sequential Blues scheme.",
+                            "xColumn": "Week",
+                            "yColumn": "Assignee",
+                            "valueColumn": "OpenTasks",
+                            "xAxisLabel": "Week",
+                            "yAxisLabel": "Assignee",
+                            "border": true,
+                            "shadow": true,
+                            "height": 340,
+                            "color": "turbo"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "children": [
+                        {
+                            "id": "sales-line-chart",
+                            "elementType": "visual",
+                            "type": "line",
+                            "datasetId": "quarterlySales",
+                            "title": "Quarterly Sales Trends",
+                            "description": "Sales trends over quarters by category.",
+                            "xColumn": "Quarter",
+                            "yColumns": ["Electronics", "Clothing", "Home"],
+                            "border": true,
+                            "shadow": true,
+                            "height": 300,
+                            "showLabels": true,
+                            "smooth": true
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "children": [
+                        {
+                            "id": "boxplot-data-mode",
+                            "elementType": "visual",
+                            "type": "boxplot",
+                            "datasetId": "adSpendVsSales",
+                            "title": "Sales Distribution by Region (Data Mode)",
+                            "dataColumn": "Sales",
+                            "categoryColumn": "Region",
+                            "showOutliers": true,
+                            "border": true,
+                            "shadow": true,
+                            "height": 300,
+                            "color": "Set3"
+                        },
+                        {
+                            "id": "boxplot-precalc-mode",
+                            "elementType": "visual",
+                            "type": "boxplot",
+                            "datasetId": "boxPlotPreCalc",
+                            "title": "Pre-calculated Box Plot",
+                            "minColumn": "Min",
+                            "q1Column": "Q1",
+                            "medianColumn": "Median",
+                            "q3Column": "Q3",
+                            "maxColumn": "Max",
+                            "meanColumn": "Mean",
+                            "categoryColumn": "Category",
+                            "border": true,
+                            "shadow": true,
+                            "height": 300,
+                            "direction": "horizontal",
+                            "color": "Viridis"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "boxPlotPreCalc": {
+            "format": "records",
+            "columns": ["Category", "Min", "Q1", "Median", "Q3", "Max", "Mean"],
+            "dtypes": ["string", "number", "number", "number", "number", "number", "number"],
+            "data": [
+                { "Category": "Group A", "Min": 10, "Q1": 25, "Median": 40, "Q3": 60, "Max": 90, "Mean": 45 },
+                { "Category": "Group B", "Min": 15, "Q1": 30, "Median": 50, "Q3": 70, "Max": 95, "Mean": 52 },
+                { "Category": "Group C", "Min": 5, "Q1": 20, "Median": 35, "Q3": 55, "Max": 85, "Mean": 38 }
+            ]
+        },
+        "tasksData": {
+            "format": "records",
+            "columns": ["Task", "Assignee", "DueDate", "Completed"],
+            "dtypes": ["string", "string", "date", "boolean"],
+            "data": [
+                { "Task": "Initial Planning", "State": "Complete", "Assignee": "Alice", "DueDate": "2024-01-15", "Completed": true },
+                { "Task": "Design Mockups", "State": "Complete", "Assignee": "Bob", "DueDate": "2024-02-01", "Completed": true },
+                { "Task": "Frontend Development", "State": "In-Progress", "Assignee": "Charlie", "DueDate": "2025-12-15", "Completed": false },
+                { "Task": "Backend API", "State": "In-Progress", "Assignee": "Dave", "DueDate": "2025-12-10", "Completed": false },
+                { "Task": "Testing", "State": "In-Progress", "Assignee": "Eve", "DueDate": "2024-03-15", "Completed": false },
+                { "Task": "Deployment", "State": "Pending", "Assignee": "Frank", "DueDate": "2024-04-01", "Completed": false },
+                { "Task": "Follow up", "State": "Pending", "Assignee": "Frank", "DueDate": "2026-04-01", "Completed": false }
+            ]
+        },
+        "top10things" : {
+            "format": "table",
+            "dtypes": ["string", "number"],
+            "columns": ["Thing", "Value"],
+            "data": [
+                ["Thing A", 100],
+                ["Thing B", 90],
+                ["Thing C", 80],
+                ["Thing D", 70],
+                ["Thing E", 60],
+                ["Thing F", 50],
+                ["Thing G", 40],
+                ["Thing H", 30],
+                ["Thing I", 20],
+                ["Thing J", 10]
+            ]
+        },
+        "quarterlySales": {
+            "format": "table",
+            "dtypes": ["string", "number", "number", "number"],
+            "columns": ["Quarter", "Electronics", "Clothing", "Home"],
+            "data": [
+                ["Q1", 5000, 3000, 2000],
+                ["Q2", 6000, 3500, 2500],
+                ["Q3", 5500, 4000, 3000],
+                ["Q4", 8000, 5000, 4000]
+            ]
+        },
+        "kpiData": {
+            "format": "table",
+            "dtypes": ["string", "number", "number"],
+            "columns": ["Metric", "Value", "Yesterday"],
+            "data": [
+                ["Total Revenue", 150000, 142500],
+                ["Active Users", 1200, 1200],
+                ["Bounce Rate", 0.45, 0.50]
+            ]
+        },
+        "adSpendVsSales": {
+            "format": "records",
+            "dtypes": ["number", "number", "string"],
+            "columns": ["AdSpend", "Sales", "Region"],
+            "data": [
+                { "AdSpend": 800, "Sales": 3200, "Region": "North" },
+                { "AdSpend": 1200, "Sales": 5800, "Region": "North" },
+                { "AdSpend": 1500, "Sales": 5500, "Region": "North" },
+                { "AdSpend": 1900, "Sales": 8100, "Region": "North" },
+                { "AdSpend": 2200, "Sales": 7900, "Region": "North" },
+                { "AdSpend": 2600, "Sales": 11000, "Region": "North" },
+                { "AdSpend": 3100, "Sales": 12500, "Region": "North" },
+                { "AdSpend": 3500, "Sales": 14000, "Region": "North" },
+                { "AdSpend": 3800, "Sales": 13500, "Region": "North" },
+                { "AdSpend": 4000, "Sales": 16000, "Region": "North" },
+                { "AdSpend": 600, "Sales": 2500, "Region": "South" },
+                { "AdSpend": 1100, "Sales": 4200, "Region": "South" },
+                { "AdSpend": 1400, "Sales": 6100, "Region": "South" },
+                { "AdSpend": 1800, "Sales": 5900, "Region": "South" },
+                { "AdSpend": 2300, "Sales": 9500, "Region": "South" },
+                { "AdSpend": 2700, "Sales": 9200, "Region": "South" },
+                { "AdSpend": 3000, "Sales": 11800, "Region": "South" },
+                { "AdSpend": 3300, "Sales": 13000, "Region": "South" },
+                { "AdSpend": 3600, "Sales": 12500, "Region": "South" },
+                { "AdSpend": 3900, "Sales": 15500, "Region": "South" },
+                { "AdSpend": 700, "Sales": 3800, "Region": "East" },
+                { "AdSpend": 1300, "Sales": 4500, "Region": "East" },
+                { "AdSpend": 1600, "Sales": 7200, "Region": "East" },
+                { "AdSpend": 2000, "Sales": 6800, "Region": "East" },
+                { "AdSpend": 2400, "Sales": 10200, "Region": "East" },
+                { "AdSpend": 2800, "Sales": 9800, "Region": "East" },
+                { "AdSpend": 3200, "Sales": 13500, "Region": "East" },
+                { "AdSpend": 3400, "Sales": 12200, "Region": "East" },
+                { "AdSpend": 3700, "Sales": 14800, "Region": "East" },
+                { "AdSpend": 4100, "Sales": 16500, "Region": "East" },
+                { "AdSpend": 900, "Sales": 2800, "Region": "West" },
+                { "AdSpend": 1250, "Sales": 5100, "Region": "West" },
+                { "AdSpend": 1750, "Sales": 6500, "Region": "West" },
+                { "AdSpend": 2100, "Sales": 8800, "Region": "West" },
+                { "AdSpend": 2550, "Sales": 8400, "Region": "West" },
+                { "AdSpend": 2950, "Sales": 11500, "Region": "West" },
+                { "AdSpend": 3250, "Sales": 11000, "Region": "West" },
+                { "AdSpend": 3550, "Sales": 14200, "Region": "West" },
+                { "AdSpend": 3850, "Sales": 13800, "Region": "West" },
+                { "AdSpend": 4200, "Sales": 17000, "Region": "West" },
+                { "AdSpend": 15000, "Sales": 29000, "Region": "West" },
+                { "AdSpend": 100, "Sales": 505, "Region": "West" }
+            ]
+        },
+        "tasksHeatmap": {
+            "format": "records",
+            "columns": ["Assignee", "Week", "OpenTasks"],
+            "dtypes": ["string", "string", "number"],
+            "data": [
+                { "Assignee": "Alice", "Week": "Wk 1", "OpenTasks": 2 },
+                { "Assignee": "Alice", "Week": "Wk 2", "OpenTasks": 4 },
+                { "Assignee": "Alice", "Week": "Wk 3", "OpenTasks": 3 },
+                { "Assignee": "Alice", "Week": "Wk 4", "OpenTasks": 1 },
+
+                { "Assignee": "Bob", "Week": "Wk 1", "OpenTasks": 5 },
+                { "Assignee": "Bob", "Week": "Wk 2", "OpenTasks": 6 },
+                { "Assignee": "Bob", "Week": "Wk 3", "OpenTasks": 4 },
+                { "Assignee": "Bob", "Week": "Wk 4", "OpenTasks": 3 },
+
+                { "Assignee": "Charlie", "Week": "Wk 1", "OpenTasks": 1 },
+                { "Assignee": "Charlie", "Week": "Wk 2", "OpenTasks": 3 },
+                { "Assignee": "Charlie", "Week": "Wk 3", "OpenTasks": 5 },
+                { "Assignee": "Charlie", "Week": "Wk 4", "OpenTasks": 4 },
+
+                { "Assignee": "Dave", "Week": "Wk 1", "OpenTasks": 3 },
+                { "Assignee": "Dave", "Week": "Wk 2", "OpenTasks": 2 },
+                { "Assignee": "Dave", "Week": "Wk 3", "OpenTasks": 2 },
+                { "Assignee": "Dave", "Week": "Wk 4", "OpenTasks": 1 }
+            ]
+        },
+        "compressedTest": {
+            "id": "compressedTest",
+            "format": "table",
+            "columns": ["Item", "Value"],
+            "dtypes": ["string", "number"],
+            "compression": "gzip",
+            "compressedData": "compressed-data-1",
+            "data": []
+        }
+    }
+}
+    </script>
+    <script id="compressed-data-1" type="text/b64-gzip">H4sIAAAAAAAACouOVvIsSc1VcFTSMTQwiNWBcp2UdIyQuM5KOsYGBrGxAEZgS5ouAAAA</script>
+    <div id="root"></div>
+    <script src="http://localhost:8080/datalys2-reports.min.js"></script>
+
+</body>
+</html>
