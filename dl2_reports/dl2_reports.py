@@ -620,7 +620,13 @@ class DL2Report:
         """
         return self
 
-    def add_df(self, name: str, df: pd.DataFrame, format: str = "records", compress: bool = False) -> DL2Report:
+    def add_df(self, 
+               name: str, 
+               df: pd.DataFrame, 
+               format: str = "records", 
+               compress: bool = False,
+               timestamp_format: str = "iso"
+            ) -> DL2Report:
         """
         Adds a DataFrame to the report.
         
@@ -629,6 +635,7 @@ class DL2Report:
             df: The DataFrame to add.
             format: Data format ('records' or 'table').
             compress: Whether to compress the data using gzip.
+            timestamp_format: Format for datetime columns ('iso' or 'epoch').
         
         Returns:
             DL2Report: The DL2Report instance.
@@ -642,6 +649,23 @@ class DL2Report:
                 dtypes.append("date")
             else:
                 dtypes.append("string")
+
+        # Handle datetime formatting
+        for col in df.columns:
+            if not pd.api.types.is_datetime64_any_dtype(df[col]):
+                continue
+
+            # Normalize to UTC so tz-aware and naive datetimes behave consistently.
+            # Naive datetimes are treated as UTC.
+            series_utc = pd.to_datetime(df[col], utc=True)
+
+            if timestamp_format == "iso":
+                df[col] = series_utc.dt.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+            elif timestamp_format == "epoch":
+                # pandas stores datetimes in ns; convert to whole seconds.
+                df[col] = (series_utc.astype("int64") // 1_000_000_000)
+            else:
+                raise ValueError("Invalid timestamp_format. Use 'iso' or 'epoch'.")
 
         if format == "records":
             data = df.to_dict(orient="records")
