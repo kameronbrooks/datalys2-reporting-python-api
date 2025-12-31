@@ -65,6 +65,7 @@ class Layout(ReportTreeComponent):
         title: Optional[str] = None,
         comparison_column: str | int | None = None,
         comparison_row_index: int | None = None,
+        comparison_text: str | None = None,
         row_index: int | None = None,
         format: str | None = None,
         currency_symbol: str | None = None,
@@ -86,6 +87,7 @@ class Layout(ReportTreeComponent):
             title: Optional KPI card title.
             comparison_column: Column for the comparison value.
             comparison_row_index: Row index to use for comparison (supports negative indices).
+            comparison_text: The comparison text to show alongside the comparison value. Ex. ("Last Month", "Yesterday", etc.).
             row_index: Row index to display (supports negative indices).
             format: 'number', 'currency', 'percent', or 'date'.
             currency_symbol: Currency symbol (viewer default is '$').
@@ -111,6 +113,8 @@ class Layout(ReportTreeComponent):
             visual_kwargs["comparison_column"] = comparison_column
         if comparison_row_index is not None:
             visual_kwargs["comparison_row_index"] = comparison_row_index
+        if comparison_text is not None:
+            visual_kwargs["comparison_text"] = comparison_text
         if row_index is not None:
             visual_kwargs["row_index"] = row_index
         if format is not None:

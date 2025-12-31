@@ -108,6 +108,7 @@ Use this when you want to pass through viewer props that don't have a dedicated 
 | `title` | `str \| None` | `None` | Optional KPI card title. |
 | `comparison_column` | `str \| int \| None` | `None` | Column for the comparison value. |
 | `comparison_row_index` | `int \| None` | `None` | Row index to use for comparison (supports negative indices). If not provided, the viewer uses the same row as `row_index`. |
+| `comparison_text` | `str` | The comparison text to show alongside the comparison value. Ex. ("Last Month", "Yesterday", etc.)
 | `row_index` | `int \| None` | `None` | Row index to display (supports negative indices). |
 | `format` | `str \| None` | `None` | `'number'`, `'currency'`, `'percent'`, or `'date'`. |
 | `currency_symbol` | `str \| None` | `None` | Currency symbol (viewer default is usually `'$'`). |
