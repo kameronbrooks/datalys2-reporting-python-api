@@ -5,8 +5,11 @@ from typing import Any, Optional
 
 class ReportTreeComponent:
     """Base class for components in the report tree."""
-
+    BASE_ID: int = 1
     def __init__(self):
+        self.id = f"elem-{ReportTreeComponent.BASE_ID}"
+        ReportTreeComponent.BASE_ID += 1
+
         self.parent: Optional[Any] = None
 
     def get_report(self) -> Any:

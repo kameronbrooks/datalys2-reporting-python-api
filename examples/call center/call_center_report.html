@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call center report</title>
+    <meta name="dl-version" content="0.2.2">
+    <meta name="description" content="A report about call center data. Based on data from call_center_12mo.csv">
+    <meta name="author" content="Kameron Brooks">
+    <meta name="last-updated" content="2025-12-31T06:53:59.836158">
+    <meta name="gc-compressed-data" content="true">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+    <script id="compressed-data-call_center_data" type="text/b64-gzip">H4sIANcOVWkC/zWR2RHFIAhFW0kBzhtA1loy6b+NhwI/0dHjXcj7kgvDD9bjSHdlOt/cbl8PgssPvvW8ZIj33lzuumM4WU9wNBZucuW4MLbGmFKOpOU2UtkG0OVlbNmSY/XmSKM4LT3x5gSTU7XmuOMjsN+N8oCap4HYoEjdI1IXwgY1ExKBjqJHK0ZF1bFOQYLY0yQq2TQXGeN8KzFFYJdd7FKrR6fwybeDe4AeVcRNa4Ajx6cw+sTbbB0PK6fOBOX8uOBT+PsDzJkoI+EBAAA=</script>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">
+{
+    "pages": [
+        {
+            "title": "Main",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "kpi",
+                            "elementType": "visual",
+                            "id": "elem-37",
+                            "datasetId": "call_center_data",
+                            "valueColumn": "asa",
+                            "comparisonRowIndex": -2,
+                            "rowIndex": -1
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "table",
+                            "elementType": "visual",
+                            "id": "elem-39",
+                            "datasetId": "call_center_data",
+                            "pageSize": 20
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "call_center_data": {
+            "id": "call_center_data",
+            "format": "table",
+            "columns": [
+                "call volume",
+                "email volume",
+                "asa(s)",
+                "abd rate",
+                "abd"
+            ],
+            "dtypes": [
+                "number",
+                "number",
+                "number",
+                "number",
+                "number"
+            ],
+            "data": [],
+            "compression": "gzip",
+            "compressedData": "compressed-data-call_center_data"
+        }
+    }
+}
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>

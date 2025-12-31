@@ -79,6 +79,7 @@ class Visual(ReportTreeComponent):
         d: Dict[str, Any] = {
             "type": self.type,
             "elementType": "visual",
+            "id": self.id,
         }
         if self.dataset_id:
             d["datasetId"] = self.dataset_id

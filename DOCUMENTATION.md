@@ -1,5 +1,5 @@
 # Datalys2 Reporting Documentation
-**Version 0.2.2**
+**Version 0.2.3**
 
 
 This documentation guides you on how to create HTML reports using the Datalys2 Reporting library.
@@ -25,7 +25,7 @@ You can also use standard HTML meta tags to configure the report header informat
     <meta name="description" content="A brief description of this report">
     <meta name="author" content="Report Author Name">
     <meta name="last-updated" content="2024-01-01">
-    <meta name="dl-version" content="0.2.2">
+    <meta name="dl-version" content="0.2.3">
 
     <!-- Include the library styles -->
     <link rel="stylesheet" href="path/to/dl2-style.css">
@@ -182,6 +182,7 @@ The `rows` array contains layout objects. Layouts can contain other layouts or v
 
 | Property | Type | Description |
 |----------|------|-------------|
+| `id` | `string` | A unique id for every element in the report. |
 | `type` | `string` | The type of component (e.g., `layout`, `card`, `kpi`). |
 | `padding` | `number` | Padding in pixels. |
 | `margin` | `number` | Margin in pixels. |
