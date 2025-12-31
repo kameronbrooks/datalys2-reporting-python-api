@@ -211,54 +211,127 @@ class DL2Report:
             self.children.append(layout)
             return layout
 
-        def add_kpi(self, dataset_id: str, value_column: str, title: str, **kwargs) -> DL2Report.Visual:
-            """
-            Adds a KPI visual to the layout.
-            
+        def add_kpi(
+            self,
+            dataset_id: str,
+            value_column: str | int,
+            title: Optional[str] = None,
+            comparison_column: str | int | None = None,
+            comparison_row_index: int | None = None,
+            row_index: int | None = None,
+            format: str | None = None,
+            currency_symbol: str | None = None,
+            good_direction: str | None = None,
+            breach_value: float | int | None = None,
+            warning_value: float | int | None = None,
+            description: Optional[str] = None,
+            width: int | None = None,
+            height: int | None = None,
+            **kwargs,
+        ) -> DL2Report.Visual:
+            """Adds a KPI visual to the layout.
+
+            This matches the KPI schema documented in `DOCUMENTATION.md`.
+
             Args:
                 dataset_id: The ID of the dataset.
-                value_column: The column containing the KPI value.
-                title: The title of the KPI.
-                **kwargs: Additional properties:
-                    * **comparison_column** (str): Column for the comparison value.
-                    * **row_index** (int): Index of the row in the dataset (default 0).
-                    * **format** (str): 'number', 'currency', or 'percent'.
-                    * **currency_symbol** (str): Symbol for currency (default '$').
-                    * **good_direction** (str): 'higher' or 'lower'.
-                    * **breach_value** (float): Value that triggers a breach indicator.
-                    * **warning_value** (float): Value that triggers a warning indicator.
-                    * **padding**, **margin**, **border**, **shadow**, **flex**, **modal_id**: Common visual properties.
-            
+                value_column: Column for the main value.
+                title: Optional title for the KPI card.
+                comparison_column: Column for the comparison value (e.g., yesterday).
+                comparison_row_index: Index of the row to use for comparison. Supports negative indices.
+                row_index: Index of the row in the dataset to display. Supports negative indices.
+                format: Formatting style. One of: 'number', 'currency', 'percent', 'date'.
+                currency_symbol: Symbol for currency (default '$' in the viewer).
+                good_direction: Which direction is considered "good" ('higher' or 'lower').
+                breach_value: Value that triggers a breach indicator.
+                warning_value: Value that triggers a warning indicator.
+                description: Optional description text displayed at the bottom.
+                width: Optional width for the KPI card.
+                height: Optional height for the KPI card.
+                **kwargs: Additional properties (including common visual properties like
+                    padding, margin, border, shadow, flex, modal_id).
+
             Returns:
                 DL2Report.Visual: The Visual instance.
             """
-            return self.add_visual("kpi", dataset_id, value_column=value_column, title=title, **kwargs)
+            visual_kwargs = dict(kwargs)
 
-        def add_table(self, dataset_id: str, title: Optional[str] = None, **kwargs) -> DL2Report.Visual:
+            # Required KPI properties
+            visual_kwargs["value_column"] = value_column
+
+            # Optional KPI properties
+            if title is not None:
+                visual_kwargs["title"] = title
+            if description is not None:
+                visual_kwargs["description"] = description
+            if comparison_column is not None:
+                visual_kwargs["comparison_column"] = comparison_column
+            if comparison_row_index is not None:
+                visual_kwargs["comparison_row_index"] = comparison_row_index
+            if row_index is not None:
+                visual_kwargs["row_index"] = row_index
+            if format is not None:
+                visual_kwargs["format"] = format
+            if currency_symbol is not None:
+                visual_kwargs["currency_symbol"] = currency_symbol
+            if good_direction is not None:
+                visual_kwargs["good_direction"] = good_direction
+            if breach_value is not None:
+                visual_kwargs["breach_value"] = breach_value
+            if warning_value is not None:
+                visual_kwargs["warning_value"] = warning_value
+            if width is not None:
+                visual_kwargs["width"] = width
+            if height is not None:
+                visual_kwargs["height"] = height
+
+            return self.add_visual("kpi", dataset_id, **visual_kwargs)
+
+        def add_table(
+            self,
+            dataset_id: str,
+            title: Optional[str] = None,
+            columns: Optional[List[str]] = None,
+            page_size: int | None = None,
+            table_style: str | None = None,
+            show_search: bool | None = None,
+            **kwargs,
+        ) -> DL2Report.Visual:
             """
             Adds a table visual to the layout.
             
             Args:
                 dataset_id: The ID of the dataset.
                 title: Optional title for the table.
+                columns: Optional array of column names to display.
+                page_size: Number of rows per page.
+                table_style: Visual style of the table ('plain', 'bordered', 'alternating').
+                show_search: Whether to show the search bar.
                 **kwargs: Additional properties:
-                    * **columns** (List[str]): Optional array of column names to display.
-                    * **page_size** (int): Number of rows per page (default 10).
-                    * **table_style** (str): 'plain', 'bordered', or 'alternating'.
-                    * **show_search** (bool): Whether to show the search bar (default True).
                     * **padding**, **margin**, **border**, **shadow**, **flex**, **modal_id**: Common visual properties.
             
             Returns:
                 DL2Report.Visual: The Visual instance.
             """
-            return self.add_visual("table", dataset_id, title=title, **kwargs)
+            visual_kwargs = dict(kwargs)
+            if title is not None:
+                visual_kwargs["title"] = title
+            if columns is not None:
+                visual_kwargs["columns"] = columns
+            if page_size is not None:
+                visual_kwargs["page_size"] = page_size
+            if table_style is not None:
+                visual_kwargs["table_style"] = table_style
+            if show_search is not None:
+                visual_kwargs["show_search"] = show_search
+            return self.add_visual("table", dataset_id, **visual_kwargs)
 
-        def add_card(self, title: str, text: str, **kwargs) -> DL2Report.Visual:
+        def add_card(self, title: str | None, text: str, **kwargs) -> DL2Report.Visual:
             """
             Adds a card visual with static or computed text.
             
             Args:
-                title: The title of the card (supports {{expr}}).
+                title: Optional title of the card (supports {{expr}}).
                 text: The text content of the card (supports {{expr}}).
                 **kwargs: Additional properties:
                     * **padding**, **margin**, **border**, **shadow**, **flex**, **modal_id**: Common visual properties.
@@ -266,136 +339,296 @@ class DL2Report:
             Returns:
                 DL2Report.Visual: The Visual instance.
             """
-            return self.add_visual("card", None, title=title, text=text, **kwargs)
+            visual_kwargs = dict(kwargs)
+            if title is not None:
+                visual_kwargs["title"] = title
+            visual_kwargs["text"] = text
+            return self.add_visual("card", None, **visual_kwargs)
 
-        def add_pie(self, dataset_id: str, category_column: str, value_column: str, **kwargs) -> DL2Report.Visual:
+        def add_pie(
+            self,
+            dataset_id: str,
+            category_column: str | int,
+            value_column: str | int,
+            inner_radius: int | None = None,
+            show_legend: bool | None = None,
+            **kwargs,
+        ) -> DL2Report.Visual:
             """
             Adds a pie chart visual.
             
             Args:
                 dataset_id: The ID of the dataset.
-                category_column: The column for pie slices.
-                value_column: The column for slice values.
+                category_column: Column for slice labels.
+                value_column: Column for slice size.
+                inner_radius: For donut chart style.
+                show_legend: Whether to show the legend.
                 **kwargs: Additional properties:
-                    * **inner_radius** (int): For donut chart style.
-                    * **show_legend** (bool): Whether to show the legend.
                     * **padding**, **margin**, **border**, **shadow**, **flex**, **modal_id**: Common visual properties.
             
             Returns:
                 DL2Report.Visual: The Visual instance.
             """
-            return self.add_visual("pie", dataset_id, category_column=category_column, value_column=value_column, **kwargs)
+            visual_kwargs = dict(kwargs)
+            visual_kwargs["category_column"] = category_column
+            visual_kwargs["value_column"] = value_column
+            if inner_radius is not None:
+                visual_kwargs["inner_radius"] = inner_radius
+            if show_legend is not None:
+                visual_kwargs["show_legend"] = show_legend
+            return self.add_visual("pie", dataset_id, **visual_kwargs)
 
-        def add_bar(self, dataset_id: str, x_column: str, y_columns: List[str], stacked: bool = False, **kwargs) -> DL2Report.Visual:
+        def add_bar(
+            self,
+            dataset_id: str,
+            x_column: str | int,
+            y_columns: List[str],
+            stacked: bool = False,
+            x_axis_label: Optional[str] = None,
+            y_axis_label: Optional[str] = None,
+            show_legend: bool | None = None,
+            show_labels: bool | None = None,
+            horizontal: bool | None = None,
+            **kwargs,
+        ) -> DL2Report.Visual:
             """
             Adds a bar chart visual (clustered or stacked).
             
             Args:
                 dataset_id: The ID of the dataset.
-                x_column: The column for the X-axis.
+                x_column: Column for X-axis categories.
                 y_columns: The list of columns for the Y-axis.
                 stacked: Whether to stack the bars.
+                x_axis_label: Label for X-axis.
+                y_axis_label: Label for Y-axis.
+                show_legend: Whether to show the legend.
+                show_labels: Whether to show value labels on bars.
+                horizontal: Whether to display bars horizontally.
                 **kwargs: Additional properties:
-                    * **x_axis_label** (str): Label for X-axis.
-                    * **y_axis_label** (str): Label for Y-axis.
-                    * **show_legend** (bool): Whether to show the legend.
-                    * **show_labels** (bool): Whether to show value labels on bars.
-                    * **horizontal** (bool): Whether to display bars horizontally.
                     * **padding**, **margin**, **border**, **shadow**, **flex**, **modal_id**: Common visual properties.
             
             Returns:
                 DL2Report.Visual: The Visual instance.
             """
             type = "stackedBar" if stacked else "clusteredBar"
-            return self.add_visual(type, dataset_id, x_column=x_column, y_columns=y_columns, **kwargs)
+            visual_kwargs = dict(kwargs)
+            visual_kwargs["x_column"] = x_column
+            visual_kwargs["y_columns"] = y_columns
+            if x_axis_label is not None:
+                visual_kwargs["x_axis_label"] = x_axis_label
+            if y_axis_label is not None:
+                visual_kwargs["y_axis_label"] = y_axis_label
+            if show_legend is not None:
+                visual_kwargs["show_legend"] = show_legend
+            if show_labels is not None:
+                visual_kwargs["show_labels"] = show_labels
+            if horizontal is not None:
+                visual_kwargs["horizontal"] = horizontal
+            return self.add_visual(type, dataset_id, **visual_kwargs)
 
-        def add_scatter(self, dataset_id: str, x_column: str, y_column: str, **kwargs) -> DL2Report.Visual:
+        def add_scatter(
+            self,
+            dataset_id: str,
+            x_column: str | int,
+            y_column: str | int,
+            category_column: str | int | None = None,
+            show_trendline: bool | None = None,
+            show_correlation: bool | None = None,
+            point_size: int | None = None,
+            x_axis_label: Optional[str] = None,
+            y_axis_label: Optional[str] = None,
+            **kwargs,
+        ) -> DL2Report.Visual:
             """
             Adds a scatter plot visual.
             
             Args:
                 dataset_id: The ID of the dataset.
-                x_column: The column for the X-axis.
-                y_column: The column for the Y-axis.
-                **kwargs: Additional properties:
-                    * **category_column** (str): Optional column for coloring points by category.
-                    * **show_trendline** (bool): Whether to show a linear regression trendline.
-                    * **show_correlation** (bool): Whether to show correlation stats.
-                    * **point_size** (int): Size of the data points (default 5).
-                    * **x_axis_label** (str): Label for X-axis.
-                    * **y_axis_label** (str): Label for Y-axis.
+                x_column: Column for X-axis values (numeric).
+                y_column: Column for Y-axis values (numeric).
+                category_column: Optional column for coloring points by category.
+                show_trendline: Whether to show a linear regression trendline.
+                show_correlation: Whether to show correlation stats.
+                point_size: Size of the data points.
+                x_axis_label: Label for X-axis.
+                y_axis_label: Label for Y-axis.
                     * **padding**, **margin**, **border**, **shadow**, **flex**, **modal_id**: Common visual properties.
             
             Returns:
                 DL2Report.Visual: The Visual instance.
             """
-            return self.add_visual("scatter", dataset_id, x_column=x_column, y_column=y_column, **kwargs)
+            visual_kwargs = dict(kwargs)
+            visual_kwargs["x_column"] = x_column
+            visual_kwargs["y_column"] = y_column
+            if category_column is not None:
+                visual_kwargs["category_column"] = category_column
+            if show_trendline is not None:
+                visual_kwargs["show_trendline"] = show_trendline
+            if show_correlation is not None:
+                visual_kwargs["show_correlation"] = show_correlation
+            if point_size is not None:
+                visual_kwargs["point_size"] = point_size
+            if x_axis_label is not None:
+                visual_kwargs["x_axis_label"] = x_axis_label
+            if y_axis_label is not None:
+                visual_kwargs["y_axis_label"] = y_axis_label
+            return self.add_visual("scatter", dataset_id, **visual_kwargs)
 
-        def add_line(self, dataset_id: str, x_column: str, y_columns: List[str] | str, **kwargs) -> DL2Report.Visual:
+        def add_line(
+            self,
+            dataset_id: str,
+            x_column: str | int,
+            y_columns: List[str] | str,
+            smooth: bool | None = None,
+            show_legend: bool | None = None,
+            show_labels: bool | None = None,
+            min_y: float | int | None = None,
+            max_y: float | int | None = None,
+            colors: Optional[List[str]] = None,
+            x_axis_label: Optional[str] = None,
+            y_axis_label: Optional[str] = None,
+            **kwargs,
+        ) -> DL2Report.Visual:
             """
             Adds a line chart visual.
             
             Args:
                 dataset_id: The ID of the dataset.
-                x_column: The column for the X-axis.
+                x_column: Column for X-axis values (usually time or category).
                 y_columns: The column(s) for the Y-axis.
+                smooth: Whether to use a smooth curve instead of straight lines.
+                show_legend: Whether to show the legend.
+                show_labels: Whether to show value labels on points.
+                min_y: Optional minimum Y-axis value.
+                max_y: Optional maximum Y-axis value.
+                colors: Array of colors for the lines.
+                x_axis_label: Label for X-axis.
+                y_axis_label: Label for Y-axis.
                 **kwargs: Additional properties:
-                    * **smooth** (bool): Whether to use a smooth curve.
-                    * **show_legend** (bool): Whether to show the legend.
-                    * **show_labels** (bool): Whether to show value labels on points.
-                    * **min_y** (float): Optional minimum Y-axis value.
-                    * **max_y** (float): Optional maximum Y-axis value.
-                    * **colors** (List[str]): Array of colors for the lines.
-                    * **x_axis_label** (str): Label for X-axis.
-                    * **y_axis_label** (str): Label for Y-axis.
                     * **padding**, **margin**, **border**, **shadow**, **flex**, **modal_id**: Common visual properties.
             
             Returns:
                 DL2Report.Visual: The Visual instance.
             """
-            return self.add_visual("line", dataset_id, x_column=x_column, y_columns=y_columns, **kwargs)
+            visual_kwargs = dict(kwargs)
+            visual_kwargs["x_column"] = x_column
+            visual_kwargs["y_columns"] = y_columns
+            if smooth is not None:
+                visual_kwargs["smooth"] = smooth
+            if show_legend is not None:
+                visual_kwargs["show_legend"] = show_legend
+            if show_labels is not None:
+                visual_kwargs["show_labels"] = show_labels
+            if min_y is not None:
+                visual_kwargs["min_y"] = min_y
+            if max_y is not None:
+                visual_kwargs["max_y"] = max_y
+            if colors is not None:
+                visual_kwargs["colors"] = colors
+            if x_axis_label is not None:
+                visual_kwargs["x_axis_label"] = x_axis_label
+            if y_axis_label is not None:
+                visual_kwargs["y_axis_label"] = y_axis_label
+            return self.add_visual("line", dataset_id, **visual_kwargs)
 
-        def add_checklist(self, dataset_id: str, status_column: str, **kwargs) -> DL2Report.Visual:
+        def add_checklist(
+            self,
+            dataset_id: str,
+            status_column: str,
+            warning_column: Optional[str] = None,
+            warning_threshold: int | None = None,
+            columns: Optional[List[str]] = None,
+            page_size: int | None = None,
+            show_search: bool | None = None,
+            **kwargs,
+        ) -> DL2Report.Visual:
             """
             Adds a checklist visual.
             
             Args:
                 dataset_id: The ID of the dataset.
                 status_column: Column name containing boolean/truthy value for completion.
+                warning_column: Column name containing a date to check against.
+                warning_threshold: Days before due date to trigger warning.
+                columns: Optional array of column names to display.
+                page_size: Number of rows per page.
+                show_search: Whether to show the search bar.
                 **kwargs: Additional properties:
-                    * **warning_column** (str): Column name containing a date to check against.
-                    * **warning_threshold** (int): Days before due date to trigger warning (default 3).
-                    * **columns** (List[str]): Optional array of column names to display.
-                    * **page_size** (int): Number of rows per page (default 10).
-                    * **show_search** (bool): Whether to show the search bar (default True).
                     * **padding**, **margin**, **border**, **shadow**, **flex**, **modal_id**: Common visual properties.
             
             Returns:
                 DL2Report.Visual: The Visual instance.
             """
-            return self.add_visual("checklist", dataset_id, status_column=status_column, **kwargs)
+            visual_kwargs = dict(kwargs)
+            visual_kwargs["status_column"] = status_column
+            if warning_column is not None:
+                visual_kwargs["warning_column"] = warning_column
+            if warning_threshold is not None:
+                visual_kwargs["warning_threshold"] = warning_threshold
+            if columns is not None:
+                visual_kwargs["columns"] = columns
+            if page_size is not None:
+                visual_kwargs["page_size"] = page_size
+            if show_search is not None:
+                visual_kwargs["show_search"] = show_search
+            return self.add_visual("checklist", dataset_id, **visual_kwargs)
 
-        def add_histogram(self, dataset_id: str, column: str, **kwargs) -> DL2Report.Visual:
+        def add_histogram(
+            self,
+            dataset_id: str,
+            column: str | int,
+            bins: int | None = None,
+            color: Optional[str] = None,
+            show_labels: bool | None = None,
+            x_axis_label: Optional[str] = None,
+            y_axis_label: Optional[str] = None,
+            **kwargs,
+        ) -> DL2Report.Visual:
             """
             Adds a histogram visual.
             
             Args:
                 dataset_id: The ID of the dataset.
                 column: Column containing the numerical values to bin.
+                bins: Number of bins to divide the data into.
+                color: Color of the bars.
+                show_labels: Whether to show count labels on top of bars.
+                x_axis_label: Label for X-axis.
+                y_axis_label: Label for Y-axis.
                 **kwargs: Additional properties:
-                    * **bins** (int): Number of bins (default 10).
-                    * **color** (str): Color of the bars.
-                    * **show_labels** (bool): Whether to show count labels.
-                    * **x_axis_label** (str): Label for X-axis.
-                    * **y_axis_label** (str): Label for Y-axis.
                     * **padding**, **margin**, **border**, **shadow**, **flex**, **modal_id**: Common visual properties.
             
             Returns:
                 DL2Report.Visual: The Visual instance.
             """
-            return self.add_visual("histogram", dataset_id, column=column, **kwargs)
+            visual_kwargs = dict(kwargs)
+            visual_kwargs["column"] = column
+            if bins is not None:
+                visual_kwargs["bins"] = bins
+            if color is not None:
+                visual_kwargs["color"] = color
+            if show_labels is not None:
+                visual_kwargs["show_labels"] = show_labels
+            if x_axis_label is not None:
+                visual_kwargs["x_axis_label"] = x_axis_label
+            if y_axis_label is not None:
+                visual_kwargs["y_axis_label"] = y_axis_label
+            return self.add_visual("histogram", dataset_id, **visual_kwargs)
 
-        def add_heatmap(self, dataset_id: str, x_column: str, y_column: str, value_column: str, **kwargs) -> DL2Report.Visual:
+        def add_heatmap(
+            self,
+            dataset_id: str,
+            x_column: str | int,
+            y_column: str | int,
+            value_column: str | int,
+            show_cell_labels: bool | None = None,
+            min_value: float | int | None = None,
+            max_value: float | int | None = None,
+            color: str | List[str] | None = None,
+            x_axis_label: Optional[str] = None,
+            y_axis_label: Optional[str] = None,
+            **kwargs,
+        ) -> DL2Report.Visual:
             """
             Adds a heatmap visual.
             
@@ -404,41 +637,101 @@ class DL2Report:
                 x_column: Column for X-axis categories.
                 y_column: Column for Y-axis categories.
                 value_column: Column for the heat value.
+                show_cell_labels: Whether to show the value text inside cells.
+                min_value: Optional minimum value for color scale.
+                max_value: Optional maximum value for color scale.
+                color: Color scheme (e.g., "Viridis") or array of colors.
+                x_axis_label: Label for X-axis.
+                y_axis_label: Label for Y-axis.
                 **kwargs: Additional properties:
-                    * **show_cell_labels** (bool): Whether to show value text inside cells.
-                    * **min_value** (float): Optional minimum value for color scale.
-                    * **max_value** (float): Optional maximum value for color scale.
-                    * **color** (str|List[str]): Color scheme (e.g., "Viridis") or array of colors.
-                    * **x_axis_label** (str): Label for X-axis.
-                    * **y_axis_label** (str): Label for Y-axis.
                     * **padding**, **margin**, **border**, **shadow**, **flex**, **modal_id**: Common visual properties.
             
             Returns:
                 DL2Report.Visual: The Visual instance.
             """
-            return self.add_visual("heatmap", dataset_id, x_column=x_column, y_column=y_column, value_column=value_column, **kwargs)
+            visual_kwargs = dict(kwargs)
+            visual_kwargs["x_column"] = x_column
+            visual_kwargs["y_column"] = y_column
+            visual_kwargs["value_column"] = value_column
+            if show_cell_labels is not None:
+                visual_kwargs["show_cell_labels"] = show_cell_labels
+            if min_value is not None:
+                visual_kwargs["min_value"] = min_value
+            if max_value is not None:
+                visual_kwargs["max_value"] = max_value
+            if color is not None:
+                visual_kwargs["color"] = color
+            if x_axis_label is not None:
+                visual_kwargs["x_axis_label"] = x_axis_label
+            if y_axis_label is not None:
+                visual_kwargs["y_axis_label"] = y_axis_label
+            return self.add_visual("heatmap", dataset_id, **visual_kwargs)
 
-        def add_boxplot(self, dataset_id: str, **kwargs) -> DL2Report.Visual:
+        def add_boxplot(
+            self,
+            dataset_id: str,
+            data_column: str | int | None = None,
+            category_column: str | int | None = None,
+            min_column: str | int | None = None,
+            q1_column: str | int | None = None,
+            median_column: str | int | None = None,
+            q3_column: str | int | None = None,
+            max_column: str | int | None = None,
+            mean_column: str | int | None = None,
+            direction: str | None = None,
+            show_outliers: bool | None = None,
+            color: str | List[str] | None = None,
+            x_axis_label: Optional[str] = None,
+            y_axis_label: Optional[str] = None,
+            **kwargs,
+        ) -> DL2Report.Visual:
             """
             Adds a box plot visual.
             
             Args:
                 dataset_id: The ID of the dataset.
+                data_column: Raw numerical values to calculate box stats (Data Mode).
+                category_column: Column to group data by (Data Mode) or label rows (Pre-calc Mode).
+                min_column/q1_column/median_column/q3_column/max_column/mean_column: Pre-calc Mode columns.
+                direction: 'vertical' or 'horizontal'.
+                show_outliers: Whether to show outliers.
+                color: Fill color or D3 scheme name.
+                x_axis_label: Label for X-axis.
+                y_axis_label: Label for Y-axis.
                 **kwargs: Additional properties:
-                    * **data_column** (str): Raw numerical values to calculate box stats (Data Mode).
-                    * **category_column** (str): Column to group data by.
-                    * **min_column**, **q1_column**, **median_column**, **q3_column**, **max_column**, **mean_column**: Pre-calc Mode columns.
-                    * **direction** (str): 'vertical' or 'horizontal'.
-                    * **show_outliers** (bool): Whether to show outliers (default True).
-                    * **color** (str|List[str]): Fill color or D3 scheme name.
-                    * **x_axis_label** (str): Label for X-axis.
-                    * **y_axis_label** (str): Label for Y-axis.
                     * **padding**, **margin**, **border**, **shadow**, **flex**, **modal_id**: Common visual properties.
             
             Returns:
                 DL2Report.Visual: The Visual instance.
             """
-            return self.add_visual("boxplot", dataset_id, **kwargs)
+            visual_kwargs = dict(kwargs)
+            if data_column is not None:
+                visual_kwargs["data_column"] = data_column
+            if category_column is not None:
+                visual_kwargs["category_column"] = category_column
+            if min_column is not None:
+                visual_kwargs["min_column"] = min_column
+            if q1_column is not None:
+                visual_kwargs["q1_column"] = q1_column
+            if median_column is not None:
+                visual_kwargs["median_column"] = median_column
+            if q3_column is not None:
+                visual_kwargs["q3_column"] = q3_column
+            if max_column is not None:
+                visual_kwargs["max_column"] = max_column
+            if mean_column is not None:
+                visual_kwargs["mean_column"] = mean_column
+            if direction is not None:
+                visual_kwargs["direction"] = direction
+            if show_outliers is not None:
+                visual_kwargs["show_outliers"] = show_outliers
+            if color is not None:
+                visual_kwargs["color"] = color
+            if x_axis_label is not None:
+                visual_kwargs["x_axis_label"] = x_axis_label
+            if y_axis_label is not None:
+                visual_kwargs["y_axis_label"] = y_axis_label
+            return self.add_visual("boxplot", dataset_id, **visual_kwargs)
 
         def add_modal_button(self, modal_id: str, button_label: str, **kwargs) -> DL2Report.Visual:
             """
@@ -767,6 +1060,7 @@ class DL2Report:
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{self.title}</title>
+    <meta name="dl-version" content="0.2.2">
     <meta name="description" content="{self.description}">
     <meta name="author" content="{self.author}">
     <meta name="last-updated" content="{datetime.datetime.now().isoformat()}">
