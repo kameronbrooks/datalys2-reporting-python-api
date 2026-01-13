@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Dict
-
+from typing import Any, Dict, Union, List
+import pandas as pd
 
 def snake_to_camel(key: str) -> str:
     return "".join(word.capitalize() if i > 0 else word for i, word in enumerate(key.split("_")))
@@ -25,3 +25,14 @@ def make_dataset_serializable(dataset: Dict[str, Any]) -> Dict[str, Any]:
     if "_df" in serializable_dataset:
         del serializable_dataset["_df"]
     return serializable_dataset
+
+
+def convert_nan_to_none(value: Union[Dict,List,None,float,int,str]) -> Union[Dict,List,None,float,int,str]:
+    if isinstance(value, dict):
+        return {k: convert_nan_to_none(v) for k, v in value.items()}
+    elif isinstance(value, list):
+        return [convert_nan_to_none(item) for item in value]
+    elif isinstance(value, float) and pd.isna(value):  # Check for NaN
+        return None
+    else:
+        return value

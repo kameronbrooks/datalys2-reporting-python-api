@@ -11,7 +11,9 @@ import json
 import pandas as pd
 
 from .components import Layout, Modal, Page, ReportTreeComponent, Visual
-from .serialization import camel_case_dict, make_dataset_serializable
+from .serialization import camel_case_dict, make_dataset_serializable, convert_nan_to_none
+
+DL2_VERSION = "0.2.3"
 
 
 class DL2Report:
@@ -57,13 +59,17 @@ class DL2Report:
         compress: bool = False,
         timestamp_format: str = "iso",
     ) -> DL2Report:
+        """Adds a pandas DataFrame as a dataset to the report."""
+
         columns = df.columns.tolist()
         dtypes: List[str] = []
         for dtype in df.dtypes:
-            if pd.api.types.is_numeric_dtype(dtype):
-                dtypes.append("number")
+            if pd.api.types.is_bool_dtype(dtype):
+                dtypes.append("boolean")
             elif pd.api.types.is_datetime64_any_dtype(dtype):
                 dtypes.append("date")
+            elif pd.api.types.is_numeric_dtype(dtype):
+                dtypes.append("number")
             else:
                 dtypes.append("string")
 
@@ -88,6 +94,9 @@ class DL2Report:
             data = df.to_dict(orient="records")
         else:
             data = df.values.tolist()
+
+        # Convert NaN to None for JSON serialization
+        data = convert_nan_to_none(data)
 
         dataset_entry: Dict[str, Any] = {
             "id": name,
@@ -157,10 +166,10 @@ class DL2Report:
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{self.title}</title>
-    <meta name="dl-version" content="0.2.2">
+    <meta name="dl-version" content="{DL2_VERSION}">
     <meta name="description" content="{self.description}">
     <meta name="author" content="{self.author}">
-    <meta name="last-updated" content="{datetime.datetime.now().isoformat()}">
+    <meta name="last-updated" content="{datetime.datetime.now().strftime('%m-%d-%Y %H:%M:%S')}">
 {meta_html}
     <link rel="stylesheet" href="{self.css_url}">
 </head>
