@@ -25,7 +25,7 @@ class DL2Report:
     Page: ClassVar[type[Page]]
     Modal: ClassVar[type[Modal]]
 
-    def __init__(self, title: str, description: str = "", author: str = ""):
+    def __init__(self, title: str, description: str = "", author: str = "", compress_visuals: bool = True):
         """Initializes a new DL2Report."""
 
         self.title = title
@@ -38,6 +38,7 @@ class DL2Report:
         self.css_url = "https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css"
         self.js_url = "https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"
         self.meta_tags: Dict[str, str] = {}
+        self.compress_visuals = compress_visuals
 
     # Compatibility: keep these helpers on DL2Report
     @staticmethod
@@ -156,9 +157,21 @@ class DL2Report:
         for name, content in self.meta_tags.items():
             meta_html += f'    <meta name="{name}" content="{content}">\n'
 
+        # Generate compressed scripts for any compressed datasets
         compressed_scripts = ""
         for script_id, b64_data in self.compressed_datasets.items():
             compressed_scripts += f'    <script id="{script_id}" type="text/b64-gzip">{b64_data}</script>\n'
+
+        # Determine the appropriate script type and content for the report data
+        report_data_html = f'<script id="report-data" type="application/json">{report_data_json}</script>'
+        if self.compress_visuals:
+            try:
+                compressed_report_data = gzip.compress(report_data_json.encode("utf-8"))
+                b64_report_data = base64.b64encode(compressed_report_data).decode("utf-8")
+                report_data_html = f'<script id="report-data" type="text/b64-gzip">{b64_report_data}</script>'
+            except Exception as e:
+                print(f"Error compressing report data: {e}")
+                report_data_html = f'<script id="report-data" type="application/json">{report_data_json}</script>'
 
         compiled_html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -176,9 +189,7 @@ class DL2Report:
 <body>
 {compressed_scripts}
     <div id="root"></div>
-    <script id="report-data" type="application/json">
-{report_data_json}
-    </script>
+    {report_data_html}
     <script src="{self.js_url}"></script>
 </body>
 </html>"""
