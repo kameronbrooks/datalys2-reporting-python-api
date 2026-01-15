@@ -61,7 +61,9 @@ class DL2Report:
         timestamp_format: str = "iso",
     ) -> DL2Report:
         """Adds a pandas DataFrame as a dataset to the report."""
-
+        # Make a deep copy of the DataFrame to avoid modifying the original
+        df = df.copy(deep=True)
+        
         columns = df.columns.tolist()
         
         # Track which columns are dates BEFORE conversion
