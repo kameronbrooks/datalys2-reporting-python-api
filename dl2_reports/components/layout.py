@@ -68,6 +68,7 @@ class Layout(ReportTreeComponent):
         comparison_text: str | None = None,
         row_index: int | None = None,
         format: str | None = None,
+        rounding_precision: int | None = None,
         currency_symbol: str | None = None,
         good_direction: str | None = None,
         breach_value: float | int | None = None,
@@ -97,6 +98,7 @@ class Layout(ReportTreeComponent):
             description: Optional description text.
             width: Optional width.
             height: Optional height.
+            rounding_precision: Optional rounding precision for numeric values.
             **kwargs: Additional common visual properties.
 
         Returns:
@@ -131,6 +133,8 @@ class Layout(ReportTreeComponent):
             visual_kwargs["width"] = width
         if height is not None:
             visual_kwargs["height"] = height
+        if rounding_precision is not None:
+            visual_kwargs["rounding_precision"] = rounding_precision
 
         return self.add_visual("kpi", dataset_id, **visual_kwargs)
 
@@ -171,13 +175,17 @@ class Layout(ReportTreeComponent):
             visual_kwargs["show_search"] = show_search
         return self.add_visual("table", dataset_id, **visual_kwargs)
 
-    def add_card(self, title: str | None, text: str, **kwargs) -> Visual:
+    def add_card(self, 
+            title: str | None, 
+            text: str,
+            content_type: str | None = None,
+            **kwargs) -> Visual:
         """Adds a card visual.
 
         Args:
             title: Optional title (supports template syntax in the viewer).
             text: Main card text (supports template syntax in the viewer).
-            **kwargs: Additional common visual properties.
+            content_type: Optional content type for the card (e.g., "text", "html", "md").
 
         Returns:
             The created card visual.
@@ -185,7 +193,9 @@ class Layout(ReportTreeComponent):
         visual_kwargs = dict(kwargs)
         if title is not None:
             visual_kwargs["title"] = title
+
         visual_kwargs["text"] = text
+        visual_kwargs["content_type"] = content_type
         return self.add_visual("card", None, **visual_kwargs)
 
     def add_pie(

@@ -63,22 +63,46 @@ class DL2Report:
         """Adds a pandas DataFrame as a dataset to the report."""
 
         columns = df.columns.tolist()
+        
+        # Track which columns are dates BEFORE conversion
+        date_columns = set()
+        
+        # First pass: identify and potentially convert date columns
+        for col in df.columns:
+            # Check if already a datetime type
+            if pd.api.types.is_datetime64_any_dtype(df[col]):
+                date_columns.add(col)
+            # Check if object type that might contain dates
+            elif df[col].dtype == 'object':
+                # Try to infer if this might be a date column
+                try:
+                    # Sample a few non-null values to see if they're datetime-like
+                    sample = df[col].dropna().head(10)
+                    if len(sample) > 0:
+                        pd.to_datetime(sample, utc=True)
+                        # If no error, convert the whole column
+                        df[col] = pd.to_datetime(df[col], utc=True)
+                        date_columns.add(col)
+                except (ValueError, TypeError):
+                    # Not a date column, continue
+                    pass
+        
+        # Capture dtypes BEFORE datetime conversion to serialization format
         dtypes: List[str] = []
-        for dtype in df.dtypes:
+        for col in df.columns:
+            dtype = df[col].dtype
+            print(dtype)
             if pd.api.types.is_bool_dtype(dtype):
                 dtypes.append("boolean")
-            elif pd.api.types.is_datetime64_any_dtype(dtype):
+            elif col in date_columns:
                 dtypes.append("date")
             elif pd.api.types.is_numeric_dtype(dtype):
                 dtypes.append("number")
             else:
                 dtypes.append("string")
 
-        # Handle datetime formatting
-        for col in df.columns:
-            if not pd.api.types.is_datetime64_any_dtype(df[col]):
-                continue
-
+        # Handle datetime formatting for serialization
+        for col in date_columns:
             # Normalize to UTC so tz-aware and naive datetimes behave consistently.
             # Naive datetimes are treated as UTC.
             series_utc = pd.to_datetime(df[col], utc=True)

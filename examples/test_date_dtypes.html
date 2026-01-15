@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date Column Test Report</title>
+    <meta name="dl-version" content="0.2.3">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="last-updated" content="01-15-2026 15:39:56">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Test Results",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "table",
+                            "elementType": "visual",
+                            "id": "elem-4",
+                            "datasetId": "datetime_iso",
+                            "description": "Date columns should be identified as 'date' dtype",
+                            "title": "Datetime with ISO Format"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "datetime_iso": {
+            "id": "datetime_iso",
+            "format": "records",
+            "columns": [
+                "id",
+                "name",
+                "created_at",
+                "updated_at",
+                "score",
+                "active"
+            ],
+            "dtypes": [
+                "number",
+                "string",
+                "date",
+                "date",
+                "number",
+                "boolean"
+            ],
+            "data": [
+                {
+                    "id": 1,
+                    "name": "Alice",
+                    "created_at": "2024-01-01T00:00:00.000000Z",
+                    "updated_at": "2024-06-01T10:30:00.000000Z",
+                    "score": 95.5,
+                    "active": true
+                },
+                {
+                    "id": 2,
+                    "name": "Bob",
+                    "created_at": "2024-02-15T00:00:00.000000Z",
+                    "updated_at": "2024-06-15T14:45:00.000000Z",
+                    "score": 87.3,
+                    "active": false
+                },
+                {
+                    "id": 3,
+                    "name": "Charlie",
+                    "created_at": "2024-03-20T00:00:00.000000Z",
+                    "updated_at": "2024-07-01T09:15:00.000000Z",
+                    "score": 92.1,
+                    "active": true
+                },
+                {
+                    "id": 4,
+                    "name": "Diana",
+                    "created_at": "2024-04-10T00:00:00.000000Z",
+                    "updated_at": "2024-07-15T16:20:00.000000Z",
+                    "score": 88.7,
+                    "active": true
+                },
+                {
+                    "id": 5,
+                    "name": "Eve",
+                    "created_at": "2024-05-25T00:00:00.000000Z",
+                    "updated_at": "2024-08-01T11:00:00.000000Z",
+                    "score": 91.2,
+                    "active": false
+                }
+            ]
+        },
+        "datetime_epoch": {
+            "id": "datetime_epoch",
+            "format": "records",
+            "columns": [
+                "id",
+                "name",
+                "created_at",
+                "updated_at",
+                "score",
+                "active"
+            ],
+            "dtypes": [
+                "number",
+                "string",
+                "date",
+                "date",
+                "number",
+                "boolean"
+            ],
+            "data": [
+                {
+                    "id": 1,
+                    "name": "Alice",
+                    "created_at": 1704067200,
+                    "updated_at": 1717237800,
+                    "score": 95.5,
+                    "active": true
+                },
+                {
+                    "id": 2,
+                    "name": "Bob",
+                    "created_at": 1707955200,
+                    "updated_at": 1718462700,
+                    "score": 87.3,
+                    "active": false
+                },
+                {
+                    "id": 3,
+                    "name": "Charlie",
+                    "created_at": 1710892800,
+                    "updated_at": 1719825300,
+                    "score": 92.1,
+                    "active": true
+                },
+                {
+                    "id": 4,
+                    "name": "Diana",
+                    "created_at": 1712707200,
+                    "updated_at": 1721060400,
+                    "score": 88.7,
+                    "active": true
+                },
+                {
+                    "id": 5,
+                    "name": "Eve",
+                    "created_at": 1716595200,
+                    "updated_at": 1722510000,
+                    "score": 91.2,
+                    "active": false
+                }
+            ]
+        },
+        "string_dates": {
+            "id": "string_dates",
+            "format": "records",
+            "columns": [
+                "id",
+                "event_date",
+                "event_time",
+                "description",
+                "count"
+            ],
+            "dtypes": [
+                "number",
+                "date",
+                "date",
+                "string",
+                "number"
+            ],
+            "data": [
+                {
+                    "id": 1,
+                    "event_date": "2024-01-15T00:00:00.000000Z",
+                    "event_time": "2024-01-15T10:30:00.000000Z",
+                    "description": "Event A",
+                    "count": 10
+                },
+                {
+                    "id": 2,
+                    "event_date": "2024-02-20T00:00:00.000000Z",
+                    "event_time": "2024-02-20T14:45:00.000000Z",
+                    "description": "Event B",
+                    "count": 20
+                },
+                {
+                    "id": 3,
+                    "event_date": "2024-03-10T00:00:00.000000Z",
+                    "event_time": "2024-03-10T09:15:00.000000Z",
+                    "description": "Event C",
+                    "count": 30
+                }
+            ]
+        }
+    }
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>
