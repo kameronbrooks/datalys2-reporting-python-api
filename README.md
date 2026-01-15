@@ -1,9 +1,9 @@
 # Datalys2 Reporting Python API
-**Version 0.2.2**
+**Version 0.2.5**
 
 A Python library to build and compile interactive HTML reports using the Datalys2 Reporting framework.
 
-**Note:** Compatible with dl2 version 0.2.2
+**Note:** Compatible with dl2 version 0.2.5
 https://github.com/kameronbrooks/datalys2-reporting
 
 ## Installation
@@ -33,6 +33,72 @@ page.add_row().add_kpi("my_data", value_column="A", title="Metric A")
 report.save("report.html")
 report.show()
 ```
+
+## Data Compression
+
+**Always use compression for production reports.** The Python API provides automatic gzip compression for your datasets, which significantly reduces file size and improves browser performance.
+
+### Why Compression Matters
+
+- **Large datasets will cause severe performance issues or fail to load entirely without compression**
+- Compressed reports load faster and consume less memory in the browser
+- File sizes can be reduced by 80-90% or more
+- The browser automatically decompresses data on-the-fly using the built-in `DecompressionStream` API
+
+### Using Compression
+
+#### Report-Level Default
+
+When creating a `DL2Report`, you can set the default compression behavior:
+
+```python
+from dl2_reports import DL2Report
+
+# Enable compression by default (recommended)
+report = DL2Report(
+    title="My Report",
+    compress_visuals=True  # This is the default
+)
+```
+
+#### Per-Dataset Control
+
+Control compression for individual datasets using the `compress` parameter in `add_df()`:
+
+```python
+import pandas as pd
+from dl2_reports import DL2Report
+
+report = DL2Report(title="Sales Report")
+
+# Compress large datasets (recommended for most data)
+large_df = pd.read_csv("sales_data.csv")
+report.add_df("salesData", large_df, compress=True)
+
+# Small datasets can be uncompressed for easier debugging
+small_df = pd.DataFrame({"kpi": [100]})
+report.add_df("kpiData", small_df, compress=False)
+```
+
+### How It Works
+
+When you set `compress=True`, the Python API automatically:
+
+1. Serializes your data to JSON
+2. Compresses it using gzip
+3. Encodes it as a Base64 string
+4. Stores it in a separate `<script>` tag in the HTML
+5. Adds the `gc-compressed-data` meta tag for automatic memory cleanup
+
+The browser then decompresses the data when the report loads.
+
+### Best Practices
+
+- **✅ Always compress in production** - essential for performance and reliability
+- **✅ Compress any dataset with more than a few rows** - the overhead is minimal
+- **❌ Only disable compression when:**
+  - Debugging and you need to inspect the raw JSON in the HTML file
+  - Working with extremely small datasets (single-row KPI values) during development
 
 ## Features
 
@@ -110,7 +176,8 @@ Use this when you want to pass through viewer props that don't have a dedicated 
 | `comparison_row_index` | `int \| None` | `None` | Row index to use for comparison (supports negative indices). If not provided, the viewer uses the same row as `row_index`. |
 | `comparison_text` | `str` | The comparison text to show alongside the comparison value. Ex. ("Last Month", "Yesterday", etc.)
 | `row_index` | `int \| None` | `None` | Row index to display (supports negative indices). |
-| `format` | `str \| None` | `None` | `'number'`, `'currency'`, `'percent'`, or `'date'`. |
+| `format` | `str \| None` | `None` | `'number'`, `'currency'`, `'percent'`, `'date'`, `'hms'`. |
+| `
 | `currency_symbol` | `str \| None` | `None` | Currency symbol (viewer default is usually `'$'`). |
 | `good_direction` | `str \| None` | `None` | Which direction is “good” (`'higher'` or `'lower'`). |
 | `breach_value` | `float \| int \| None` | `None` | Value that triggers a breach indicator. |
