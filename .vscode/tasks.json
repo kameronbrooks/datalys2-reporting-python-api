@@ -1,0 +1,11 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build and Publish to PyPI",
+			"type": "shell",
+			"command": ".\\build_and_publish.ps1",
+			"group": "build"
+		}
+	]
+}

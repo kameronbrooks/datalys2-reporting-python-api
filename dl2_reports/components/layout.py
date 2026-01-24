@@ -86,19 +86,6 @@ class Layout(
         self.children.append(layout)
         return layout
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     def add_modal_button(self, modal_id: str, button_label: str, **kwargs) -> Visual:
         """Adds a modal trigger button.
 

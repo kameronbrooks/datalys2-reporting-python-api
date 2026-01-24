@@ -13,7 +13,7 @@ import pandas as pd
 from .components import Layout, Modal, Page, ReportTreeComponent, Visual
 from .serialization import camel_case_dict, make_dataset_serializable, convert_nan_to_none
 
-DL2_VERSION = "0.2.7"
+DL2_VERSION = "0.2.8"
 
 
 class DL2Report:
@@ -26,7 +26,15 @@ class DL2Report:
     Modal: ClassVar[type[Modal]]
 
     def __init__(self, title: str, description: str = "", author: str = "", compress_visuals: bool = True):
-        """Initializes a new DL2Report."""
+        """
+        Initializes a new DL2Report.
+
+        Args:
+            title (str): The title of the report.
+            description (str, optional): A brief description of the report. Defaults to "".
+            author (str, optional): The author of the report. Defaults to "".
+            compress_visuals (bool, optional): Whether to compress the report data. Defaults to True.
+        """
 
         self.title = title
         self.description = description
@@ -43,13 +51,21 @@ class DL2Report:
     # Compatibility: keep these helpers on DL2Report
     @staticmethod
     def _camel_case_dict(d: Dict[str, Any]) -> Dict[str, Any]:
+        """Internal helper to convert dictionary keys to camelCase."""
         return camel_case_dict(d)
 
     @staticmethod
     def _make_dataset_serializable(dataset: Dict[str, Any]) -> Dict[str, Any]:
+        """Internal helper to make a dataset serializable."""
         return make_dataset_serializable(dataset)
 
     def get_report(self) -> DL2Report:
+        """
+        Returns the report instance itself.
+        
+        Returns:
+            DL2Report: The current report instance.
+        """
         return self
 
     def add_df(
@@ -60,7 +76,19 @@ class DL2Report:
         compress: bool = False,
         timestamp_format: str = "iso",
     ) -> DL2Report:
-        """Adds a pandas DataFrame as a dataset to the report."""
+        """
+        Adds a pandas DataFrame as a dataset to the report.
+
+        Args:
+            name (str): The unique identifier for the dataset.
+            df (pd.DataFrame): The pandas DataFrame containing the data.
+            format (str, optional): The format to serialize the data ('records' or 'values'). Defaults to "records".
+            compress (bool, optional): Whether to compress the dataset using Gzip. Defaults to False.
+            timestamp_format (str, optional): The format for datetime columns ('iso' or 'epoch'). Defaults to "iso".
+
+        Returns:
+            DL2Report: The report instance for method chaining.
+        """
         # Make a deep copy of the DataFrame to avoid modifying the original
         df = df.copy(deep=True)
 
@@ -154,22 +182,59 @@ class DL2Report:
         return self
 
     def add_page(self, title: str, description: Optional[str] = None) -> Page:
+        """
+        Adds a new page to the report.
+
+        Args:
+            title (str): The title of the page.
+            description (str, optional): A description for the page. Defaults to None.
+
+        Returns:
+            Page: The newly created Page instance.
+        """
         page = Page(title, description)
         page.parent = self
         self.pages.append(page)
         return page
 
     def add_modal(self, id: str, title: str, description: Optional[str] = None) -> Modal:
+        """
+        Adds a modal dialog to the report.
+
+        Args:
+            id (str): A unique identifier for the modal.
+            title (str): The title of the modal.
+            description (str, optional): A description for the modal. Defaults to None.
+
+        Returns:
+            Modal: The newly created Modal instance.
+        """
         modal = Modal(id, title, description)
         modal.parent = self
         self.modals.append(modal)
         return modal
 
     def set_meta(self, name: str, content: str) -> DL2Report:
+        """
+        Sets a metadata tag in the report's HTML head.
+
+        Args:
+            name (str): The name attribute of the meta tag.
+            content (str): The content attribute of the meta tag.
+
+        Returns:
+            DL2Report: The report instance for method chaining.
+        """
         self.meta_tags[name] = content
         return self
 
     def compile(self) -> str:
+        """
+        Compiles the report into a complete HTML string.
+
+        Returns:
+            str: The full HTML content of the report.
+        """
         report_data: Dict[str, Any] = {
             "pages": [p.to_dict() for p in self.pages],
             "datasets": {name: self._make_dataset_serializable(ds) for name, ds in self.datasets.items()},
@@ -222,10 +287,25 @@ class DL2Report:
         return compiled_html
 
     def save(self, filename: str):
+        """
+        Saves the compiled report to a file.
+
+        Args:
+            filename (str): The path where the HTML report should be saved.
+        """
         with open(filename, "w", encoding="utf-8") as f:
             f.write(self.compile())
 
     def show(self, height: int = 800):
+        """
+        Displays the report in a Jupyter Notebook environment.
+
+        Args:
+            height (int, optional): The height of the iframe in pixels. Defaults to 800.
+
+        Returns:
+            IPython.display.IFrame: An IFrame containing the report, if IPython is available.
+        """
         try:
             from IPython.display import IFrame
 
@@ -236,6 +316,12 @@ class DL2Report:
             print("IPython not found. Save the report to an HTML file to view it.")
 
     def _repr_html_(self):
+        """
+        Returns the HTML representation of the report for Jupyter Notebook display.
+
+        Returns:
+            str: An HTML iframe string containing the report.
+        """
         escaped_html = html.escape(self.compile())
         return f'<iframe srcdoc="{escaped_html}" width="100%" height="800px" style="border:none;"></iframe>'
 

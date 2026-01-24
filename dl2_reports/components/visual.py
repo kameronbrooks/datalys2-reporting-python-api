@@ -8,9 +8,22 @@ from ..serialization import camel_case_dict, snake_to_camel
 from ..utilities import analytics
 from .base import ReportTreeComponent
 
+_TREND_ALLOWED_TYPES = frozenset({"line", "scatter", "clusteredBar", "stackedBar"})
+
 
 class Visual(ReportTreeComponent):
+    """
+    Represents a visualization component in the report.
+    """
     def __init__(self, type: str, dataset_id: Optional[str] = None, **kwargs):
+        """
+        Initializes a new Visual.
+
+        Args:
+            type (str): The type of visual (e.g., 'bar', 'line', 'scatter').
+            dataset_id (str, optional): The ID of the dataset this visual will use. Defaults to None.
+            **kwargs: Additional properties for the visual (e.g., x_column, y_column).
+        """
         super().__init__()
         self.type = type
         self.dataset_id = dataset_id
@@ -18,7 +31,16 @@ class Visual(ReportTreeComponent):
         self.props = kwargs
 
     def add_element(self, type: str, **kwargs) -> Visual:
-        """Adds a visual element (annotation) to the visual."""
+        """
+        Adds a generic visual element (annotation) to the visual.
+
+        Args:
+            type (str): The type of element to add.
+            **kwargs: Additional properties for the element.
+
+        Returns:
+            Visual: The visual instance for method chaining.
+        """
 
         element = {"visual_element_type": type}
         element.update(kwargs)
@@ -26,11 +48,32 @@ class Visual(ReportTreeComponent):
         return self
 
     def add_trend(self, coefficients: (List[float] | int | None) = None, **kwargs) -> Visual:
-        """Adds a trend line element to the visual."""
+        """
+        Adds a trend line element to the visual.
 
-        # TODO: Only allow trends for certain visual types?
-        if self.type not in ["line", "scatter", "bar"]:
-            raise ValueError("Trend elements can only be added to line, scatter, or bar visuals.")
+        This method is only supported for 'line', 'scatter', 'clusteredBar', and 'stackedBar' visuals.
+        If coefficients are not provided, it attempts to auto-calculate them using the visual's dataset
+        and properties (specifically x_column and y_column).
+
+        Args:
+            coefficients (List[float] | int | None, optional): 
+                If a list, these are the polynomial coefficients.
+                If an int, it represents the degree of the polynomial to calculate (defaults to 1 if None).
+                If None, calculates a linear trend (degree 1).
+            **kwargs: Additional properties for the trend line.
+
+        Returns:
+            Visual: The visual instance for method chaining.
+
+        Raises:
+            ValueError: If the visual type does not support trends.
+            ValueError: If auto-calculation fails due to missing props, report, or dataset.
+        """
+
+        if self.type not in _TREND_ALLOWED_TYPES:
+            raise ValueError(
+                "Trend elements can only be added to line, scatter, clusteredBar, or stackedBar visuals."
+            )
 
         element: Dict[str, Any] = {"visual_element_type": "trend", "coefficients": []}
 
@@ -76,6 +119,12 @@ class Visual(ReportTreeComponent):
         return self
 
     def to_dict(self) -> Dict[str, Any]:
+        """
+        Converts the visual to a dictionary for serialization.
+
+        Returns:
+            Dict[str, Any]: The dictionary representation of the visual.
+        """
         d: Dict[str, Any] = {
             "type": self.type,
             "elementType": "visual",

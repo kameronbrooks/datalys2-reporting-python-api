@@ -1,5 +1,5 @@
 # Datalys2 Reporting Documentation
-**Version 0.2.5**
+**Version 0.2.8**
 
 
 This documentation guides you on how to create HTML reports using the Datalys2 Reporting library.
@@ -25,7 +25,7 @@ You can also use standard HTML meta tags to configure the report header informat
     <meta name="description" content="A brief description of this report">
     <meta name="author" content="Report Author Name">
     <meta name="last-updated" content="2024-01-01">
-    <meta name="dl-version" content="0.2.2">
+    <meta name="dl-version" content="0.2.8">
 
     <!-- Include the library styles -->
     <link rel="stylesheet" href="path/to/dl2-style.css">
@@ -429,6 +429,80 @@ Displays the distribution of data through their quartiles. Supports two modes: r
     "categoryColumn": "Department",
     "color": "Tableau10",
     "direction": "horizontal"
+}
+```
+
+**12. Gauge (`type: "gauge"`)**
+
+Displays a gauge/speedometer visualization with an animated needle, optional range bands, and value display. The gauge animates smoothly when first rendered.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `valueColumn` | `string \| number` | Column containing the gauge value (default: 0). |
+| `rowIndex` | `number` | Row index to read the value from (default: 0). |
+| `minValue` | `number` | Minimum value for the gauge scale (default: 0). |
+| `maxValue` | `number` | Maximum value for the gauge scale (default: 100). |
+| `title` | `string` | Optional title displayed above the gauge. |
+| `thickness` | `number` | Arc thickness in pixels (default: 24). |
+| `startAngle` | `number` | Start angle in radians (default: -π/2, i.e., -90°). |
+| `endAngle` | `number` | End angle in radians (default: π/2, i.e., 90°). |
+| `ranges` | `GaugeRange[]` | Optional array of range bands with colors. |
+| `trackColor` | `string` | Background track color when no ranges are defined. |
+| `valueColor` | `string` | Color for the value arc when no ranges are defined. |
+| `needleColor` | `string` | Color of the needle (default: `var(--dl2-text-main)`). |
+| `showNeedle` | `boolean` | Whether to show the needle (default: true). |
+| `showValue` | `boolean` | Whether to show the center value (default: true). |
+| `showMinMax` | `boolean` | Whether to show min/max labels (default: true). |
+| `format` | `'number' \| 'currency' \| 'percent'` | Display format for the value. |
+| `roundingPrecision` | `number` | Decimal precision for the value (default: 1). |
+| `currencySymbol` | `string` | Currency symbol when format is 'currency' (default: '$'). |
+| `unit` | `string` | Optional unit text displayed below the value. |
+| `colors` | `ColorProperty` | Color palette for ranges (D3 scheme or array). |
+
+**GaugeRange Object:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `from` | `number` | Start value of the range. |
+| `to` | `number` | End value of the range. |
+| `color` | `string` | Optional. Color for this range segment. |
+| `label` | `string` | Optional. Label for this range (shown in tooltip). |
+
+**Features:**
+- **Animation:** The needle animates from 0 to the target value when the gauge first appears.
+- **Interactivity:** Hovering over arc segments highlights them and shows a tooltip with range information.
+- **Value Background:** A subtle background appears behind the value text when the needle might overlap it for better readability.
+
+**Example Gauge (Simple):**
+
+```json
+{
+    "type": "gauge",
+    "datasetId": "scoreData",
+    "valueColumn": "Score",
+    "title": "Performance Score",
+    "minValue": 0,
+    "maxValue": 100,
+    "unit": "pts"
+}
+```
+
+**Example Gauge with Ranges:**
+
+```json
+{
+    "type": "gauge",
+    "datasetId": "csatData",
+    "valueColumn": "CSAT",
+    "title": "Customer Satisfaction",
+    "minValue": 0,
+    "maxValue": 100,
+    "unit": "%",
+    "ranges": [
+        { "from": 0, "to": 50, "color": "#e74c3c", "label": "Poor" },
+        { "from": 50, "to": 75, "color": "#f39c12", "label": "Average" },
+        { "from": 75, "to": 100, "color": "#27ae60", "label": "Good" }
+    ]
 }
 ```
 
