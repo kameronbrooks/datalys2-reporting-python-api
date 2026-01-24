@@ -13,7 +13,7 @@ import pandas as pd
 from .components import Layout, Modal, Page, ReportTreeComponent, Visual
 from .serialization import camel_case_dict, make_dataset_serializable, convert_nan_to_none
 
-DL2_VERSION = "0.2.3"
+DL2_VERSION = "0.2.7"
 
 
 class DL2Report:
@@ -63,7 +63,7 @@ class DL2Report:
         """Adds a pandas DataFrame as a dataset to the report."""
         # Make a deep copy of the DataFrame to avoid modifying the original
         df = df.copy(deep=True)
-        
+
         columns = df.columns.tolist()
         
         # Track which columns are dates BEFORE conversion
@@ -81,9 +81,9 @@ class DL2Report:
                     # Sample a few non-null values to see if they're datetime-like
                     sample = df[col].dropna().head(10)
                     if len(sample) > 0:
-                        pd.to_datetime(sample, utc=True)
+                        pd.to_datetime(sample)
                         # If no error, convert the whole column
-                        df[col] = pd.to_datetime(df[col], utc=True)
+                        df[col] = pd.to_datetime(df[col])
                         date_columns.add(col)
                 except (ValueError, TypeError):
                     # Not a date column, continue
@@ -93,7 +93,7 @@ class DL2Report:
         dtypes: List[str] = []
         for col in df.columns:
             dtype = df[col].dtype
-            print(dtype)
+
             if pd.api.types.is_bool_dtype(dtype):
                 dtypes.append("boolean")
             elif col in date_columns:
@@ -107,7 +107,7 @@ class DL2Report:
         for col in date_columns:
             # Normalize to UTC so tz-aware and naive datetimes behave consistently.
             # Naive datetimes are treated as UTC.
-            series_utc = pd.to_datetime(df[col], utc=True)
+            series_utc = pd.to_datetime(df[col])
 
             if timestamp_format == "iso":
                 df[col] = series_utc.dt.strftime("%Y-%m-%dT%H:%M:%S.%fZ")

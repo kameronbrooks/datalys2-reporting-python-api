@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date Types Report</title>
+    <meta name="dl-version" content="0.2.7">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="last-updated" content="01-01-2024 12:00:00">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Dates",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "table",
+                            "elementType": "visual",
+                            "id": "elem-3",
+                            "datasetId": "dates"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "dates": {
+            "id": "dates",
+            "format": "records",
+            "columns": [
+                "Date",
+                "DateTime",
+                "Value",
+                "Nulls"
+            ],
+            "dtypes": [
+                "date",
+                "date",
+                "number",
+                "number"
+            ],
+            "data": [
+                {
+                    "Date": "2023-01-01T00:00:00.000000Z",
+                    "DateTime": "2023-01-01T10:00:00.000000Z",
+                    "Value": 1.5,
+                    "Nulls": null
+                },
+                {
+                    "Date": "2023-01-02T00:00:00.000000Z",
+                    "DateTime": "2023-01-02T11:30:00.000000Z",
+                    "Value": 2.5,
+                    "Nulls": 3.0
+                }
+            ]
+        }
+    }
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Report</title>
+    <meta name="dl-version" content="0.2.7">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="last-updated" content="01-01-2024 12:00:00">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Card",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "card",
+                            "elementType": "visual",
+                            "id": "elem-3",
+                            "title": "Welcome",
+                            "text": "This is a simple card.",
+                            "contentType": "text"
+                        },
+                        {
+                            "type": "card",
+                            "elementType": "visual",
+                            "id": "elem-4",
+                            "title": "HTML Card",
+                            "text": "<b>Bold Text</b>",
+                            "contentType": "html"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {}
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>

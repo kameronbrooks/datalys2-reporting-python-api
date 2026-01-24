@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple KPI Report</title>
+    <meta name="dl-version" content="0.2.7">
+    <meta name="description" content="A test report with a simple KPI">
+    <meta name="author" content="Test Bot">
+    <meta name="last-updated" content="01-01-2024 12:00:00">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Dashboard",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "kpi",
+                            "elementType": "visual",
+                            "id": "elem-3",
+                            "datasetId": "kpi_data",
+                            "valueColumn": "Value",
+                            "title": "Revenue",
+                            "comparisonColumn": "Goal",
+                            "rowIndex": 0
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "kpi_data": {
+            "id": "kpi_data",
+            "format": "records",
+            "columns": [
+                "Category",
+                "Value",
+                "Goal"
+            ],
+            "dtypes": [
+                "string",
+                "number",
+                "number"
+            ],
+            "data": [
+                {
+                    "Category": "A",
+                    "Value": 100,
+                    "Goal": 90
+                },
+                {
+                    "Category": "B",
+                    "Value": 200,
+                    "Goal": 210
+                },
+                {
+                    "Category": "C",
+                    "Value": 300,
+                    "Goal": 290
+                }
+            ]
+        }
+    }
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>

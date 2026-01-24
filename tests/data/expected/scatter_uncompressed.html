@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scatter Report</title>
+    <meta name="dl-version" content="0.2.7">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="last-updated" content="01-01-2024 12:00:00">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Scatter",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "scatter",
+                            "elementType": "visual",
+                            "id": "elem-3",
+                            "datasetId": "biometrics",
+                            "xColumn": "Height",
+                            "yColumn": "Weight",
+                            "categoryColumn": "Gender",
+                            "showTrendline": true
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "biometrics": {
+            "id": "biometrics",
+            "format": "records",
+            "columns": [
+                "Height",
+                "Weight",
+                "Gender"
+            ],
+            "dtypes": [
+                "number",
+                "number",
+                "string"
+            ],
+            "data": [
+                {
+                    "Height": 160,
+                    "Weight": 60,
+                    "Gender": "F"
+                },
+                {
+                    "Height": 170,
+                    "Weight": 70,
+                    "Gender": "M"
+                },
+                {
+                    "Height": 180,
+                    "Weight": 80,
+                    "Gender": "M"
+                },
+                {
+                    "Height": 165,
+                    "Weight": 65,
+                    "Gender": "F"
+                }
+            ]
+        }
+    }
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>
