@@ -13,7 +13,7 @@ import pandas as pd
 from .components import Layout, Modal, Page, ReportTreeComponent, Visual
 from .serialization import camel_case_dict, make_dataset_serializable, convert_nan_to_none
 
-DL2_VERSION = "0.2.8"
+DL2_VERSION = "0.2.10"
 
 
 class DL2Report:

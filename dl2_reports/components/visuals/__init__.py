@@ -5,6 +5,7 @@ from .Pie import PieVisual
 from .Bar import BarVisual
 from .Scatter import ScatterVisual
 from .Line import LineVisual
+from .Area import AreaVisual
 from .Checklist import ChecklistVisual
 from .Histogram import HistogramVisual
 from .Heatmap import HeatmapVisual
@@ -19,6 +20,7 @@ __ALL__ = [
     BarVisual,
     ScatterVisual,
     LineVisual,
+    AreaVisual,
     ChecklistVisual,
     HistogramVisual,
     HeatmapVisual,

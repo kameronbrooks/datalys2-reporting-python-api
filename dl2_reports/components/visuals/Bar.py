@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, List, TYPE_CHECKING
+from typing import Optional, List, Dict, Any, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ..visual import Visual
@@ -21,6 +21,7 @@ class BarVisual:
         show_legend: bool | None = None,
         show_labels: bool | None = None,
         horizontal: bool | None = None,
+        threshold: Optional[Dict[str, Any]] = None,
         **kwargs,
     ) -> Visual:
         """Adds a clustered or stacked bar chart visual.
@@ -35,6 +36,7 @@ class BarVisual:
             show_legend: Whether to show the legend.
             show_labels: Whether to show value labels.
             horizontal: Whether to render bars horizontally (viewer-dependent).
+            threshold: Optional ThresholdConfig for pass/fail coloring (clustered only).
             **kwargs: Additional common visual properties.
 
         Returns:
@@ -48,6 +50,8 @@ class BarVisual:
             visual_kwargs["x_axis_label"] = x_axis_label
         if y_axis_label is not None:
             visual_kwargs["y_axis_label"] = y_axis_label
+        if threshold is not None:
+            visual_kwargs["threshold"] = threshold
         if show_legend is not None:
             visual_kwargs["show_legend"] = show_legend
         if show_labels is not None:
