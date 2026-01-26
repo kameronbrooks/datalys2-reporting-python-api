@@ -147,6 +147,7 @@ These are the visual types you can add via the `Layout` helpers:
 - `clusteredBar` / `stackedBar` (via `add_bar(stacked=...)`)
 - `scatter` (via `add_scatter`)
 - `line` (via `add_line`)
+- `area` (via `add_area`)
 - `checklist` (via `add_checklist`)
 - `histogram` (via `add_histogram`)
 - `heatmap` (via `add_heatmap`)
@@ -226,6 +227,7 @@ Use this when you want to pass through viewer props that don't have a dedicated 
 | `x_column` | `str \| int` | (required) | Column for X-axis categories. |
 | `y_columns` | `list[str]` | (required) | Series columns for Y values. |
 | `stacked` | `bool` | `False` | If `True`, uses stacked bars; otherwise clustered. |
+| `threshold` | `dict \| None` | `None` | Optional pass/fail coloring (see [Threshold Configuration](#threshold-configuration)). |
 | `x_axis_label` | `str \| None` | `None` | Optional X-axis label. |
 | `y_axis_label` | `str \| None` | `None` | Optional Y-axis label. |
 | `show_legend` | `bool \| None` | `None` | Whether to show the legend. |
@@ -261,6 +263,28 @@ Use this when you want to pass through viewer props that don't have a dedicated 
 | `min_y` | `float \| int \| None` | `None` | Optional minimum Y. |
 | `max_y` | `float \| int \| None` | `None` | Optional maximum Y. |
 | `colors` | `list[str] \| None` | `None` | Optional list of series colors. |
+| `threshold` | `dict \| None` | `None` | Optional pass/fail coloring (see [Threshold Configuration](#threshold-configuration)). |
+| `x_axis_label` | `str \| None` | `None` | Optional X-axis label. |
+| `y_axis_label` | `str \| None` | `None` | Optional Y-axis label. |
+| `**kwargs` | `Any` | — | Additional common visual properties. |
+
+#### Area
+
+| Parameter | Type | Default | Description |
+|----------|------|---------|-------------|
+| `dataset_id` | `str` | (required) | The dataset id. |
+| `x_column` | `str \| int` | (required) | Column for X values. |
+| `y_columns` | `list[str] \| str` | (required) | Column(s) for Y series. |
+| `smooth` | `bool \| None` | `None` | Whether to render smooth curves. |
+| `show_line` | `bool \| None` | `True` | Show line stroke on top of fill. |
+| `show_markers` | `bool \| None` | `True` | Show interactive marker points. |
+| `fill_opacity` | `float \| None` | `0.3` | Area fill opacity (0-1). |
+| `show_legend` | `bool \| None` | `None` | Whether to show the legend. |
+| `show_labels` | `bool \| None` | `None` | Whether to show value labels. |
+| `min_y` | `float \| int \| None` | `None` | Optional minimum Y. |
+| `max_y` | `float \| int \| None` | `None` | Optional maximum Y. |
+| `colors` | `list[str] \| None` | `None` | Optional list of series colors. |
+| `threshold` | `dict \| None` | `None` | Optional pass/fail coloring (see [Threshold Configuration](#threshold-configuration)). |
 | `x_axis_label` | `str \| None` | `None` | Optional X-axis label. |
 | `y_axis_label` | `str \| None` | `None` | Optional Y-axis label. |
 | `**kwargs` | `Any` | — | Additional common visual properties. |
@@ -341,6 +365,27 @@ Supports two modes:
 | `**kwargs` | `Any` | — | Additional common visual properties. |
 
 > Note: Most visuals also support `modal_id` as a keyword argument to enable an "expand" icon that opens a modal on click.
+
+### Threshold Configuration
+
+Color chart elements based on whether values pass or fail a threshold. Applies to **Line**, **Area**, and **Clustered Bar**.
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `value` | `number` | (required) | The threshold value to compare against. |
+| `pass_color` | `str` | `#22c55e` | Color for passing values. |
+| `fail_color` | `str` | `#ef4444` | Color for failing values. |
+| `mode` | `'above'`\|`'below'`\|`'equals'` | `'above'` | How to determine pass/fail. |
+| `show_line` | `bool` | `True` | Show reference line at threshold. |
+| `line_style` | `'solid'`\|`'dashed'`\|`'dotted'` | `'dashed'` | Threshold line style. |
+| `blend_width` | `number` | `5` | Gradient blend zone width (line/area only). |
+| `apply_to` | `'both'`\|`'markers'`\|`'lines'` | `'both'` | Which elements get threshold colors. |
+
+**Mode Options:**
+- `'above'` - Values >= threshold pass
+- `'below'` - Values <= threshold pass
+- `'equals'` - Only exact matches pass
+
 
 
 
