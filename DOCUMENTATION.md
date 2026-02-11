@@ -59,6 +59,24 @@ The application reads the following tags from the `<head>` to populate the repor
 | `author` | Displays the author's name. |
 | `last-updated` | Displays the last updated date/time. |
 
+### Library Assets (CDN)
+
+The report requires the Datalys2 Reporting JavaScript bundle and CSS styles. By default, the Python library links to the latest version hosted on jsDelivr.
+
+**Default CDN:** `https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist`
+
+**Backup CDN:** `https://d12owwy7533nor.cloudfront.net/dist`
+
+You can customize the CDN URL when initializing the `DL2Report` class in Python using the `cdn_url` parameter:
+
+```python
+# Use the backup CDN (or any other host)
+report = DL2Report(
+    title="My Report",
+    cdn_url="https://d12owwy7533nor.cloudfront.net/dist"
+)
+```
+
 ## The `report-data` Script
 
 The core of the report configuration lives inside the `<script id="report-data" type="application/json">` tag. This JSON object must adhere to the `ApplicationData` structure.

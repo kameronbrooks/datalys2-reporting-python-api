@@ -7,7 +7,7 @@ import datetime
 import gzip
 import html
 import json
-
+import os
 import pandas as pd
 
 from .components import Layout, Modal, Page, ReportTreeComponent, Visual
@@ -15,6 +15,9 @@ from .serialization import camel_case_dict, make_dataset_serializable, convert_n
 
 DL2_VERSION = "0.2.10"
 
+DEFAULT_CDN = f"https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist"
+JS_URI = f"/datalys2-reports.min.js"
+CSS_URI = f"/dl2-style.css"
 
 class DL2Report:
     # These are assigned at module import time to preserve the historical
@@ -25,7 +28,14 @@ class DL2Report:
     Page: ClassVar[type[Page]]
     Modal: ClassVar[type[Modal]]
 
-    def __init__(self, title: str, description: str = "", author: str = "", compress_visuals: bool = True):
+    def __init__(
+            self, 
+            title: str, 
+            description: str = "", 
+            author: str = "", 
+            compress_visuals: bool = True,
+            cdn_url: Optional[str] = None,
+            ):
         """
         Initializes a new DL2Report.
 
@@ -34,7 +44,11 @@ class DL2Report:
             description (str, optional): A brief description of the report. Defaults to "".
             author (str, optional): The author of the report. Defaults to "".
             compress_visuals (bool, optional): Whether to compress the report data. Defaults to True.
+            cdn_url (Optional[str], optional): The base URL for the CDN. Defaults to None.
         """
+        base_url = os.environ.get("DL2_CDN_URL", cdn_url or DEFAULT_CDN).rstrip("/")
+        css_url = f"{base_url}{CSS_URI}"
+        js_url = f"{base_url}{JS_URI}"
 
         self.title = title
         self.description = description
@@ -43,8 +57,8 @@ class DL2Report:
         self.modals: List[Modal] = []
         self.datasets: Dict[str, Dict[str, Any]] = {}
         self.compressed_datasets: Dict[str, str] = {}
-        self.css_url = "https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css"
-        self.js_url = "https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"
+        self.css_url = css_url
+        self.js_url = js_url
         self.meta_tags: Dict[str, str] = {}
         self.compress_visuals = compress_visuals
 
