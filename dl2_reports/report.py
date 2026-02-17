@@ -13,7 +13,7 @@ import pandas as pd
 from .components import Layout, Modal, Page, ReportTreeComponent, Visual
 from .serialization import camel_case_dict, make_dataset_serializable, convert_nan_to_none
 
-DL2_VERSION = "0.2.10"
+DL2_VERSION = "0.2.12"
 
 DEFAULT_CDN = f"https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist"
 JS_URI = f"/datalys2-reports.min.js"
@@ -195,18 +195,19 @@ class DL2Report:
         self.datasets[name] = dataset_entry
         return self
 
-    def add_page(self, title: str, description: Optional[str] = None) -> Page:
+    def add_page(self, title: str, description: Optional[str] = None, last_updated: Optional[str] = None) -> Page:
         """
         Adds a new page to the report.
 
         Args:
             title (str): The title of the page.
             description (str, optional): A description for the page. Defaults to None.
+            last_updated (str, optional): The last updated date for the page. Defaults to None.
 
         Returns:
             Page: The newly created Page instance.
         """
-        page = Page(title, description)
+        page = Page(title, description=description, last_updated=last_updated)
         page.parent = self
         self.pages.append(page)
         return page

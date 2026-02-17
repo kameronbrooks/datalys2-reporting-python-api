@@ -1,5 +1,5 @@
 # Datalys2 Reporting Documentation
-**Version 0.2.10**
+**Version 0.2.12**
 
 
 This documentation guides you on how to create HTML reports using the Datalys2 Reporting library.
@@ -25,7 +25,7 @@ You can also use standard HTML meta tags to configure the report header informat
     <meta name="description" content="A brief description of this report">
     <meta name="author" content="Report Author Name">
     <meta name="last-updated" content="2024-01-01">
-    <meta name="dl-version" content="0.2.10">
+    <meta name="dl-version" content="0.2.12">
 
     <!-- Include the library styles -->
     <link rel="stylesheet" href="path/to/dl2-style.css">
@@ -58,24 +58,6 @@ The application reads the following tags from the `<head>` to populate the repor
 | `description` | Sets the report description text. |
 | `author` | Displays the author's name. |
 | `last-updated` | Displays the last updated date/time. |
-
-### Library Assets (CDN)
-
-The report requires the Datalys2 Reporting JavaScript bundle and CSS styles. By default, the Python library links to the latest version hosted on jsDelivr.
-
-**Default CDN:** `https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist`
-
-**Backup CDN:** `https://d12owwy7533nor.cloudfront.net/dist`
-
-You can customize the CDN URL when initializing the `DL2Report` class in Python using the `cdn_url` parameter:
-
-```python
-# Use the backup CDN (or any other host)
-report = DL2Report(
-    title="My Report",
-    cdn_url="https://d12owwy7533nor.cloudfront.net/dist"
-)
-```
 
 ## The `report-data` Script
 
@@ -319,6 +301,7 @@ Displays a Key Performance Indicator with optional comparison and breach status.
 | `yAxisLabel` | `string` | Label for Y-axis. |
 | `showLegend` | `boolean` | Whether to show the legend. |
 | `showLabels` | `boolean` | Whether to show value labels on bars. |
+| `threshold` | `ThresholdConfig` | Optional. Threshold configuration for pass/fail coloring (clusteredBar only). See [Threshold Configuration](#threshold-configuration). |
 
 **5. Scatter Plot (`type: "scatter"`)**
 
@@ -416,8 +399,72 @@ Displays data points connected by straight or smooth lines.
 | `colors` | `string[]` | Array of colors for the lines. |
 | `xAxisLabel` | `string` | Label for X-axis. |
 | `yAxisLabel` | `string` | Label for Y-axis. |
+| `threshold` | `ThresholdConfig` | Optional. Threshold configuration for pass/fail coloring. See [Threshold Configuration](#threshold-configuration). |
 
-**11. Box Plot (`type: "boxplot"`)**
+**Example Line Chart with Threshold:**
+
+```json
+{
+    "type": "line",
+    "datasetId": "salesData",
+    "xColumn": "Month",
+    "yColumns": ["Revenue"],
+    "smooth": true,
+    "threshold": {
+        "value": 5000,
+        "passColor": "#22c55e",
+        "failColor": "#ef4444",
+        "mode": "above",
+        "showLine": true,
+        "blendWidth": 8
+    }
+}
+```
+
+**11. Area Chart (`type: "area"`)**
+
+Displays data as filled areas below lines. Supports all the same features as Line Chart plus additional fill options.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `xColumn` | `string \| number` | Column for X-axis values (usually time or category). |
+| `yColumns` | `string \| string[]` | Column(s) for Y-axis values (series). |
+| `smooth` | `boolean` | Whether to use a smooth curve instead of straight lines. |
+| `showLegend` | `boolean` | Whether to show the legend. |
+| `showLabels` | `boolean` | Whether to show value labels on points. |
+| `showLine` | `boolean` | Whether to show the line stroke on top of the area (default: true). |
+| `showMarkers` | `boolean` | Whether to show interactive marker points (default: true). |
+| `fillOpacity` | `number` | Opacity of the area fill, 0-1 (default: 0.3). |
+| `minY` | `number` | Optional minimum Y-axis value. |
+| `maxY` | `number` | Optional maximum Y-axis value. |
+| `colors` | `string[]` | Array of colors for the areas. |
+| `xAxisLabel` | `string` | Label for X-axis. |
+| `yAxisLabel` | `string` | Label for Y-axis. |
+| `threshold` | `ThresholdConfig` | Optional. Threshold configuration for pass/fail coloring. See [Threshold Configuration](#threshold-configuration). |
+
+**Example Area Chart:**
+
+```json
+{
+    "type": "area",
+    "datasetId": "temperatureData",
+    "xColumn": "Date",
+    "yColumns": ["Temperature"],
+    "smooth": true,
+    "fillOpacity": 0.4,
+    "showMarkers": true,
+    "threshold": {
+        "value": 75,
+        "passColor": "#22c55e",
+        "failColor": "#ef4444",
+        "mode": "below",
+        "showLine": true,
+        "applyTo": "both"
+    }
+}
+```
+
+**12. Box Plot (`type: "boxplot"`)****
 
 Displays the distribution of data through their quartiles. Supports two modes: raw data calculation and pre-calculated values.
 
@@ -450,7 +497,7 @@ Displays the distribution of data through their quartiles. Supports two modes: r
 }
 ```
 
-**12. Gauge (`type: "gauge"`)**
+**13. Gauge (`type: "gauge"`)**
 
 Displays a gauge/speedometer visualization with an animated needle, optional range bands, and value display. The gauge animates smoothly when first rendered.
 
@@ -470,6 +517,7 @@ Displays a gauge/speedometer visualization with an animated needle, optional ran
 | `needleColor` | `string` | Color of the needle (default: `var(--dl2-text-main)`). |
 | `showNeedle` | `boolean` | Whether to show the needle (default: true). |
 | `showValue` | `boolean` | Whether to show the center value (default: true). |
+| `showLegend` | `boolean` | Whether to show a legend for the ranges (default: false). |
 | `showMinMax` | `boolean` | Whether to show min/max labels (default: true). |
 | `format` | `'number' \| 'currency' \| 'percent'` | Display format for the value. |
 | `roundingPrecision` | `number` | Decimal precision for the value (default: 1). |
@@ -484,12 +532,14 @@ Displays a gauge/speedometer visualization with an animated needle, optional ran
 | `from` | `number` | Start value of the range. |
 | `to` | `number` | End value of the range. |
 | `color` | `string` | Optional. Color for this range segment. |
-| `label` | `string` | Optional. Label for this range (shown in tooltip). |
+| `label` | `string` | Optional. Label for this range. |
+| `showPlus` | `boolean` | Optional. If true, displays the range as "{from}+" instead of "{from} - {to}" in the legend and tooltip. |
 
 **Features:**
 - **Animation:** The needle animates from 0 to the target value when the gauge first appears.
 - **Interactivity:** Hovering over arc segments highlights them and shows a tooltip with range information.
 - **Value Background:** A subtle background appears behind the value text when the needle might overlap it for better readability.
+- **Legend:** Optionally displays a legend below the gauge with color indicators, labels, and range values with support for "X+" format.
 
 **Example Gauge (Simple):**
 
@@ -592,6 +642,109 @@ Displays a text label at a specific value.
             "coefficients": [100, 5.5]
         }
     ]
+}
+```
+
+## Threshold Configuration
+
+Threshold configuration allows you to color chart elements (lines, areas, bars, markers) based on whether values pass or fail a threshold. This is useful for highlighting values that meet or miss targets.
+
+### ThresholdConfig Object
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `value` | `number` | **Required**. The threshold value to compare against. |
+| `passColor` | `string` | Color for values that pass the threshold (default: `#22c55e` green). |
+| `failColor` | `string` | Color for values that fail the threshold (default: `#ef4444` red). |
+| `mode` | `string` | How to determine pass/fail: `'above'` (default), `'below'`, or `'equals'`. |
+| `showLine` | `boolean` | Whether to show a reference line at the threshold value (default: true). |
+| `lineStyle` | `string` | Style of the threshold line: `'solid'`, `'dashed'` (default), or `'dotted'`. |
+| `blendWidth` | `number` | Width of the color blend zone as percentage of chart width, 0-50 (default: 5). For line/area charts only. |
+| `applyTo` | `string` | Which elements to apply threshold coloring to: `'both'` (default), `'markers'`, or `'lines'`. |
+
+### Supported Visuals
+
+- **Line Chart** (`type: "line"`) - Colors lines with gradient blending at crossings, markers by value
+- **Area Chart** (`type: "area"`) - Colors areas and lines with gradient blending, markers by value
+- **Clustered Bar Chart** (`type: "clusteredBar"`) - Colors each bar based on its value
+
+### Mode Options
+
+| Mode | Description |
+|------|-------------|
+| `'above'` | Values >= threshold pass (green), values < threshold fail (red) |
+| `'below'` | Values <= threshold pass, values > threshold fail |
+| `'equals'` | Only values exactly equal to threshold pass |
+
+### applyTo Options
+
+| Value | Description |
+|-------|-------------|
+| `'both'` | Apply threshold colors to both lines/areas and markers |
+| `'markers'` | Only markers use threshold colors; lines/areas keep original series colors |
+| `'lines'` | Only lines/areas use threshold colors; markers keep original series colors |
+
+### Gradient Blending (Line/Area Charts)
+
+For line and area charts, the color transitions smoothly at threshold crossing points. The `blendWidth` property controls how gradual this transition is:
+- `0` = Hard edge at the crossing point
+- `5` = Subtle blend (default)
+- `10-15` = More gradual, visible fade
+
+**Example: Line Chart with Threshold**
+
+```json
+{
+    "type": "line",
+    "datasetId": "performanceData",
+    "xColumn": "Week",
+    "yColumns": ["Score"],
+    "threshold": {
+        "value": 80,
+        "passColor": "#22c55e",
+        "failColor": "#ef4444",
+        "mode": "above",
+        "showLine": true,
+        "lineStyle": "dashed",
+        "blendWidth": 8,
+        "applyTo": "both"
+    }
+}
+```
+
+**Example: Multi-Series with Markers Only**
+
+When you have multiple series and want to preserve distinct line colors while showing pass/fail on markers:
+
+```json
+{
+    "type": "line",
+    "datasetId": "salesData",
+    "xColumn": "Quarter",
+    "yColumns": ["Electronics", "Clothing", "Home"],
+    "threshold": {
+        "value": 4000,
+        "mode": "above",
+        "applyTo": "markers"
+    }
+}
+```
+
+**Example: Clustered Bar Chart with Threshold**
+
+```json
+{
+    "type": "clusteredBar",
+    "datasetId": "salesData",
+    "xColumn": "Quarter",
+    "yColumns": ["Revenue"],
+    "threshold": {
+        "value": 5000,
+        "passColor": "#22c55e",
+        "failColor": "#ef4444",
+        "mode": "above",
+        "showLine": true
+    }
 }
 ```
 

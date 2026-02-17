@@ -7,6 +7,30 @@ if TYPE_CHECKING:
 
 class GaugeVisual:
 
+    class Range:
+        def __init__(self, 
+                     from_value: Optional[float] = None, 
+                     to_value: Optional[float] = None, 
+                     color: Optional[str] = None, 
+                     label: Optional[str] = None
+            ):
+            self.from_value = from_value
+            self.to_value = to_value
+            self.color = color
+            self.label = label
+
+        def to_dict(self) -> Dict[str, Any]:
+            d = {}
+            if self.from_value is not None:
+                d["from"] = self.from_value
+            if self.to_value is not None:
+                d["to"] = self.to_value
+            if self.color is not None:
+                d["color"] = self.color
+            if self.label is not None:
+                d["label"] = self.label
+            return d
+
     # Mixin assumes parent class provides add_visual method
     def add_visual(self, type: str, dataset_id: str | None = None, **kwargs) -> "Visual": ...
 
@@ -21,7 +45,7 @@ class GaugeVisual:
         thickness: int | None = None,
         start_angle: float | None = None,
         end_angle: float | None = None,
-        ranges: Optional[List[Dict[str, Any]]] = None,
+        ranges: Optional[List[Dict[str, Any]] | List[GaugeVisual.Range]] = None,
         track_color: Optional[str] = None,
         value_color: Optional[str] = None,
         needle_color: Optional[str] = None,
@@ -33,6 +57,7 @@ class GaugeVisual:
         currency_symbol: str | None = None,
         unit: Optional[str] = None,
         colors: str | List[str] | None = None,
+        show_legend: bool | None = None,
         **kwargs,
     ) -> Visual:
         """Adds a gauge/speedometer visual.
@@ -66,6 +91,7 @@ class GaugeVisual:
             currency_symbol: Currency symbol when format is 'currency' (default: '$').
             unit: Optional unit text displayed below the value.
             colors: Color palette for ranges (D3 scheme or array).
+            show_legend: Whether to show the legend for ranges (default: false).
             **kwargs: Additional common visual properties.
 
         Returns:
@@ -112,5 +138,7 @@ class GaugeVisual:
             visual_kwargs["unit"] = unit
         if colors is not None:
             visual_kwargs["colors"] = colors
+        if show_legend is not None:
+            visual_kwargs["show_legend"] = show_legend
         
         return self.add_visual("gauge", dataset_id, **visual_kwargs)

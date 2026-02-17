@@ -10,17 +10,19 @@ class Page(ReportTreeComponent):
     """
     Represents a page in the report.
     """
-    def __init__(self, title: str, description: Optional[str] = None):
+    def __init__(self, title: str, description: Optional[str] = None, last_updated: Optional[str] = None):
         """
         Initializes a new Page.
 
         Args:
             title (str): The title of the page.
             description (str, optional): A description for the page. Defaults to None.
+            last_updated (str, optional): The last updated date for the page. Defaults to None.
         """
         super().__init__()
         self.title = title
         self.description = description
+        self.last_updated = last_updated
         self.rows: List[Layout] = []
 
     def add_row(self, direction: str = "row", **kwargs) -> Layout:
@@ -52,4 +54,6 @@ class Page(ReportTreeComponent):
         }
         if self.description:
             d["description"] = self.description
+        if self.last_updated:
+            d["lastUpdated"] = self.last_updated
         return d

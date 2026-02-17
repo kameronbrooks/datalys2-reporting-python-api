@@ -125,6 +125,16 @@ class Visual(ReportTreeComponent):
         Returns:
             Dict[str, Any]: The dictionary representation of the visual.
         """
+        def _serialize_object(v: Any) -> Any:
+            if hasattr(v, "to_dict") and callable(getattr(v, "to_dict")):
+                return _serialize_object(v.to_dict())
+            elif isinstance(v, dict):
+                return {snake_to_camel(k): _serialize_object(val) for k, val in v.items()}
+            elif isinstance(v, list):
+                return [_serialize_object(i) for i in v]
+            else:
+                return v
+
         d: Dict[str, Any] = {
             "type": self.type,
             "elementType": "visual",
@@ -134,14 +144,9 @@ class Visual(ReportTreeComponent):
             d["datasetId"] = self.dataset_id
 
         if self.other_elements:
-            d["otherElements"] = [camel_case_dict(e) for e in self.other_elements]
+            d["otherElements"] = [_serialize_object(e) for e in self.other_elements]
 
         for k, v in self.props.items():
             camel_k = snake_to_camel(k)
-            if isinstance(v, dict):
-                d[camel_k] = camel_case_dict(v)
-            elif isinstance(v, list):
-                d[camel_k] = [camel_case_dict(i) if isinstance(i, dict) else i for i in v]
-            else:
-                d[camel_k] = v
+            d[camel_k] = _serialize_object(v)
         return d
