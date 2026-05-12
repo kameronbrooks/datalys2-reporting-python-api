@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>copy() and get_value() demo</title>
+    <meta name="dl-version" content="0.2.12">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="last-updated" content="05-11-2026 18:38:40">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "copy() demo",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "kpi",
+                            "elementType": "visual",
+                            "id": "elem-3",
+                            "datasetId": "sales",
+                            "valueColumn": "revenue",
+                            "title": "Revenue \u2013 North",
+                            "rowIndex": 0,
+                            "format": "currency",
+                            "goodDirection": "higher"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "kpi",
+                            "elementType": "visual",
+                            "id": "elem-4",
+                            "datasetId": "sales",
+                            "valueColumn": "revenue",
+                            "title": "Revenue \u2013 South",
+                            "rowIndex": 1,
+                            "format": "currency",
+                            "goodDirection": "higher"
+                        },
+                        {
+                            "type": "kpi",
+                            "elementType": "visual",
+                            "id": "elem-5",
+                            "datasetId": "sales",
+                            "valueColumn": "revenue",
+                            "title": "Revenue \u2013 East",
+                            "rowIndex": 2,
+                            "format": "currency",
+                            "goodDirection": "higher"
+                        },
+                        {
+                            "type": "kpi",
+                            "elementType": "visual",
+                            "id": "elem-6",
+                            "datasetId": "sales",
+                            "valueColumn": "revenue",
+                            "title": "Revenue \u2013 West",
+                            "rowIndex": 3,
+                            "format": "currency",
+                            "goodDirection": "higher"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Summary",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "kpi",
+                            "elementType": "visual",
+                            "id": "elem-10",
+                            "datasetId": "sales",
+                            "valueColumn": "units",
+                            "title": "Units \u2013 North",
+                            "rowIndex": 0,
+                            "format": "number"
+                        },
+                        {
+                            "type": "kpi",
+                            "elementType": "visual",
+                            "id": "elem-11",
+                            "datasetId": "sales",
+                            "valueColumn": "units",
+                            "title": "Units \u2013 South",
+                            "rowIndex": 1,
+                            "format": "number"
+                        },
+                        {
+                            "type": "kpi",
+                            "elementType": "visual",
+                            "id": "elem-12",
+                            "datasetId": "sales",
+                            "valueColumn": "units",
+                            "title": "Units \u2013 East",
+                            "rowIndex": 2,
+                            "format": "number"
+                        },
+                        {
+                            "type": "kpi",
+                            "elementType": "visual",
+                            "id": "elem-13",
+                            "datasetId": "sales",
+                            "valueColumn": "units",
+                            "title": "Units \u2013 West",
+                            "rowIndex": 3,
+                            "format": "number"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Conditional Layout",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": []
+                }
+            ]
+        },
+        {
+            "title": "Conditional Layout",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "clusteredBar",
+                            "elementType": "visual",
+                            "id": "elem-18",
+                            "datasetId": "sales",
+                            "title": "Revenue by Region",
+                            "xColumn": "region",
+                            "yColumns": [
+                                "revenue"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Conditional Layout",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "clusteredBar",
+                            "elementType": "visual",
+                            "id": "elem-21",
+                            "datasetId": "sales",
+                            "title": "Revenue by Region",
+                            "xColumn": "region",
+                            "yColumns": [
+                                "revenue"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "card",
+                            "elementType": "visual",
+                            "id": "elem-23",
+                            "title": "Top Performer",
+                            "text": "**East** leads with **$175,200** in revenue \u2014 above the $150,000 high-water mark.",
+                            "contentType": "md"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "card",
+                            "elementType": "visual",
+                            "id": "elem-25",
+                            "title": "Warning: South below target",
+                            "text": "Revenue $98,300 is $21,700 short of the $120,000 target.",
+                            "contentType": "md"
+                        },
+                        {
+                            "type": "card",
+                            "elementType": "visual",
+                            "id": "elem-26",
+                            "title": "Warning: West below target",
+                            "text": "Revenue $110,800 is $9,200 short of the $120,000 target.",
+                            "contentType": "md"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Conditional Layout",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "clusteredBar",
+                            "elementType": "visual",
+                            "id": "elem-29",
+                            "datasetId": "sales",
+                            "title": "Revenue by Region",
+                            "xColumn": "region",
+                            "yColumns": [
+                                "revenue"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "card",
+                            "elementType": "visual",
+                            "id": "elem-31",
+                            "title": "Top Performer",
+                            "text": "**East** leads with **$175,200** in revenue \u2014 above the $150,000 high-water mark.",
+                            "contentType": "md"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "card",
+                            "elementType": "visual",
+                            "id": "elem-33",
+                            "title": "Warning: South below target",
+                            "text": "Revenue $98,300 is $21,700 short of the $120,000 target.",
+                            "contentType": "md"
+                        },
+                        {
+                            "type": "card",
+                            "elementType": "visual",
+                            "id": "elem-34",
+                            "title": "Warning: West below target",
+                            "text": "Revenue $110,800 is $9,200 short of the $120,000 target.",
+                            "contentType": "md"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "sales": {
+            "id": "sales",
+            "format": "records",
+            "columns": [
+                "region",
+                "revenue",
+                "units"
+            ],
+            "dtypes": [
+                "string",
+                "number",
+                "number"
+            ],
+            "data": [
+                {
+                    "region": "North",
+                    "revenue": 142500,
+                    "units": 1420
+                },
+                {
+                    "region": "South",
+                    "revenue": 98300,
+                    "units": 980
+                },
+                {
+                    "region": "East",
+                    "revenue": 175200,
+                    "units": 1750
+                },
+                {
+                    "region": "West",
+                    "revenue": 110800,
+                    "units": 1105
+                }
+            ]
+        }
+    }
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>

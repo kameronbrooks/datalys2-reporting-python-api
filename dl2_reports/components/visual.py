@@ -30,6 +30,17 @@ class Visual(ReportTreeComponent):
         self.other_elements: List[Dict[str, Any]] = []
         self.props = kwargs
 
+    def copy(self) -> Visual:
+        """
+        Creates a copy of this visual, including its properties and other elements, but with a new unique ID.
+
+        Returns:
+            Visual: A new Visual instance with the same properties and elements.
+        """
+        copied_visual = Visual(self.type, self.dataset_id, **self.props)
+        copied_visual.other_elements = [dict(e) for e in self.other_elements]
+        return copied_visual
+
     def add_element(self, type: str, **kwargs) -> Visual:
         """
         Adds a generic visual element (annotation) to the visual.
@@ -46,7 +57,7 @@ class Visual(ReportTreeComponent):
         element.update(kwargs)
         self.other_elements.append(element)
         return self
-
+    
     def add_trend(self, coefficients: (List[float] | int | None) = None, **kwargs) -> Visual:
         """
         Adds a trend line element to the visual.
@@ -150,3 +161,48 @@ class Visual(ReportTreeComponent):
             camel_k = snake_to_camel(k)
             d[camel_k] = _serialize_object(v)
         return d
+    
+    def get_value(self) -> Optional[Any]:
+        """
+        Attempts to retrieve the value represented by this visual from its dataset, if possible.
+        This only works for visuals that have a dataset_id and the original DataFrame available in the dataset.
+        It also requires that the visual's props include 'row_index' and 'value_column' to identify which value to retrieve.
+        Returns:
+            The value from the dataset that this visual represents, or None if it cannot be retrieved.
+        Raises:
+            ValueError: If the visual does not have a dataset_id.
+            ValueError: If the visual is not part of a report.
+            ValueError: If the dataset_id is not found in the report's datasets.
+            ValueError: If the original DataFrame is not available in the dataset.
+            ValueError: If 'row_index' or 'value_column' props are missing or invalid.
+        """
+        if self.dataset_id is None:
+            return None
+
+        report = self.get_report()
+        if report is None:
+            raise ValueError("Cannot get visual value without a parent report.")
+
+        dataset_id = self.dataset_id
+        if dataset_id is None or dataset_id not in report.datasets:
+            raise ValueError("Cannot get visual value without a valid dataset_id in the visual.")
+
+        dataset: Dict[str, Any] = report.datasets[dataset_id]
+        df = dataset.get("_df", None)
+
+        if df is None or not isinstance(df, pd.DataFrame):
+            raise ValueError(
+                "Cannot get visual value without the original DataFrame in the dataset."
+            )
+
+        if "row_index" in self.props and "value_column" in self.props:
+            row_index = self.props["row_index"]
+            value_column = self.props["value_column"]
+            if value_column not in df.columns:
+                raise ValueError(f"Value column '{value_column}' not found in dataset DataFrame.")
+            if row_index < 0 or row_index >= len(df):
+                raise ValueError(f"Row index {row_index} is out of bounds for the dataset DataFrame.")
+            return df.iloc[row_index][value_column]
+        
+        else:
+            raise ValueError("Cannot get visual value without both 'row_index' and 'value_column' in visual props.")

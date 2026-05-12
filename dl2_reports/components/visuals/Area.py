@@ -7,7 +7,6 @@ if TYPE_CHECKING:
 
 class AreaVisual:
 
-
     class Threshold:
         def __init__(self, 
                      value: float | int, 

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from ..visual import Visual  # Only imported for type checkers
@@ -88,5 +88,5 @@ class KPIVisual:
             visual_kwargs["height"] = height
         if rounding_precision is not None:
             visual_kwargs["rounding_precision"] = rounding_precision
-
+        
         return self.add_visual("kpi", dataset_id, **visual_kwargs)

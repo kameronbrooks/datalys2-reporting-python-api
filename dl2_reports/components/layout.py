@@ -56,22 +56,36 @@ class Layout(
         self.children: List[Layout | Visual] = []
         self.props = kwargs
 
-    def add_visual(self, type: str, dataset_id: Optional[str] = None, **kwargs) -> Visual:
+    def add_visual(self, type: str, dataset_id: Optional[str] = None, visual: Optional[Visual] = None, **kwargs) -> Visual:
         """Adds a generic visual to the layout.
 
         Args:
             type: Visual type (e.g., 'kpi', 'table', 'line', 'scatter').
             dataset_id: Dataset id to bind to this visual.
+            visual: An existing Visual instance to add to the layout.
             **kwargs: Visual properties (serialized to JSON). Common ones include:
                 padding, margin, border, shadow, flex, modal_id.
 
         Returns:
             The created :class:`~dl2_reports.components.visual.Visual` instance.
         """
-        visual = Visual(type, dataset_id, **kwargs)
+        if visual is None:
+            visual = Visual(type, dataset_id, **kwargs)
+        
         visual.parent = self
         self.children.append(visual)
         return visual
+    
+    
+    def remove_visual(self, visual: Visual) -> None:
+        """Removes a visual from the layout.
+
+        Args:
+            visual: The visual instance to remove.
+        """
+        if visual in self.children:
+            self.children.remove(visual)
+            visual.parent = None
 
     def add_layout(self, direction: str = "row", **kwargs) -> Layout:
         """Adds a nested layout to this layout.

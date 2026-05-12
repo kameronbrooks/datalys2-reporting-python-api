@@ -81,6 +81,34 @@ class DL2Report:
             DL2Report: The current report instance.
         """
         return self
+    
+    def get_value(self, data_source_name: str, column_name: str, row_index: int = -1) -> Any:
+        """
+        Retrieves a value from a specific dataset.
+
+        Args:
+            data_source_name (str): The name of the dataset.
+            column_name (str): The name of the column.
+            row_index (int): The index of the row. Defaults to -1 (last row).
+
+        Returns:
+            Any: The value at the specified location.
+        """
+        dataset = self.datasets.get(data_source_name)
+        if dataset is None:
+            raise ValueError(f"Dataset '{data_source_name}' not found.")
+        df = pd.DataFrame(dataset["data"])
+        
+        if column_name not in df.columns:
+            raise ValueError(f"Column '{column_name}' not found in dataset '{data_source_name}'.")
+        
+        if row_index < 0:
+            row_index += len(df)
+
+        if row_index < 0 or row_index >= len(df):
+            raise IndexError(f"Row index {row_index} out of range for dataset '{data_source_name}'.")
+        
+        return df.at[row_index, column_name]
 
     def add_df(
         self,
