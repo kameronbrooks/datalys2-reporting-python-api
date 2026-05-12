@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 class PieVisual:
 
     # Mixin assumes parent class provides add_visual method
-    def add_visual(self, type: str, dataset_id: str | None = None, **kwargs) -> "Visual": ...
+    def add_visual(self, type: str, dataset_id: str | None = None, **kwargs) -> Optional["Visual"]: ...
 
     def add_pie(
         self,
@@ -18,7 +18,7 @@ class PieVisual:
         inner_radius: int | None = None,
         show_legend: bool | None = None,
         **kwargs,
-    ) -> Visual:
+    ) -> Optional[Visual]:
         """Adds a pie/donut chart visual.
 
         Args:

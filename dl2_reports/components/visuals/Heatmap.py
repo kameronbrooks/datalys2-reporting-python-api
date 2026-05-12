@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 class HeatmapVisual:
 
     # Mixin assumes parent class provides add_visual method
-    def add_visual(self, type: str, dataset_id: str | None = None, **kwargs) -> "Visual": ...
+    def add_visual(self, type: str, dataset_id: str | None = None, **kwargs) -> Optional["Visual"]: ...
 
     def add_heatmap(
         self,
@@ -23,7 +23,7 @@ class HeatmapVisual:
         x_axis_label: Optional[str] = None,
         y_axis_label: Optional[str] = None,
         **kwargs,
-    ) -> Visual:
+    ) -> Optional[Visual]:
         """Adds a heatmap visual.
 
         Args:

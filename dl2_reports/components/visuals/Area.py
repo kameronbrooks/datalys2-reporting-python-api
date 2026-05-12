@@ -45,7 +45,7 @@ class AreaVisual:
             return d
 
     # Mixin assumes parent class provides add_visual method
-    def add_visual(self, type: str, dataset_id: str | None = None, **kwargs) -> "Visual": ...
+    def add_visual(self, type: str, dataset_id: str | None = None, **kwargs) -> Optional[Visual]: ...
 
     def add_area(
         self,
@@ -65,7 +65,7 @@ class AreaVisual:
         x_axis_label: Optional[str] = None,
         y_axis_label: Optional[str] = None,
         **kwargs,
-    ) -> Visual:
+    ) -> Optional[Visual]:
         """Adds an area chart visual.
 
         Args:

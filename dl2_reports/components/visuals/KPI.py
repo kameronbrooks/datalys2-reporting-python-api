@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 class KPIVisual:
 
     # Mixin assumes parent class provides add_visual method
-    def add_visual(self, type: str, dataset_id: str | None = None, **kwargs) -> "Visual": ...
+    def add_visual(self, type: str, dataset_id: str | None = None, **kwargs) -> Optional[Visual]: ...
 
     # Visual helpers
     def add_kpi(
@@ -30,7 +30,7 @@ class KPIVisual:
         width: int | None = None,
         height: int | None = None,
         **kwargs,
-    ) -> Visual:
+    ) -> Optional[Visual]:
         """Adds a KPI visual.
 
         Matches the KPI schema documented in `DOCUMENTATION.md`.
@@ -88,5 +88,5 @@ class KPIVisual:
             visual_kwargs["height"] = height
         if rounding_precision is not None:
             visual_kwargs["rounding_precision"] = rounding_precision
-        
+
         return self.add_visual("kpi", dataset_id, **visual_kwargs)

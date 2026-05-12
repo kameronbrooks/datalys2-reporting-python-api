@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 class BarVisual:
 
     # Mixin assumes parent class provides add_visual method
-    def add_visual(self, type: str, dataset_id: str | None = None, **kwargs) -> "Visual": ...
+    def add_visual(self, type: str, dataset_id: str | None = None, **kwargs) -> Optional[Visual]: ...
 
     def add_bar(
         self,
@@ -23,7 +23,7 @@ class BarVisual:
         horizontal: bool | None = None,
         threshold: Optional[Dict[str, Any]] = None,
         **kwargs,
-    ) -> Visual:
+    ) -> Optional[Visual]:
         """Adds a clustered or stacked bar chart visual.
 
         Args:

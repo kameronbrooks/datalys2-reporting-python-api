@@ -196,13 +196,7 @@ class Visual(ReportTreeComponent):
             )
 
         if "row_index" in self.props and "value_column" in self.props:
-            row_index = self.props["row_index"]
-            value_column = self.props["value_column"]
-            if value_column not in df.columns:
-                raise ValueError(f"Value column '{value_column}' not found in dataset DataFrame.")
-            if row_index < 0 or row_index >= len(df):
-                raise ValueError(f"Row index {row_index} is out of bounds for the dataset DataFrame.")
-            return df.iloc[row_index][value_column]
+            return report.get_value(self.dataset_id, self.props["value_column"], self.props["row_index"])
         
         else:
             raise ValueError("Cannot get visual value without both 'row_index' and 'value_column' in visual props.")

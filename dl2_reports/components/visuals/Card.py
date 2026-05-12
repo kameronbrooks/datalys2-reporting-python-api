@@ -8,13 +8,13 @@ if TYPE_CHECKING:
 class CardVisual:
 
     # Mixin assumes parent class provides add_visual method
-    def add_visual(self, type: str, dataset_id: str | None = None, **kwargs) -> "Visual": ...
+    def add_visual(self, type: str, dataset_id: str | None = None, **kwargs) -> Optional[Visual]: ...
 
     def add_card(self, 
             title: str | None, 
             text: str,
             content_type: str | None = None,
-            **kwargs) -> Visual:
+            **kwargs) -> Optional[Visual]:
         """Adds a card visual.
 
         Args:

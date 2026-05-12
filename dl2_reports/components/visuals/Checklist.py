@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 class ChecklistVisual:
 
     # Mixin assumes parent class provides add_visual method
-    def add_visual(self, type: str, dataset_id: str | None = None, **kwargs) -> "Visual": ...
+    def add_visual(self, type: str, dataset_id: str | None = None, **kwargs) -> Optional[Visual]: ...
 
     def add_checklist(
         self,
@@ -20,7 +20,7 @@ class ChecklistVisual:
         page_size: int | None = None,
         show_search: bool | None = None,
         **kwargs,
-    ) -> Visual:
+    ) -> Optional[Visual]:
         """Adds a checklist visual.
 
         Args:

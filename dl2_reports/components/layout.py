@@ -23,6 +23,44 @@ from .visuals import (
 )
 
 
+class CompileTimeConditional(
+    KPIVisual,
+    TableVisual,
+    CardVisual,
+    PieVisual,
+    BarVisual,
+    ScatterVisual,
+    LineVisual,
+    AreaVisual,
+    ChecklistVisual,
+    HistogramVisual,
+    HeatmapVisual,
+    GaugeVisual,
+    BoxplotVisual,
+    ):
+    """
+    Temporary wrapper returned by ``Layout.on_condition()``.
+    When the condition is True, delegates all ``add_*`` calls to the parent layout.
+    When the condition is False, returns a :class:`NullVisual` sentinel that safely
+    absorbs any further chained method calls (e.g. ``.add_trend()``).
+
+    Does **not** inherit from :class:`ReportTreeComponent` and does not consume an
+    element ID, so it has no effect on the ID sequence of the compiled report.
+    """
+
+    def __init__(self, parent: Layout, condition: bool):
+        # Intentionally not calling super().__init__() — this is not a real tree
+        # node and must not consume a BASE_ID slot.
+        self.parent = parent
+        self.condition = condition
+
+    def add_visual(self, type: str, dataset_id: Optional[str] = None, visual: Optional[Visual] = None, **kwargs) -> Optional[Visual]:
+        if not self.condition:
+            return None
+        return self.parent.add_visual(type, dataset_id, visual=visual, **kwargs)
+
+
+
 class Layout(
     ReportTreeComponent,
     KPIVisual,
@@ -56,7 +94,7 @@ class Layout(
         self.children: List[Layout | Visual] = []
         self.props = kwargs
 
-    def add_visual(self, type: str, dataset_id: Optional[str] = None, visual: Optional[Visual] = None, **kwargs) -> Visual:
+    def add_visual(self, type: str, dataset_id: Optional[str] = None, visual: Optional[Visual] = None, **kwargs) -> Optional[Visual]:
         """Adds a generic visual to the layout.
 
         Args:
@@ -75,6 +113,14 @@ class Layout(
         visual.parent = self
         self.children.append(visual)
         return visual
+    
+    def on_condition(self, condition: bool) -> CompileTimeConditional:
+        """Returns a conditional wrapper for this layout that only adds visuals if the condition is True.
+
+        Example usage:
+            layout.on_condition(show_sales).add_bar(...)
+        """
+        return CompileTimeConditional(self, condition)
     
     
     def remove_visual(self, visual: Visual) -> None:
@@ -102,7 +148,7 @@ class Layout(
         self.children.append(layout)
         return layout
 
-    def add_modal_button(self, modal_id: str, button_label: str, **kwargs) -> Visual:
+    def add_modal_button(self, modal_id: str, button_label: str, **kwargs) -> Optional[Visual]:
         """Adds a modal trigger button.
 
         Args:

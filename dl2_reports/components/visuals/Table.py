@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 class TableVisual:
 
     # Mixin assumes parent class provides add_visual method
-    def add_visual(self, type: str, dataset_id: str | None = None, **kwargs) -> "Visual": ...
+    def add_visual(self, type: str, dataset_id: str | None = None, **kwargs) -> Optional["Visual"]: ...
 
     def add_table(
         self,
@@ -19,7 +19,7 @@ class TableVisual:
         table_style: str | None = None,
         show_search: bool | None = None,
         **kwargs,
-    ) -> Visual:
+    ) -> Optional[Visual]:
         """Adds a table visual.
 
         Args:
