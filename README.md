@@ -451,6 +451,106 @@ report = visual.get_report()
 print(report.title)
 ```
 
+## Reading Values
+
+The API provides two ways to read scalar values back from your data after the report is built. These are useful for conditional layout logic, threshold checks, or computing derived metrics without re-querying the original DataFrame.
+
+### `report.get_value()`
+
+Query a value from any registered dataset by name — no visual reference required.
+
+```python
+report.get_value(data_source_name, column_name, row_index=-1)
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `data_source_name` | `str` | (required) | The dataset name passed to `add_df()`. |
+| `column_name` | `str` | (required) | The column to read from. |
+| `row_index` | `int` | `-1` | Row index. Negative indices count from the end (e.g. `-1` = last row). |
+
+This is the right tool when you need to inspect a value **before** or **without** creating a visual — for example, deciding whether to add a row at all:
+
+```python
+report = DL2Report(title="Sales Report")
+report.add_df("sales", sales_df, format="records", compress=False)
+
+page = report.add_page("Overview")
+
+# Add a bar chart
+bar_row = page.add_row()
+bar_row.add_bar(dataset_id="sales", x_column="region", y_columns=["revenue"])
+
+# Only add a warning card if the worst region is below target
+TARGET = 120_000
+revenues = [report.get_value("sales", "revenue", i) for i in range(len(sales_df))]
+worst = min(revenues)
+
+if worst < TARGET:
+    warning_row = page.add_row()
+    warning_row.add_card(
+        title="Warning: underperforming region detected",
+        text=f"Lowest revenue is ${worst:,} — below the ${TARGET:,} target.",
+        content_type="md",
+    )
+```
+
+### `visual.get_value()`
+
+Read the scalar value that a specific visual represents, directly from its backing DataFrame. The visual must be part of the report tree (i.e. already added to a row) and its props must include `row_index` and `value_column`.
+
+```python
+value = visual.get_value()
+```
+
+This is the right tool when you already have a visual reference and want to inspect or act on its value:
+
+```python
+kpi = page.add_row().add_kpi(
+    dataset_id="sales",
+    value_column="revenue",
+    row_index=0,
+    title="Revenue – North",
+    format="currency",
+)
+
+north_revenue = kpi.get_value()
+print(f"North revenue: {north_revenue:,}")
+```
+
+### `visual.copy()`
+
+Create a duplicate of a visual with the same `type`, `dataset_id`, props, and annotations, but a new unique ID. Use this to stamp the same visual configuration into multiple rows without re-specifying every argument.
+
+```python
+copied_visual = visual.copy()
+```
+
+After copying, add the copy back into any layout row using `row.add_visual(copy.type, visual=copy)`. You can then mutate `copy.props` to override only what differs:
+
+```python
+# Build a prototype KPI once
+proto = row.add_kpi(
+    dataset_id="sales",
+    value_column="revenue",
+    row_index=0,
+    title="Revenue – North",
+    format="currency",
+)
+
+# Stamp copies for remaining regions
+for i, region in enumerate(["South", "East", "West"], start=1):
+    copy = proto.copy()
+    copy.props["row_index"] = i
+    copy.props["title"] = f"Revenue – {region}"
+    row.add_visual(copy.type, visual=copy)
+
+# Each copy exposes get_value() once it is in the tree
+total = proto.get_value() + sum(
+    row.children[i].get_value() for i in range(1, 4)
+)
+```
+
 ## Datalys2 Documentation
 
 For detailed information on available visuals and configuration, see [DOCUMENTATION.md](DOCUMENTATION.md).
