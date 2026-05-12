@@ -551,6 +551,55 @@ total = proto.get_value() + sum(
 )
 ```
 
+## Conditional Layout
+
+Use `layout.on_condition()` to conditionally add visuals to a row at report-build time. This is a compile-time guard — it evaluates a plain Python `bool` and either delegates the `add_*` call to the real layout or silently discards it.
+
+```python
+layout.on_condition(condition).add_<visual>(...)
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `condition` | `bool` | If `True`, the visual is added normally and returned. If `False`, nothing is added and `None` is returned. |
+
+### How It Works
+
+- When `condition` is `True`, the call is forwarded to the parent layout exactly as if you had called `layout.add_<visual>(...)` directly.
+- When `condition` is `False`, no visual is created, no element ID is consumed, and `None` is returned.
+- The wrapper is **not** a tree node — it never occupies a slot in the report tree regardless of the condition.
+
+### Example: Show a warning card only when a threshold is breached
+
+```python
+report = DL2Report(title="Sales Report")
+report.add_df("sales", sales_df, format="records", compress=False)
+
+page = report.add_page("Overview")
+row = page.add_row()
+row.add_bar(dataset_id="sales", x_column="region", y_columns=["revenue"])
+
+TARGET = 120_000
+worst = min(report.get_value("sales", "revenue", i) for i in range(len(sales_df)))
+
+warning_row = page.add_row()
+warning_row.on_condition(worst < TARGET).add_card(
+    title="Warning: underperforming region detected",
+    text=f"Lowest revenue is ${worst:,} — below the ${TARGET:,} target.",
+)
+```
+
+### Example: Toggle a chart based on a flag
+
+```python
+show_details = True  # could come from any Python logic
+
+detail_row = page.add_row()
+detail_row.on_condition(show_details).add_table("sales", title="Detail View")
+```
+
+> **Tip:** Because `on_condition` returns `None` when the condition is `False`, avoid using the return value without a `None` check when the condition may be `False`.
+
 ## Datalys2 Documentation
 
 For detailed information on available visuals and configuration, see [DOCUMENTATION.md](DOCUMENTATION.md).

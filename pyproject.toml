@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dl2-reports"
-version = "0.2.13"
+version = "0.2.14"
 authors = [
   { name="kameronbrooks", email="kameron@creation-wasteland.com" },
 ]

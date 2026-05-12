@@ -97,8 +97,11 @@ class DL2Report:
         dataset = self.datasets.get(data_source_name)
         if dataset is None:
             raise ValueError(f"Dataset '{data_source_name}' not found.")
-        df = pd.DataFrame(dataset["data"])
-        
+        # Use the stored DataFrame when available (data[] is emptied when compress=True)
+        df = dataset.get("_df")
+        if df is None:
+            df = pd.DataFrame(dataset["data"])
+
         if column_name not in df.columns:
             raise ValueError(f"Column '{column_name}' not found in dataset '{data_source_name}'.")
         
@@ -108,7 +111,7 @@ class DL2Report:
         if row_index < 0 or row_index >= len(df):
             raise IndexError(f"Row index {row_index} out of range for dataset '{data_source_name}'.")
         
-        return df.at[row_index, column_name]
+        return df.iloc[row_index][column_name]
 
     def add_df(
         self,
