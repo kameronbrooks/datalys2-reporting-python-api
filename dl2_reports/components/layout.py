@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Optional
 
 from ..serialization import camel_case_dict, snake_to_camel
 from .base import ReportTreeComponent
+from .component import split_legacy_kwargs
 from .visual import Visual
 
 from .visuals import (
@@ -71,6 +72,11 @@ class CompileTimeConditional(
             return None
         return self.parent.add_layout(direction, **kwargs)
 
+    def add_component(self, cls: type, *args, **kwargs):
+        if not self.condition:
+            return None
+        return self.parent.add_component(cls, *args, **kwargs)
+
 
 
 class Layout(
@@ -130,6 +136,18 @@ class Layout(
         self.children.append(visual)
         return visual
     
+    def add_component(self, cls: type, *args, **kwargs):
+        """Constructs a typed component and adds it to this layout.
+
+        Used by the legacy ``add_*`` helpers; kwargs the component does not model are
+        routed into its ``extra`` passthrough dict for backward compatibility.
+        Direct v2 usage constructs the component itself and calls :meth:`add`.
+        """
+        comp = cls(*args, **split_legacy_kwargs(cls, dict(kwargs)))
+        comp.parent = self
+        self.children.append(comp)
+        return comp
+
     def on_condition(self, condition: bool) -> CompileTimeConditional:
         """Returns a conditional wrapper for this layout that only adds visuals if the condition is True.
 
