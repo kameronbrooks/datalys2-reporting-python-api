@@ -1,5 +1,5 @@
 # Datalys2 Reporting Documentation
-**Version 0.2.12**
+**Version 0.4.0**
 
 
 This documentation guides you on how to create HTML reports using the Datalys2 Reporting library.
@@ -25,7 +25,7 @@ You can also use standard HTML meta tags to configure the report header informat
     <meta name="description" content="A brief description of this report">
     <meta name="author" content="Report Author Name">
     <meta name="last-updated" content="2024-01-01">
-    <meta name="dl-version" content="0.2.12">
+    <meta name="dl-version" content="0.4.0">
 
     <!-- Include the library styles -->
     <link rel="stylesheet" href="path/to/dl2-style.css">
@@ -58,6 +58,9 @@ The application reads the following tags from the `<head>` to populate the repor
 | `description` | Sets the report description text. |
 | `author` | Displays the author's name. |
 | `last-updated` | Displays the last updated date/time. |
+| `report-id` | Optional (0.4+). Stable id used to namespace persisted view state in localStorage. Falls back to the title, then the file path. |
+| `dl2-validate` | Optional (0.3+). Set content to `"false"` to disable config validation warnings. |
+| `gc-compressed-data` | Optional. Set content to `"true"` to free compressed source strings after decompression. |
 
 ## The `report-data` Script
 
@@ -89,13 +92,16 @@ Datasets are defined in the `datasets` object. The key is the `datasetId` refere
 
 | Property | Type | Description |
 |----------|------|-------------|
-| `id` | `string` | The unique ID of the dataset. |
+| `id` | `string` | The unique ID of the dataset. Auto-filled from the dictionary key when omitted (0.3+). |
 | `data` | `any[]` | The actual data records (can be empty if using compression). |
 | `columns` | `string[]` | Array of column names. |
 | `dtypes` | `string[]` | Array of data types for columns (e.g., 'string', 'number'). |
 | `format` | `string` | Data format: `'table'`, `'records'`, `'list'`, or `'record'`. |
 | `compression` | `string` | Optional. Set to `'gzip'` to enable decompression. |
 | `compressedData` | `string` | Optional. The ID of a script tag containing the base64-encoded gzip data. |
+| `source` | `string` | Optional (0.3+). Makes this a **derived dataset** computed from another dataset at load time (see [Derived Datasets](#derived-datasets)). |
+| `filter` | `FilterExpression` | Optional (0.3+). Filter applied to the source rows (derived datasets only). |
+| `aggregate` | `AggregateSpec` | Optional (0.3+). Aggregation applied after the filter (derived datasets only). |
 
 **Example Dataset (Records Format):**
 ```json
@@ -195,12 +201,15 @@ The `rows` array contains layout objects. Layouts can contain other layouts or v
 | Property | Type | Description |
 |----------|------|-------------|
 | `type` | `string` | The type of component (e.g., `layout`, `card`, `kpi`). |
-| `padding` | `number` | Padding in pixels. |
-| `margin` | `number` | Margin in pixels. |
+| `id` | `string` | Optional. Stable element id. Every visual with an id is a DOM anchor (0.4+), can be a link target, and can persist view state. |
+| `padding` | `number` | Padding in pixels (default 0; zero is respected as of 0.3). |
+| `margin` | `number` | Margin in pixels (default 0 as of 0.3 — spacing is owned by layout `gap`). |
 | `border` | `boolean/string` | CSS border or boolean to enable default. |
 | `shadow` | `boolean/string` | CSS box-shadow or boolean to enable default. |
-| `flex` | `number` | Flex grow value. |
+| `flex` | `number` | Flex grow value (`flex: 0` is respected as of 0.3). |
 | `modalId` | `string` | Optional. The ID of a modal to open when the element is hovered and the expand icon is clicked. |
+| `filter` | `FilterExpression` | Optional (0.3+). Client-side filter applied to this visual's view of its dataset. See [Filtering & Aggregation](#filtering--aggregation-03). |
+| `aggregate` | `AggregateSpec` | Optional (0.3+). Client-side aggregation applied after `filter`. |
 
 #### Layout Component (`type: "layout"`)
 
@@ -208,8 +217,14 @@ The `rows` array contains layout objects. Layouts can contain other layouts or v
 |----------|------|-------------|
 | `direction` | `'row' \| 'column' \| 'grid'` | Direction of children. |
 | `columns` | `number` | Optional. Number of columns for grid layout (default: 3). |
-| `gap` | `string \| number` | Optional. Gap between elements (default: 10px for grid). |
-| `children` | `Array` | Array of child elements (Layouts or Visuals). |
+| `gap` | `string \| number` | Optional. Gap between elements (default: `10px` as of 0.3). |
+| `wrap` | `boolean` | Optional (0.3+). Enables flex wrapping for row/column layouts. |
+| `align` | `string` | Optional (0.3+). CSS `align-items` for row/column layouts. |
+| `justify` | `string` | Optional (0.3+). CSS `justify-content` for row/column layouts. |
+| `minChildWidth` | `number \| string` | Optional (0.3+). Responsive grid: `repeat(auto-fit, minmax(X, 1fr))`. Numbers are px. |
+| `flex` | `number` | Optional. Flex grow (default 1; honored as of 0.3). |
+| `title` | `string` | Optional. Rendered above the content in all directions. |
+| `children` | `Array` | Array of child elements (Layouts or Visuals). Untyped objects with a `children` array also render as layouts (0.3+). |
 
 #### Visual Components
 
@@ -231,6 +246,7 @@ Available variables inside `{{ ... }}`:
 - `datasets`: the datasets object from `report-data`
 - `props`: reserved for future use (currently `{}` for cards)
 - `helpers`: helper functions
+- `row` (0.4+): when the card is inside a modal opened via a table's `rowModalId`, the clicked row's values (e.g. `{{ row.Region }}`, `{{ formatCurrency(row.Amount) }}`)
 
 Convenience: the following helper functions are also available directly (they are destructured from `helpers`):
 
@@ -318,15 +334,36 @@ Displays a Key Performance Indicator with optional comparison and breach status.
 
 **6. Table (`type: "table"`)**
 
-Displays data in a tabular format with sorting, filtering, and pagination.
+Displays data in a tabular format with sorting, filtering, grouping, export, and pagination.
 
 | Property | Type | Description |
 |----------|------|-------------|
 | `columns` | `string[]` | Optional array of column names to display. Defaults to all. |
-| `pageSize` | `number` | Number of rows per page (default 10). |
+| `pageSize` | `number` | Number of rows per page (default 10). While grouped, groups per page. |
 | `tableStyle` | `'plain' \| 'bordered' \| 'alternating'` | Visual style of the table (default 'plain'). |
 | `showSearch` | `boolean` | Whether to show the search bar (default true). |
 | `title` | `string` | Optional title for the table. |
+| `sortable` | `boolean` | (0.3+) Type-aware sorting; Shift+click for multi-column sort (default true). |
+| `defaultSort` | `{column, direction}[]` | (0.3+) Initial sort, e.g. `[{"column": "Amount", "direction": "desc"}]`. |
+| `hiddenColumns` | `string[]` | (0.3+) Columns hidden initially. |
+| `allowColumnHiding` | `boolean` | (0.3+) Runtime Columns menu (default true). |
+| `groupBy` | `string` | (0.3+) Initial grouping column (collapsible groups). |
+| `groupAggregates` | `{column, fn, as?}[]` | (0.3+) Per-group aggregates shown in group headers. |
+| `groupsCollapsed` | `boolean` | (0.3+) Whether groups start collapsed (default false). |
+| `enableExport` | `boolean` | (0.3+) CSV export and clipboard copy (default true). |
+| `exportFileName` | `string` | (0.3+) File name for CSV export. |
+| `contextMenu` | `boolean` | (0.3+) Right-click menus on headers/cells (default true). |
+| `maxHeight` | `number` | (0.3+) Max body height in px; enables scrollable body + sticky header. |
+| `stickyHeader` | `boolean` | (0.3+) Defaults to true when `maxHeight` is set. |
+| `totalRow` | `boolean \| {label?, fns?}` | (0.4+) Grand-total row over the filtered data (all pages). `true` sums numeric columns, or `fns` maps column names to aggregate fns, e.g. `{"Amount": "avg"}`. Display-only. |
+| `totalColumn` | `boolean \| {label?, columns?}` | (0.4+) Per-row total column. `true` sums numeric visible columns, or pick `columns`. Display-only. |
+| `rowModal` | `boolean` | (0.4+) Double-click a row (or right-click → Open details) to open a built-in detail modal. |
+| `rowModalColumns` | `string[]` | (0.4+) Columns listed in the built-in detail modal. |
+| `rowModalTitle` | `string` | (0.4+) Title of the built-in detail modal (default 'Details'). |
+| `rowModalId` | `string` | (0.4+) Open a custom modal from `modals` instead; cards inside can use `{{ row.ColumnName }}` templates. Implies `rowModal`. |
+| `persistState` | `boolean` | (0.4+) Persist runtime sort/hidden-columns/grouping to localStorage. Defaults to true when the table has an `id`. |
+
+Set `contextMenu: false`, `enableExport: false`, `allowColumnHiding: false`, `sortable: false` to fully restore pre-0.3 behavior.
 
 **7. Checklist (`type: "checklist"`)**
 
@@ -573,6 +610,118 @@ Displays a gauge/speedometer visualization with an animated needle, optional ran
     ]
 }
 ```
+
+**14. Tabs (`type: "tabs"`, alias `"tabgroup"`)** *(0.3+)*
+
+A container visual holding tabs of arbitrary layouts/visuals. Works in rows, grids, and nested inside other tab groups. Does not require a dataset.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `tabs` | `Tab[]` | **Required.** Array of tabs. Each tab: `{ "title": string, "children": LayoutElement[] }` or `{ "title": string, "layout": Layout }` (`layout` takes precedence). |
+| `defaultTab` | `number` | Index of the initially active tab (default 0). |
+| `title` | `string` | Optional title above the tab strip. |
+| `id` | `string` | Enables active-tab persistence (0.4+) and link targeting. |
+| `persistState` | `boolean` | (0.4+) Persist the active tab (default true when `id` is set). |
+
+```json
+{
+    "type": "tabs",
+    "id": "sales-tabs",
+    "tabs": [
+        { "title": "Chart", "children": [ { "type": "line", "datasetId": "sales", "xColumn": "Month", "yColumns": ["Revenue"] } ] },
+        { "title": "Data",  "layout": { "type": "layout", "direction": "column", "children": [ { "type": "table", "datasetId": "sales" } ] } }
+    ]
+}
+```
+
+**15. Link (`type: "link"`)** *(0.4+)*
+
+Navigation element. Requires `targetId` **or** `href`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `targetId` | `string` | Id of a visual to navigate to: switches to the containing page, activates containing tabs (nested included), scrolls to the visual, and flashes it. |
+| `href` | `string` | External URL (opens in a new tab). |
+| `label` | `string` | Link text (alias: `text`). Defaults to the target/href. |
+| `linkStyle` | `'link' \| 'button'` | Rendering style (default 'link'). |
+
+Every visual with an `id` is also a DOM anchor — plain `#visual-id` hash links (including in markdown cards and deep links on page load) navigate the same way.
+
+## Filtering & Aggregation (0.3+)
+
+Any visual may declare `filter` and/or `aggregate` props — several visuals can then show different slices of one shared dataset, entirely client-side. The same grammar powers [derived datasets](#derived-datasets).
+
+### FilterExpression
+
+A filter is either a **leaf condition** or a **boolean group**; groups nest arbitrarily.
+
+```json
+{ "column": "Region", "op": "eq", "value": "West" }
+
+{ "and": [
+    { "column": "Amount", "op": "gte", "value": 200 },
+    { "or": [
+        { "column": "Region", "op": "in", "values": ["South", "West"] },
+        { "not": { "column": "Category", "op": "isNull" } }
+    ]}
+]}
+```
+
+| Field | Description |
+|-------|-------------|
+| `column` | Column name (or integer column index). |
+| `op` | `eq`, `neq`, `gt`, `gte`, `lt`, `lte`, `in`, `nin`, `contains`, `startsWith`, `endsWith`, `between`, `isNull`, `notNull`. |
+| `value` | Scalar comparison value (or `[low, high]` for `between`). |
+| `values` | Array for `in` / `nin` / `between`. |
+
+Notes: string ops are case-insensitive; `between` is inclusive; `isNull` matches null/undefined/empty-string; comparisons on date columns are date-aware. Only `table` and `records` dataset formats can be filtered.
+
+### AggregateSpec
+
+Applied after `filter`; produces one row per group (records format).
+
+```json
+{
+    "groupBy": ["Region"],
+    "aggregates": [ { "column": "Amount", "fn": "sum", "as": "Total" } ]
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `groupBy` | Non-empty array of column names/indices. |
+| `aggregates[].column` | Column to aggregate (ignored by `count`). |
+| `aggregates[].fn` | `sum`, `avg`, `min`, `max`, `count`, `countDistinct`, `first`, `last`. |
+| `aggregates[].as` | Optional output column name. **Defaults to `"{fn}_{column}"`** (e.g. `sum_Amount`) — reference that name in the visual's column props. |
+
+## Derived Datasets
+
+*(0.3+)* A dataset may declare a `source` (plus optional `filter`/`aggregate`) to be computed from another dataset at load time. Chains are supported; cycles produce a console warning.
+
+```json
+"datasets": {
+    "sales": { "id": "sales", "format": "records", "columns": ["Region", "Amount"], "data": [ ... ] },
+    "westTotals": {
+        "id": "westTotals",
+        "source": "sales",
+        "filter": { "column": "Region", "op": "eq", "value": "West" },
+        "aggregate": { "groupBy": ["Region"], "aggregates": [ { "column": "Amount", "fn": "sum", "as": "Total" } ] }
+    }
+}
+```
+
+## Persistent View State (0.4+)
+
+Runtime view changes — table sort / hidden columns / grouping, and the active tab of tab groups — are saved to localStorage and restored on reload, **per report and per visual `id`**.
+
+- A visual persists only if it has an `id`; opt out with `persistState: false`.
+- Reports are namespaced by `<meta name="report-id">` (falling back to the title, then the path). Set a stable `report-id` if the title may change.
+- Give persisted visuals **stable, unique ids** — duplicate ids break persistence and links (the validator warns).
+- Reset: right-click a visual header → **Reset view**, or the report-wide **Reset view** button in the headbar (appears only when saved customizations exist).
+
+## Config Validation (0.3+)
+
+On load, the config is validated and helpful `[datalys2]` console warnings are emitted for unknown visual types, missing datasets, bad column names, invalid filter ops, empty layouts, duplicate visual ids, unknown `rowModalId` / link `targetId`, malformed tabs, etc. Warnings never block rendering. Opt out with `<meta name="dl2-validate" content="false">`.
 
 ## Visual Elements
 
@@ -821,6 +970,32 @@ You can also place a dedicated button in your layout by using the `modal` type d
     "id": "revenue-details",
     "buttonLabel": "View Detailed Breakdown"
 }
+```
+
+#### 3. From a Table Row (0.4+)
+
+Set `rowModalId` on a table to open a custom modal when a row is double-clicked (or right-click → Open details). Cards inside the modal can reference the clicked row through `{{ row.ColumnName }}` templates:
+
+```json
+{
+    "type": "table",
+    "datasetId": "orders",
+    "rowModalId": "order-detail"
+},
+...
+"modals": [
+    {
+        "id": "order-detail",
+        "title": "Order Details",
+        "rows": [
+            { "type": "layout", "children": [
+                { "type": "card", "contentType": "md",
+                  "title": "Order — {{ row.Region }}",
+                  "text": "**Rep:** {{ row.Rep }}\n**Amount:** {{ formatCurrency(row.Amount) }}" }
+            ]}
+        ]
+    }
+]
 ```
 
 ## Example Configuration

@@ -1,9 +1,9 @@
 # Datalys2 Reporting Python API
-**Version 0.2.12**
+**Version 0.4.0**
 
 A Python library to build and compile interactive HTML reports using the Datalys2 Reporting framework.
 
-**Note:** Compatible with dl2 version 0.2.12
+**Note:** Compatible with dl2 version 0.4.0
 https://github.com/kameronbrooks/datalys2-reporting
 
 ## Installation
@@ -153,6 +153,8 @@ These are the visual types you can add via the `Layout` helpers:
 - `heatmap` (via `add_heatmap`)
 - `boxplot` (via `add_boxplot`)
 - `modal` (via `add_modal_button`)
+- `tabs` (via `add_tabs`, dl2 0.3+)
+- `link` (via `add_link`, dl2 0.4+)
 
 You can also add any viewer-supported visual type directly using `add_visual(type=..., ...)`.
 
@@ -195,10 +197,30 @@ Use this when you want to pass through viewer props that don't have a dedicated 
 | `dataset_id` | `str` | (required) | The dataset id. |
 | `title` | `str \| None` | `None` | Optional table title. |
 | `columns` | `list[str] \| None` | `None` | Optional list of columns to display. |
-| `page_size` | `int \| None` | `None` | Rows per page. |
+| `page_size` | `int \| None` | `None` | Rows per page (groups per page while grouped). |
 | `table_style` | `str \| None` | `None` | `'plain'`, `'bordered'`, or `'alternating'`. |
 | `show_search` | `bool \| None` | `None` | Whether to show the search box. |
-| `**kwargs` | `Any` | — | Additional common visual properties. |
+| `sortable` | `bool \| None` | `None` | Type-aware sorting; Shift+click multi-sort (viewer default true). |
+| `default_sort` | `list[dict] \| None` | `None` | Initial sort, e.g. `[{"column": "Amount", "direction": "desc"}]`. |
+| `hidden_columns` | `list[str] \| None` | `None` | Columns hidden initially. |
+| `allow_column_hiding` | `bool \| None` | `None` | Runtime Columns menu (viewer default true). |
+| `group_by` | `str \| None` | `None` | Initial grouping column (collapsible groups). |
+| `group_aggregates` | `list[dict] \| None` | `None` | Per-group aggregates, e.g. `[aggregates.agg("Amount", "sum")]`. |
+| `groups_collapsed` | `bool \| None` | `None` | Whether groups start collapsed. |
+| `enable_export` | `bool \| None` | `None` | CSV export / clipboard copy (viewer default true). |
+| `export_file_name` | `str \| None` | `None` | File name for CSV export. |
+| `context_menu` | `bool \| None` | `None` | Right-click context menus (viewer default true). |
+| `max_height` | `int \| None` | `None` | Max body height in px (scrollable body + sticky header). |
+| `sticky_header` | `bool \| None` | `None` | Viewer default: true when `max_height` is set. |
+| `total_row` | `bool \| dict \| None` | `None` | `True` or `{"label": ..., "fns": {"<col>": "<fn>"}}` — grand-total row (dl2 0.4+). |
+| `total_column` | `bool \| dict \| None` | `None` | `True` or `{"label": ..., "columns": [...]}` — per-row total column (dl2 0.4+). |
+| `row_modal` | `bool \| None` | `None` | Built-in row detail modal on double-click (dl2 0.4+). |
+| `row_modal_id` | `str \| None` | `None` | Open a custom modal instead; cards can use `{{ row.Col }}` templates (dl2 0.4+). |
+| `row_modal_columns` | `list[str] \| None` | `None` | Columns listed in the built-in detail modal. |
+| `row_modal_title` | `str \| None` | `None` | Title of the built-in detail modal. |
+| `id` | `str \| None` | `None` | Stable element id (persistence + link targeting). |
+| `persist_state` | `bool \| None` | `None` | Persist sort/columns/grouping (viewer default: true when `id` is set). |
+| `**kwargs` | `Any` | — | Additional common visual properties (e.g. `filter=`, `aggregate=`). |
 
 #### Card
 
@@ -388,6 +410,113 @@ Color chart elements based on whether values pass or fail a threshold. Applies t
 
 
 
+
+#### Tabs (dl2 0.3+)
+
+`row.add_tabs()` returns a `Tabs` container; `tabs.add_tab(title)` returns a full `Layout`, so every `add_*` helper works inside a tab. Tabs can be nested.
+
+```python
+tabs = page.add_row().add_tabs(id="sales-tabs", default_tab=0, title="Sales Views")
+tabs.add_tab("Chart").add_line("sales", x_column="Month", y_columns=["Revenue"])
+tabs.add_tab("Data", direction="column").add_table("sales", id="sales-table")
+```
+
+| Parameter | Type | Default | Description |
+|----------|------|---------|-------------|
+| `id` | `str \| None` | auto | Stable id — enables active-tab persistence (dl2 0.4+) and link targeting. |
+| `default_tab` | `int \| None` | `None` | Index of the initially active tab (viewer default 0). |
+| `title` | `str \| None` | `None` | Optional title above the tab strip. |
+| `**kwargs` | `Any` | — | Container props (`padding`, `border`, `shadow`, `flex`, `persist_state`, ...). |
+
+`add_tab(title, direction="column", **layout_kwargs)` — the kwargs are layout props (`gap`, `wrap`, `columns`, ...).
+
+#### Link (dl2 0.4+)
+
+Navigate to any visual with an `id` (switches page, activates containing tabs, scrolls, flashes) or to an external URL. Exactly one of `target_id` / `href` is required.
+
+```python
+row.add_link(target_id="sales-table", label="Jump to data", link_style="button")
+row.add_link(href="https://example.com", label="Docs")
+```
+
+### Filtering & Aggregation (dl2 0.3+)
+
+Any visual accepts `filter=` and `aggregate=` — several visuals can show different client-side slices of one shared dataset, with no extra data embedded in the HTML. Use the `filters` and `aggregates` builder modules (plain dicts work too); invalid operators/functions raise `ValueError` at build time.
+
+```python
+from dl2_reports import DL2Report, aggregates as A, filters as F
+
+# Filter: leaf conditions + and_/or_/not_ composition
+row.add_table(
+    "sales",
+    filter=F.and_(F.gte("Amount", 200), F.isin("Region", ["South", "West"])),
+)
+
+# Aggregate: groupBy + aggregate fns (applied after the filter)
+row.add_bar(
+    "sales",
+    x_column="Region",
+    y_columns=["sum_Amount"],   # default output name is "{fn}_{column}"
+    aggregate=A.aggregate("Region", A.agg("Amount", "sum")),
+)
+```
+
+Filter shortcuts: `eq, neq, gt, gte, lt, lte, isin, notin, contains, starts_with, ends_with, between, is_null, not_null` (plus generic `where(column, op, ...)`).
+Aggregate fns: `sum, avg, min, max, count, countDistinct, first, last`. Use `A.agg("Amount", "sum", as_="Total")` to name the output column.
+
+### Derived Datasets (dl2 0.3+)
+
+Declare a dataset computed **in the browser** from another dataset — filtered and/or aggregated at load time. Chains are supported and declaration order doesn't matter (sources are checked at `compile()`).
+
+```python
+report.add_derived_dataset(
+    "north_by_category",
+    source="sales",
+    filter=F.eq("Region", "North"),
+    aggregate=A.aggregate("Category", A.agg("Amount", "sum", as_="Total")),
+)
+page.add_row().add_table("north_by_category")
+```
+
+Note: derived values are not available to `report.get_value()` at compile time (they only exist in the browser) — compute with pandas if you need them while building.
+
+### Table Totals & Row Detail Modals (dl2 0.4+)
+
+```python
+page.add_row().add_table(
+    "orders",
+    id="orders-table",
+    total_row={"label": "Totals", "fns": {"Units": "sum", "Amount": "avg"}},
+    total_column={"columns": ["Units", "Amount"]},
+    row_modal_id="order-detail",       # or row_modal=True for the built-in modal
+)
+
+modal = report.add_modal("order-detail", "Order Details")
+modal.add_row().add_card(
+    title="Order — {{ row.Region }}",
+    text="**Rep:** {{ row.Rep }}\n**Amount:** {{ formatCurrency(row.Amount) }}",
+    content_type="md",
+)
+```
+
+The column names in `total_row["fns"]` are preserved exactly as written (they are not snake_case→camelCase converted). For your own passthrough props whose dict **keys** are column names, wrap them in `dl2_reports.RawDict` to get the same protection.
+
+### Persistent View State (dl2 0.4+)
+
+Runtime view changes (table sort/hidden columns/grouping, active tabs) are saved to localStorage per report + visual `id` and restored on reload.
+
+- Give tables/tabs a stable `id=` and the viewer persists them automatically; opt out per visual with `persist_state=False`.
+- Set a stable report identity so state survives title changes: `DL2Report(title, report_id="my-report")` or `report.set_report_id("my-report")` (emits `<meta name="report-id">`).
+- Users can reset via right-click → Reset view, or the report-wide Reset view button.
+
+### Layout Options (dl2 0.3+)
+
+Layouts own spacing now (`gap` defaults to 10px; visuals default to `margin: 0`). Rows/columns accept `wrap=True`, `align=...`, `justify=...`; grids accept `min_child_width=250` for responsive `auto-fit` columns. `flex=0` and `padding=0`/`margin=0` are respected.
+
+```python
+page.add_row(wrap=True, gap=16, justify="space-between")
+page.add_row(direction="grid", min_child_width=250)
+```
 
 ### Modals
 
