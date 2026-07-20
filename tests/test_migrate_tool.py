@@ -1,8 +1,6 @@
 """
-Tests for tools/migrate_to_v2.py — source-to-source transforms only.
-
-These tests do not require the v2 API to exist; they only assert that the tool
-produces the planned v2 syntax. Skipped entirely when libcst is not installed.
+Tests for dl2_reports.migrate — source-to-source transforms only.
+Skipped entirely when libcst is not installed.
 """
 
 import json
@@ -11,7 +9,6 @@ import sys
 import unittest
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "tools")))
 
 try:
     import libcst  # noqa: F401
@@ -20,7 +17,7 @@ except ImportError:
     HAS_LIBCST = False
 
 if HAS_LIBCST:
-    from migrate_to_v2 import transform_notebook, transform_source
+    from dl2_reports.migrate import transform_notebook, transform_source
 
 
 @unittest.skipUnless(HAS_LIBCST, "libcst not installed")

@@ -20,6 +20,11 @@ dependencies = [
     "pandas>=1.0.0",
 ]
 
+[project.optional-dependencies]
+migrate = [
+    "libcst>=1.0",
+]
+
 [project.urls]
 "Homepage" = "https://github.com/kameronbrooks/datalys2-reporting-python-api"
 "Bug Tracker" = "https://github.com/kameronbrooks/datalys2-reporting-python-api/issues"
