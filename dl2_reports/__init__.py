@@ -1,4 +1,8 @@
 from .dl2_reports import DL2Report
+from .components.visual_components import (
+    Card,
+    KPI,
+)
 from .serialization import RawDict
 from .shapes import (
     AggregateColumn,
@@ -16,6 +20,8 @@ __all__ = [
     "RawDict",
     "aggregates",
     "filters",
+    "Card",
+    "KPI",
     "AggregateColumn",
     "GaugeRange",
     "SortSpec",

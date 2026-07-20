@@ -7,28 +7,18 @@ if TYPE_CHECKING:
 
 class CardVisual:
 
-    # Mixin assumes parent class provides add_visual method
-    def add_visual(self, type: str, dataset_id: str | None = None, **kwargs) -> Optional[Visual]: ...
+    # Mixin assumes parent class provides the add_component hook
+    def add_component(self, cls: type, *args, **kwargs) -> Optional["Visual"]: ...
 
-    def add_card(self, 
-            title: str | None, 
-            text: str,
-            content_type: str | None = None,
-            **kwargs) -> Optional[Visual]:
-        """Adds a card visual.
+    def add_card(self, *args, **kwargs) -> Optional[Visual]:
+        """Adds a card visual. Legacy helper — see :class:`dl2_reports.Card` for the
+        typed parameter reference; unknown kwargs pass through for compatibility."""
+        from ..visual_components import Card
 
-        Args:
-            title: Optional title (supports template syntax in the viewer).
-            text: Main card text (supports template syntax in the viewer).
-            content_type: Optional content type for the card (e.g., "text", "html", "md").
-
-        Returns:
-            The created card visual.
-        """
-        visual_kwargs = dict(kwargs)
-        if title is not None:
-            visual_kwargs["title"] = title
-
-        visual_kwargs["text"] = text
-        visual_kwargs["content_type"] = content_type
-        return self.add_visual("card", None, **visual_kwargs)
+        # Legacy parity: add_card always emitted contentType (null when unset).
+        if len(args) < 3 and "content_type" not in kwargs:
+            kwargs["content_type"] = None
+        comp = self.add_component(Card, *args, **kwargs)
+        if comp is not None and "content_type" not in comp.props:
+            comp.props["content_type"] = None
+        return comp

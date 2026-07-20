@@ -232,5 +232,68 @@ class TestShapes(unittest.TestCase):
         self.assertEqual(d["totalRow"], {"label": "T", "fns": {"unit_price": "sum"}})
 
 
+class TestKPIAndCard(unittest.TestCase):
+    def setUp(self):
+        ReportTreeComponent.BASE_ID = 1
+        self.report = _make_report()
+        self.row = self.report.add_page("P").add_row()
+
+    def test_kpi_component_direct(self):
+        from dl2_reports import KPI
+        kpi = self.row.add(KPI("sales", value_column="amount", format="currency", row_index=0))
+        d = kpi.to_dict()
+        self.assertEqual(d["type"], "kpi")
+        self.assertEqual(d["valueColumn"], "amount")
+        self.assertEqual(d["format"], "currency")
+
+    def test_kpi_typo_raises(self):
+        from dl2_reports import KPI
+        with self.assertRaises(TypeError) as ctx:
+            KPI("sales", value_colum="amount")
+        self.assertIn("value_column", str(ctx.exception))  # did-you-mean
+
+    def test_kpi_get_value(self):
+        from dl2_reports import KPI
+        kpi = self.row.add(KPI("sales", value_column="amount", row_index=0))
+        self.assertEqual(kpi.get_value(), 1)
+
+    def test_legacy_add_kpi_same_output(self):
+        """Legacy helper and direct component construction serialize identically."""
+        ReportTreeComponent.BASE_ID = 1
+        r1 = _make_report()
+        v1 = r1.add_page("P").add_row().add_kpi(
+            dataset_id="sales", value_column="amount", title="T", row_index=0, border=True
+        )
+        ReportTreeComponent.BASE_ID = 1
+        from dl2_reports import KPI
+        r2 = _make_report()
+        v2 = r2.add_page("P").add_row().add(
+            KPI("sales", value_column="amount", title="T", row_index=0, border=True)
+        )
+        self.assertEqual(v1.to_dict(), v2.to_dict())
+
+    def test_legacy_add_kpi_unknown_kwarg_passes_through(self):
+        v = self.row.add_kpi(dataset_id="sales", value_column="amount", some_future_prop=1)
+        self.assertEqual(v.to_dict()["someFutureProp"], 1)
+
+    def test_card_component(self):
+        from dl2_reports import Card
+        card = self.row.add(Card(title="Hi", text="There", content_type="md"))
+        d = card.to_dict()
+        self.assertEqual(d["type"], "card")
+        self.assertEqual(d["contentType"], "md")
+        self.assertNotIn("datasetId", d)
+
+    def test_legacy_add_card_null_content_type_parity(self):
+        v = self.row.add_card(title="Hi", text="There")
+        self.assertIn("content_type", v.props)
+        self.assertIsNone(v.props["content_type"])
+
+    def test_kpi_chaining_on_condition(self):
+        result = self.row.on_condition(False).add_kpi(dataset_id="sales", value_column="amount")
+        self.assertIsNone(result)
+        self.assertEqual(len(self.row.children), 0)
+
+
 if __name__ == "__main__":
     unittest.main()

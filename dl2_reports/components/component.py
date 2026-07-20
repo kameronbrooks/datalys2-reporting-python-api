@@ -103,7 +103,7 @@ def split_legacy_kwargs(cls: type, kwargs: Dict[str, Any]) -> Dict[str, Any]:
     do not. This routes any kwarg the component doesn't model into ``extra`` so legacy
     call sites keep working unchanged.
     """
-    known = cls.known_props()
+    known = cls.known_props() | {"dataset_id", "extra"}
     extra = dict(kwargs.pop("extra", None) or {})
     for key in [k for k in kwargs if k not in known]:
         extra[key] = kwargs.pop(key)
