@@ -120,6 +120,54 @@ class TestAddComponentConditional(unittest.TestCase):
         self.assertEqual(w.id, "elem-3")  # report page/row consumed 1-2; no gap from the False branch
 
 
+class TestAddAndAddRow(unittest.TestCase):
+    def setUp(self):
+        ReportTreeComponent.BASE_ID = 1
+        self.report = _make_report()
+        self.page = self.report.add_page("P")
+
+    def test_add_returns_child(self):
+        row = self.page.add_row()
+        w = _Widget("sales", value_column="amount")
+        self.assertIs(row.add(w), w)
+        self.assertIs(w.parent, row)
+
+    def test_add_rejects_non_component(self):
+        row = self.page.add_row()
+        with self.assertRaises(TypeError):
+            row.add({"type": "kpi"})
+
+    def test_add_row_accepts_components(self):
+        w1 = _Widget("sales", value_column="amount")
+        w2 = _Widget("sales", value_column="region")
+        row = self.page.add_row(w1, w2, gap=16)
+        self.assertEqual(row.children, [w1, w2])
+        self.assertEqual(row.to_dict()["gap"], 16)
+
+    def test_add_row_legacy_direction_positional(self):
+        row = self.page.add_row("column")
+        self.assertEqual(row.direction, "column")
+
+    def test_add_row_direction_keyword_with_children(self):
+        w = _Widget("sales", value_column="amount")
+        row = self.page.add_row(w, direction="grid")
+        self.assertEqual(row.direction, "grid")
+        self.assertEqual(row.children, [w])
+
+    def test_modal_add_row_accepts_components(self):
+        modal = self.report.add_modal("m", "T")
+        w = _Widget("sales", value_column="amount")
+        row = modal.add_row(w)
+        self.assertEqual(row.children, [w])
+
+    def test_conditional_add(self):
+        row = self.page.add_row()
+        self.assertIsNone(row.on_condition(False).add(_Widget("sales", value_column="amount")))
+        w = _Widget("sales", value_column="amount")
+        self.assertIs(row.on_condition(True).add(w), w)
+        self.assertEqual(row.children, [w])
+
+
 class TestShapes(unittest.TestCase):
     def test_threshold_serialization(self):
         from dl2_reports import Threshold

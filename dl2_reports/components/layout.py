@@ -77,6 +77,11 @@ class CompileTimeConditional(
             return None
         return self.parent.add_component(cls, *args, **kwargs)
 
+    def add(self, child):
+        if not self.condition:
+            return None
+        return self.parent.add(child)
+
 
 
 class Layout(
@@ -136,6 +141,29 @@ class Layout(
         self.children.append(visual)
         return visual
     
+    def add(self, child: ReportTreeComponent) -> ReportTreeComponent:
+        """Adds a constructed component (visual, layout, or tabs container) to this
+        layout and returns it — the v2 entry point.
+
+        Example:
+            row.add(KPI("sales", value_column="Revenue", format="currency"))
+            row.add(Table("sales", group_by="Region")).add_element("yAxis", value=100)
+
+        Args:
+            child: Any report-tree component (e.g. a typed visual component, a
+                Visual, a Layout, or a Tabs container).
+
+        Returns:
+            The added child, for chaining.
+        """
+        if not isinstance(child, ReportTreeComponent):
+            raise TypeError(
+                f"layout.add() expects a component (Visual/Layout/Tabs), got {type(child).__name__}."
+            )
+        child.parent = self
+        self.children.append(child)
+        return child
+
     def add_component(self, cls: type, *args, **kwargs):
         """Constructs a typed component and adds it to this layout.
 

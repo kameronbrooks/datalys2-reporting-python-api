@@ -25,20 +25,30 @@ class Modal(ReportTreeComponent):
         self.description = description
         self.rows: List[Layout] = []
 
-    def add_row(self, direction: str = "row", **kwargs) -> Layout:
+    def add_row(self, *children, direction: str = "row", **kwargs) -> Layout:
         """
         Adds a layout row to the modal.
 
+        Components may be passed directly (v2 style); a single leading string
+        positional argument is treated as the layout direction (legacy).
+
         Args:
-            direction (str, optional): The flexbox direction of the row ('row' or 'column'). Defaults to "row".
+            *children: Optional components/layouts to add to the new row.
+            direction (str, optional): The flexbox direction of the row ('row', 'column',
+                or 'grid'). Defaults to "row".
             **kwargs: Additional properties for the layout.
 
         Returns:
             Layout: The newly created Layout instance.
         """
+        if children and isinstance(children[0], str):
+            direction = children[0]
+            children = children[1:]
         row = Layout(direction, **kwargs)
         row.parent = self
         self.rows.append(row)
+        for child in children:
+            row.add(child)
         return row
 
     def to_dict(self) -> Dict[str, object]:

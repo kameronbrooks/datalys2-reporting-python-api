@@ -25,20 +25,33 @@ class Page(ReportTreeComponent):
         self.last_updated = last_updated
         self.rows: List[Layout] = []
 
-    def add_row(self, direction: str = "row", **kwargs) -> Layout:
+    def add_row(self, *children, direction: str = "row", **kwargs) -> Layout:
         """
         Adds a layout row to the page.
 
+        Components may be passed directly (v2 style):
+            page.add_row(KPI("sales", value_column="Revenue"), Card(title="Hi", text="..."))
+
+        For backward compatibility, a single leading string positional argument is
+        treated as the layout direction: ``page.add_row("column")``.
+
         Args:
-            direction (str, optional): The flexbox direction of the row ('row' or 'column'). Defaults to "row".
-            **kwargs: Additional properties for the layout.
+            *children: Optional components/layouts to add to the new row.
+            direction (str, optional): The flexbox direction of the row ('row', 'column',
+                or 'grid'). Defaults to "row".
+            **kwargs: Additional properties for the layout (gap, wrap, align, ...).
 
         Returns:
             Layout: The newly created Layout instance.
         """
+        if children and isinstance(children[0], str):
+            direction = children[0]
+            children = children[1:]
         row = Layout(direction, **kwargs)
         row.parent = self
         self.rows.append(row)
+        for child in children:
+            row.add(child)
         return row
 
     def to_dict(self) -> Dict[str, object]:
