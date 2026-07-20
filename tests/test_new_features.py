@@ -226,12 +226,12 @@ class TestTabs(unittest.TestCase):
 
     def test_on_condition_false(self):
         result = self.row.on_condition(False).add_tabs(id="cond-tabs")
-        self.assertIsNone(result)
+        self.assertFalse(bool(result))
         self.assertEqual(len(self.row.children), 0)
 
     def test_on_condition_false_add_layout(self):
         result = self.row.on_condition(False).add_layout("column")
-        self.assertIsNone(result)
+        self.assertFalse(bool(result))
         self.assertEqual(len(self.row.children), 0)
 
 
@@ -338,7 +338,7 @@ class TestLinkVisual(unittest.TestCase):
 
     def test_on_condition_forwarding(self):
         result = self.row.on_condition(False).add_link(target_id="x")
-        self.assertIsNone(result)
+        self.assertFalse(bool(result))
         self.assertEqual(len(self.row.children), 0)
 
 

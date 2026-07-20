@@ -60,7 +60,7 @@ class TestOnConditionTrue(unittest.TestCase):
 
 
 class TestOnConditionFalse(unittest.TestCase):
-    """When condition=False NO visual is added and a NullVisual is returned."""
+    """When condition=False NO visual is added and a falsy NullComponent is returned."""
 
     def setUp(self):
         ReportTreeComponent.BASE_ID = 1
@@ -68,9 +68,10 @@ class TestOnConditionFalse(unittest.TestCase):
         self.page = self.report.add_page("Page")
         self.row = self.page.add_row()
 
-    def test_returns_none(self):
+    def test_returns_null_component(self):
+        from dl2_reports.components.layout import NullComponent
         result = self.row.on_condition(False).add_card(title="Hi", text="There")
-        self.assertIsNone(result)
+        self.assertIsInstance(result, NullComponent)
 
     def test_no_visual_added_to_row(self):
         self.row.on_condition(False).add_card(title="Hi", text="There")
@@ -80,15 +81,19 @@ class TestOnConditionFalse(unittest.TestCase):
         result = self.row.on_condition(False).add_card(title="Hi", text="There")
         self.assertFalse(bool(result))
 
-    def test_caller_guards_none_before_chaining(self):
-        """on_condition(False) returns None; callers should guard before chaining."""
+    def test_chaining_is_safe_without_guard(self):
+        """Chained calls on the NullComponent are silently absorbed."""
         result = self.row.on_condition(False).add_scatter(
             dataset_id="sales", x_column="revenue", y_column="revenue"
+        ).add_trend(color="red").add_element("yAxis", value=1)
+        self.assertFalse(bool(result))
+        self.assertEqual(len(self.row.children), 0)
+
+    def test_get_value_returns_none(self):
+        result = self.row.on_condition(False).add_kpi(
+            dataset_id="sales", value_column="revenue", row_index=0
         )
-        self.assertIsNone(result)
-        # Correct pattern: check before chaining
-        if result is not None:
-            result.add_trend()
+        self.assertIsNone(result.get_value())
 
     def test_multiple_false_conditions_do_not_add_visuals(self):
         self.row.on_condition(False).add_kpi(dataset_id="sales", value_column="revenue")

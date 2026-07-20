@@ -116,7 +116,7 @@ class TestAddComponentConditional(unittest.TestCase):
 
     def test_condition_false_returns_none_and_consumes_no_id(self):
         result = self.row.on_condition(False).add_component(_Widget, "sales", value_column="amount")
-        self.assertIsNone(result)
+        self.assertFalse(bool(result))
         self.assertEqual(len(self.row.children), 0)
         w = self.row.add_component(_Widget, "sales", value_column="amount")
         self.assertEqual(w.id, "elem-3")  # report page/row consumed 1-2; no gap from the False branch
@@ -164,7 +164,7 @@ class TestAddAndAddRow(unittest.TestCase):
 
     def test_conditional_add(self):
         row = self.page.add_row()
-        self.assertIsNone(row.on_condition(False).add(_Widget("sales", value_column="amount")))
+        self.assertFalse(bool(row.on_condition(False).add(_Widget("sales", value_column="amount"))))
         w = _Widget("sales", value_column="amount")
         self.assertIs(row.on_condition(True).add(w), w)
         self.assertEqual(row.children, [w])
@@ -293,7 +293,7 @@ class TestKPIAndCard(unittest.TestCase):
 
     def test_kpi_chaining_on_condition(self):
         result = self.row.on_condition(False).add_kpi(dataset_id="sales", value_column="amount")
-        self.assertIsNone(result)
+        self.assertFalse(bool(result))
         self.assertEqual(len(self.row.children), 0)
 
 

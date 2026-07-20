@@ -7,6 +7,37 @@ from .base import ReportTreeComponent
 from .component import split_legacy_kwargs
 from .visual import Visual
 
+
+class NullComponent:
+    """Chain-safe no-op returned by ``on_condition(False).add_*``.
+
+    Falsy like the old ``None`` return, but any further chained call
+    (``.add_trend()``, ``.add_element()``, ...) is silently absorbed instead of
+    raising ``AttributeError``. Nothing is ever added to the report tree.
+    """
+
+    def __bool__(self) -> bool:
+        return False
+
+    def __repr__(self) -> str:
+        return "<NullComponent (condition was False)>"
+
+    @property
+    def props(self):
+        return {}
+
+    def get_value(self):
+        return None
+
+    def __getattr__(self, name):
+        def _noop(*args, **kwargs):
+            return self
+
+        return _noop
+
+
+NULL_COMPONENT = NullComponent()
+
 from .visuals import (
     KPIVisual,
     TableVisual,
@@ -57,29 +88,29 @@ class CompileTimeConditional(
         self.parent = parent
         self.condition = condition
 
-    def add_visual(self, type: str, dataset_id: Optional[str] = None, visual: Optional[Visual] = None, **kwargs) -> Optional[Visual]:
+    def add_visual(self, type: str, dataset_id: Optional[str] = None, visual: Optional[Visual] = None, **kwargs) -> Any:
         if not self.condition:
-            return None
+            return NULL_COMPONENT
         return self.parent.add_visual(type, dataset_id, visual=visual, **kwargs)
 
-    def add_tabs(self, id: Optional[str] = None, default_tab: Optional[int] = None, title: Optional[str] = None, **kwargs):
+    def add_tabs(self, id: Optional[str] = None, default_tab: Optional[int] = None, title: Optional[str] = None, **kwargs) -> Any:
         if not self.condition:
-            return None
+            return NULL_COMPONENT
         return self.parent.add_tabs(id=id, default_tab=default_tab, title=title, **kwargs)
 
-    def add_layout(self, direction: str = "row", **kwargs) -> Optional[Layout]:
+    def add_layout(self, direction: str = "row", **kwargs) -> Any:
         if not self.condition:
-            return None
+            return NULL_COMPONENT
         return self.parent.add_layout(direction, **kwargs)
 
-    def add_component(self, cls: type, *args, **kwargs):
+    def add_component(self, cls: type, *args, **kwargs) -> Any:
         if not self.condition:
-            return None
+            return NULL_COMPONENT
         return self.parent.add_component(cls, *args, **kwargs)
 
-    def add(self, child):
+    def add(self, child) -> Any:
         if not self.condition:
-            return None
+            return NULL_COMPONENT
         return self.parent.add(child)
 
 
