@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filters Report</title>
+    <meta name="dl-version" content="0.4.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="last-updated" content="01-01-2024 12:00:00">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Filtered",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "table",
+                            "elementType": "visual",
+                            "id": "elem-3",
+                            "datasetId": "sales",
+                            "filter": {
+                                "and": [
+                                    {
+                                        "column": "Amount",
+                                        "op": "gte",
+                                        "value": 200
+                                    },
+                                    {
+                                        "column": "Region",
+                                        "op": "in",
+                                        "values": [
+                                            "South",
+                                            "West"
+                                        ]
+                                    }
+                                ]
+                            },
+                            "title": "Big Sales"
+                        },
+                        {
+                            "type": "clusteredBar",
+                            "elementType": "visual",
+                            "id": "elem-4",
+                            "datasetId": "sales",
+                            "title": "By Region",
+                            "aggregate": {
+                                "groupBy": [
+                                    "Region"
+                                ],
+                                "aggregates": [
+                                    {
+                                        "column": "Amount",
+                                        "fn": "sum"
+                                    }
+                                ]
+                            },
+                            "xColumn": "Region",
+                            "yColumns": [
+                                "sum_Amount"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "table",
+                            "elementType": "visual",
+                            "id": "elem-6",
+                            "datasetId": "north_by_category",
+                            "title": "North by Category"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "sales": {
+            "id": "sales",
+            "format": "records",
+            "columns": [
+                "Region",
+                "Category",
+                "Amount"
+            ],
+            "dtypes": [
+                "string",
+                "string",
+                "number"
+            ],
+            "data": [
+                {
+                    "Region": "North",
+                    "Category": "A",
+                    "Amount": 100
+                },
+                {
+                    "Region": "South",
+                    "Category": "B",
+                    "Amount": 200
+                },
+                {
+                    "Region": "North",
+                    "Category": "A",
+                    "Amount": 300
+                },
+                {
+                    "Region": "West",
+                    "Category": "B",
+                    "Amount": 400
+                }
+            ]
+        },
+        "north_by_category": {
+            "id": "north_by_category",
+            "source": "sales",
+            "filter": {
+                "column": "Region",
+                "op": "eq",
+                "value": "North"
+            },
+            "aggregate": {
+                "groupBy": [
+                    "Category"
+                ],
+                "aggregates": [
+                    {
+                        "column": "Amount",
+                        "fn": "sum",
+                        "as": "Total"
+                    }
+                ]
+            }
+        }
+    }
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabs Report</title>
+    <meta name="dl-version" content="0.4.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="last-updated" content="01-01-2024 12:00:00">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Tabs",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "tabs",
+                            "elementType": "visual",
+                            "id": "sales-tabs",
+                            "tabs": [
+                                {
+                                    "title": "Chart",
+                                    "layout": {
+                                        "type": "layout",
+                                        "direction": "column",
+                                        "children": [
+                                            {
+                                                "type": "line",
+                                                "elementType": "visual",
+                                                "id": "elem-5",
+                                                "datasetId": "sales",
+                                                "xColumn": "Month",
+                                                "yColumns": [
+                                                    "Revenue"
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "title": "Data",
+                                    "layout": {
+                                        "type": "layout",
+                                        "direction": "column",
+                                        "children": [
+                                            {
+                                                "type": "table",
+                                                "elementType": "visual",
+                                                "id": "sales-table",
+                                                "datasetId": "sales"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "title": "About",
+                                    "layout": {
+                                        "type": "layout",
+                                        "direction": "column",
+                                        "children": [
+                                            {
+                                                "type": "card",
+                                                "elementType": "visual",
+                                                "id": "elem-9",
+                                                "title": "Info",
+                                                "text": "Monthly revenue.",
+                                                "contentType": "text"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "defaultTab": 0,
+                            "title": "Sales Views"
+                        },
+                        {
+                            "type": "link",
+                            "elementType": "visual",
+                            "id": "elem-10",
+                            "targetId": "sales-table",
+                            "label": "Jump to data",
+                            "linkStyle": "button"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "sales": {
+            "id": "sales",
+            "format": "records",
+            "columns": [
+                "Month",
+                "Revenue"
+            ],
+            "dtypes": [
+                "string",
+                "number"
+            ],
+            "data": [
+                {
+                    "Month": "Jan",
+                    "Revenue": 100
+                },
+                {
+                    "Month": "Feb",
+                    "Revenue": 150
+                },
+                {
+                    "Month": "Mar",
+                    "Revenue": 200
+                }
+            ]
+        }
+    }
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>

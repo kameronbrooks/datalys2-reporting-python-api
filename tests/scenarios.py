@@ -2,7 +2,7 @@
 import pandas as pd
 import datetime
 import numpy as np
-from dl2_reports import DL2Report
+from dl2_reports import DL2Report, aggregates as A, filters as F
 
 def simple_kpi_report():
     report = DL2Report("Simple KPI Report", "A test report with a simple KPI", author="Test Bot")
@@ -235,6 +235,102 @@ def gauge_report():
     page.add_row().add_gauge(dataset_id="sensors", value_column="Value", value_min=0, value_max=120, title="Speedometer")
     return report
 
+def tabs_report():
+    report = DL2Report("Tabs Report")
+    df = pd.DataFrame({
+        "Month": ["Jan", "Feb", "Mar"],
+        "Revenue": [100, 150, 200]
+    })
+    report.add_df("sales", df)
+    page = report.add_page("Tabs")
+    row = page.add_row()
+
+    tabs = row.add_tabs(id="sales-tabs", default_tab=0, title="Sales Views")
+    tabs.add_tab("Chart").add_line(dataset_id="sales", x_column="Month", y_columns=["Revenue"])
+    tabs.add_tab("Data", direction="column").add_table(dataset_id="sales", id="sales-table")
+    tabs.add_tab("About").add_card(title="Info", text="Monthly revenue.", content_type="text")
+
+    row.add_link(target_id="sales-table", label="Jump to data", link_style="button")
+    return report
+
+
+def filters_report():
+    report = DL2Report("Filters Report")
+    df = pd.DataFrame({
+        "Region": ["North", "South", "North", "West"],
+        "Category": ["A", "B", "A", "B"],
+        "Amount": [100, 200, 300, 400]
+    })
+    report.add_df("sales", df)
+
+    # Derived dataset: filtered + aggregated in the browser at load time
+    report.add_derived_dataset(
+        "north_by_category",
+        "sales",
+        filter=F.eq("Region", "North"),
+        aggregate=A.aggregate("Category", A.agg("Amount", "sum", as_="Total")),
+    )
+
+    page = report.add_page("Filtered")
+    row = page.add_row()
+
+    # Per-visual filter: same shared dataset, different slice
+    row.add_table(
+        dataset_id="sales",
+        title="Big Sales",
+        filter=F.and_(F.gte("Amount", 200), F.isin("Region", ["South", "West"])),
+    )
+
+    # Per-visual aggregate
+    row.add_bar(
+        dataset_id="sales",
+        x_column="Region",
+        y_columns=["sum_Amount"],
+        title="By Region",
+        aggregate=A.aggregate("Region", A.agg("Amount", "sum")),
+    )
+
+    page.add_row().add_table(dataset_id="north_by_category", title="North by Category")
+    return report
+
+
+def table_features_report():
+    report = DL2Report("Table Features Report", report_id="table-features")
+    df = pd.DataFrame({
+        "Region": ["North", "South", "East"],
+        "Rep": ["Alice", "Bob", "Cara"],
+        "Units": [10, 20, 30],
+        "Amount": [100.0, 200.0, 300.0]
+    })
+    report.add_df("orders", df)
+
+    modal = report.add_modal("order-detail", "Order Details")
+    modal.add_row().add_card(
+        title="Order — {{ row.Region }}",
+        text="**Rep:** {{ row.Rep }}\n**Amount:** {{ formatCurrency(row.Amount) }}",
+        content_type="md",
+    )
+
+    page = report.add_page("Orders")
+    page.add_row().add_table(
+        dataset_id="orders",
+        id="orders-table",
+        title="Orders",
+        page_size=25,
+        max_height=400,
+        default_sort=[{"column": "Amount", "direction": "desc"}],
+        hidden_columns=["Rep"],
+        group_by="Region",
+        group_aggregates=[A.agg("Amount", "sum")],
+        total_row={"label": "Totals", "fns": {"Units": "sum", "Amount": "sum"}},
+        total_column={"label": "Total", "columns": ["Units", "Amount"]},
+        row_modal_id="order-detail",
+        persist_state=True,
+        export_file_name="orders.csv",
+    )
+    return report
+
+
 scenarios = {
     "simple_kpi": simple_kpi_report,
     "date_types": date_types_report,
@@ -249,5 +345,8 @@ scenarios = {
     "histogram": histogram_report,
     "heatmap": heatmap_report,
     "boxplot": boxplot_report,
-    "gauge": gauge_report
+    "gauge": gauge_report,
+    "tabs": tabs_report,
+    "filters": filters_report,
+    "table_features": table_features_report
 }

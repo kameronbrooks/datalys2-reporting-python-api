@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table Features Report</title>
+    <meta name="dl-version" content="0.4.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="last-updated" content="01-01-2024 12:00:00">
+    <meta name="report-id" content="table-features">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Orders",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "table",
+                            "elementType": "visual",
+                            "id": "orders-table",
+                            "datasetId": "orders",
+                            "title": "Orders",
+                            "pageSize": 25,
+                            "defaultSort": [
+                                {
+                                    "column": "Amount",
+                                    "direction": "desc"
+                                }
+                            ],
+                            "hiddenColumns": [
+                                "Rep"
+                            ],
+                            "groupBy": "Region",
+                            "groupAggregates": [
+                                {
+                                    "column": "Amount",
+                                    "fn": "sum"
+                                }
+                            ],
+                            "exportFileName": "orders.csv",
+                            "maxHeight": 400,
+                            "totalRow": {
+                                "label": "Totals",
+                                "fns": {
+                                    "Units": "sum",
+                                    "Amount": "sum"
+                                }
+                            },
+                            "totalColumn": {
+                                "label": "Total",
+                                "columns": [
+                                    "Units",
+                                    "Amount"
+                                ]
+                            },
+                            "rowModalId": "order-detail",
+                            "persistState": true
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "orders": {
+            "id": "orders",
+            "format": "records",
+            "columns": [
+                "Region",
+                "Rep",
+                "Units",
+                "Amount"
+            ],
+            "dtypes": [
+                "string",
+                "string",
+                "number",
+                "number"
+            ],
+            "data": [
+                {
+                    "Region": "North",
+                    "Rep": "Alice",
+                    "Units": 10,
+                    "Amount": 100.0
+                },
+                {
+                    "Region": "South",
+                    "Rep": "Bob",
+                    "Units": 20,
+                    "Amount": 200.0
+                },
+                {
+                    "Region": "East",
+                    "Rep": "Cara",
+                    "Units": 30,
+                    "Amount": 300.0
+                }
+            ]
+        }
+    },
+    "modals": [
+        {
+            "id": "order-detail",
+            "title": "Order Details",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "card",
+                            "elementType": "visual",
+                            "id": "elem-3",
+                            "title": "Order \u2014 {{ row.Region }}",
+                            "text": "**Rep:** {{ row.Rep }}\n**Amount:** {{ formatCurrency(row.Amount) }}",
+                            "contentType": "md"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>
