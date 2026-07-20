@@ -75,10 +75,13 @@ class VisualComponent(Visual):
                 f"Use extra={{...}} to pass unmodeled viewer props through explicitly."
             )
 
-        props: Dict[str, Any] = {k: v for k, v in (specific or {}).items() if v is not None}
-        props.update({k: v for k, v in common.items() if v is not None})
+        # Assembly order mirrors the legacy helpers (which JSON key order follows):
+        # passthrough props first (common + extra), then the component's own props
+        # in declaration order.
+        props: Dict[str, Any] = {k: v for k, v in common.items() if v is not None}
         if extra:
             props.update(extra)
+        props.update({k: v for k, v in (specific or {}).items() if v is not None})
 
         super().__init__(self.TYPE, dataset_id, **props)
 

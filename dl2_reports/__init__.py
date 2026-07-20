@@ -2,6 +2,7 @@ from .dl2_reports import DL2Report
 from .components.visual_components import (
     Card,
     KPI,
+    Table,
 )
 from .serialization import RawDict
 from .shapes import (
@@ -22,6 +23,7 @@ __all__ = [
     "filters",
     "Card",
     "KPI",
+    "Table",
     "AggregateColumn",
     "GaugeRange",
     "SortSpec",

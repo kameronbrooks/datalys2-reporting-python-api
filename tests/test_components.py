@@ -295,5 +295,62 @@ class TestKPIAndCard(unittest.TestCase):
         self.assertEqual(len(self.row.children), 0)
 
 
+class TestTableComponent(unittest.TestCase):
+    def setUp(self):
+        ReportTreeComponent.BASE_ID = 1
+        self.report = _make_report()
+        self.row = self.report.add_page("P").add_row()
+
+    def test_full_surface(self):
+        from dl2_reports import SortSpec, Table, TotalColumn, TotalRow
+        t = self.row.add(Table(
+            "sales",
+            id="tbl",
+            group_by="region",
+            default_sort=[SortSpec("amount", "desc")],
+            total_row=TotalRow(fns={"unit_price": "avg"}),
+            total_column=TotalColumn(columns=["amount"]),
+            row_modal_id="m",
+            max_height=300,
+            persist_state=False,
+        ))
+        d = t.to_dict()
+        self.assertEqual(d["id"], "tbl")
+        self.assertEqual(d["defaultSort"], [{"column": "amount", "direction": "desc"}])
+        self.assertEqual(d["totalRow"], {"fns": {"unit_price": "avg"}})
+        self.assertEqual(d["totalColumn"], {"columns": ["amount"]})
+        self.assertEqual(d["rowModalId"], "m")
+        self.assertEqual(d["persistState"], False)
+
+    def test_dict_total_row_fns_protected(self):
+        from dl2_reports import Table
+        d = Table("sales", total_row={"fns": {"unit_price": "sum"}}).to_dict()
+        self.assertEqual(d["totalRow"]["fns"], {"unit_price": "sum"})
+
+    def test_typo_raises(self):
+        from dl2_reports import Table
+        with self.assertRaises(TypeError) as ctx:
+            Table("sales", pagesize=20)
+        self.assertIn("page_size", str(ctx.exception))
+
+    def test_legacy_helper_parity(self):
+        ReportTreeComponent.BASE_ID = 1
+        r1 = _make_report()
+        v1 = r1.add_page("P").add_row().add_table(
+            "sales", title="T", page_size=5,
+            total_row={"label": "Tot", "fns": {"unit_price": "avg"}},
+            hidden_columns=["region"], custom_passthrough=1,
+        )
+        ReportTreeComponent.BASE_ID = 1
+        from dl2_reports import Table
+        r2 = _make_report()
+        v2 = r2.add_page("P").add_row().add(Table(
+            "sales", title="T", page_size=5,
+            total_row={"label": "Tot", "fns": {"unit_price": "avg"}},
+            hidden_columns=["region"], extra={"custom_passthrough": 1},
+        ))
+        self.assertEqual(v1.to_dict(), v2.to_dict())
+
+
 if __name__ == "__main__":
     unittest.main()
