@@ -401,5 +401,59 @@ class TestChartComponents(unittest.TestCase):
             Line("sales", x_column="region", y_colums=["amount"])
 
 
+class TestRemainingComponents(unittest.TestCase):
+    def setUp(self):
+        ReportTreeComponent.BASE_ID = 1
+        self.report = _make_report()
+        self.row = self.report.add_page("P").add_row()
+
+    def test_gauge_with_range_shapes(self):
+        from dl2_reports import Gauge, GaugeRange
+        d = Gauge("sales", value_column="amount",
+                  ranges=[GaugeRange(from_=0, to=50, color="red")]).to_dict()
+        self.assertEqual(d["ranges"], [{"from": 0, "to": 50, "color": "red"}])
+        self.assertEqual(d["valueColumn"], "amount")
+
+    def test_gauge_legacy_range_object(self):
+        from dl2_reports.components.visuals.Gauge import GaugeVisual
+        v = self.row.add_gauge("sales", value_column="amount",
+                               ranges=[GaugeVisual.Range(0, 50, "red")])
+        self.assertEqual(v.to_dict()["ranges"], [{"from": 0, "to": 50, "color": "red"}])
+
+    def test_link_component_validation(self):
+        from dl2_reports import Link
+        with self.assertRaises(ValueError):
+            Link()
+        with self.assertRaises(ValueError):
+            Link(target_id="a", href="b")
+        self.assertEqual(Link(target_id="a").to_dict()["targetId"], "a")
+
+    def test_modal_button(self):
+        from dl2_reports import ModalButton
+        b = self.row.add(ModalButton("details", "Open"))
+        d = b.to_dict()
+        self.assertEqual(d["type"], "modal")
+        self.assertEqual(d["id"], "details")
+        self.assertEqual(d["buttonLabel"], "Open")
+
+    def test_legacy_add_modal_button_parity(self):
+        ReportTreeComponent.BASE_ID = 1
+        r1 = _make_report()
+        v1 = r1.add_page("P").add_row().add_modal_button("details", "Open")
+        ReportTreeComponent.BASE_ID = 1
+        from dl2_reports import ModalButton
+        r2 = _make_report()
+        v2 = r2.add_page("P").add_row().add(ModalButton("details", "Open"))
+        self.assertEqual(v1.to_dict(), v2.to_dict())
+
+    def test_boxplot_and_checklist_and_histogram_and_heatmap(self):
+        from dl2_reports import Boxplot, Checklist, Heatmap, Histogram
+        self.assertEqual(Boxplot("sales", data_column="amount").to_dict()["type"], "boxplot")
+        self.assertEqual(Checklist("sales", status_column="region").to_dict()["statusColumn"], "region")
+        self.assertEqual(Histogram("sales", column="amount", bins=5).to_dict()["bins"], 5)
+        d = Heatmap("sales", x_column="region", y_column="region", value_column="amount").to_dict()
+        self.assertEqual(d["valueColumn"], "amount")
+
+
 if __name__ == "__main__":
     unittest.main()

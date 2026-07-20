@@ -201,6 +201,341 @@ class Table(VisualComponent):
         )
 
 
+class Checklist(VisualComponent):
+    """A task checklist (``type: "checklist"``) with completion status and due-date warnings."""
+
+    TYPE = "checklist"
+
+    def __init__(
+        self,
+        dataset_id: str,
+        status_column: str = None,
+        warning_column: Optional[str] = None,
+        warning_threshold: Optional[int] = None,
+        columns: Optional[List[str]] = None,
+        page_size: Optional[int] = None,
+        show_search: Optional[bool] = None,
+        extra: Optional[Dict[str, Any]] = None,
+        **common: Any,
+    ):
+        """
+        Args:
+            dataset_id: The dataset id.
+            status_column: Column containing a truthy completion value.
+            warning_column: Optional date column to evaluate for warnings.
+            warning_threshold: Days before due date to trigger warning.
+            columns: Optional subset of columns to display.
+            page_size: Rows per page.
+            show_search: Whether to show the search box.
+        """
+        super().__init__(
+            dataset_id,
+            dict(
+                status_column=status_column,
+                warning_column=warning_column,
+                warning_threshold=warning_threshold,
+                columns=columns,
+                page_size=page_size,
+                show_search=show_search,
+            ),
+            extra=extra,
+            **common,
+        )
+
+
+class Histogram(VisualComponent):
+    """A histogram (``type: "histogram"``) of a numeric column."""
+
+    TYPE = "histogram"
+
+    def __init__(
+        self,
+        dataset_id: str,
+        column: Column = None,
+        bins: Optional[int] = None,
+        color: Optional[str] = None,
+        show_labels: Optional[bool] = None,
+        x_axis_label: Optional[str] = None,
+        y_axis_label: Optional[str] = None,
+        extra: Optional[Dict[str, Any]] = None,
+        **common: Any,
+    ):
+        """
+        Args:
+            dataset_id: The dataset id.
+            column: Numeric column to bin.
+            bins: Number of bins.
+            color: Bar color.
+            show_labels: Whether to show count labels.
+            x_axis_label / y_axis_label: Axis labels.
+        """
+        super().__init__(
+            dataset_id,
+            dict(
+                column=column,
+                bins=bins,
+                color=color,
+                show_labels=show_labels,
+                x_axis_label=x_axis_label,
+                y_axis_label=y_axis_label,
+            ),
+            extra=extra,
+            **common,
+        )
+
+
+class Heatmap(VisualComponent):
+    """A heatmap matrix (``type: "heatmap"``)."""
+
+    TYPE = "heatmap"
+
+    def __init__(
+        self,
+        dataset_id: str,
+        x_column: Column = None,
+        y_column: Column = None,
+        value_column: Column = None,
+        show_cell_labels: Optional[bool] = None,
+        min_value: Optional[float] = None,
+        max_value: Optional[float] = None,
+        color: Union[str, List[str], None] = None,
+        x_axis_label: Optional[str] = None,
+        y_axis_label: Optional[str] = None,
+        extra: Optional[Dict[str, Any]] = None,
+        **common: Any,
+    ):
+        """
+        Args:
+            dataset_id: The dataset id.
+            x_column / y_column: Category columns.
+            value_column: Column for cell heat values.
+            show_cell_labels: Whether to show values inside cells.
+            min_value / max_value: Optional color-scale bounds.
+            color: D3 interpolator name (e.g. 'Viridis') or list of colors.
+            x_axis_label / y_axis_label: Axis labels.
+        """
+        super().__init__(
+            dataset_id,
+            dict(
+                x_column=x_column,
+                y_column=y_column,
+                value_column=value_column,
+                show_cell_labels=show_cell_labels,
+                min_value=min_value,
+                max_value=max_value,
+                color=color,
+                x_axis_label=x_axis_label,
+                y_axis_label=y_axis_label,
+            ),
+            extra=extra,
+            **common,
+        )
+
+
+class Gauge(VisualComponent):
+    """A gauge/speedometer (``type: "gauge"``) with animated needle and range bands."""
+
+    TYPE = "gauge"
+
+    def __init__(
+        self,
+        dataset_id: str,
+        value_column: Column = 0,
+        row_index: Optional[int] = None,
+        min_value: Optional[float] = None,
+        max_value: Optional[float] = None,
+        title: Optional[str] = None,
+        thickness: Optional[int] = None,
+        start_angle: Optional[float] = None,
+        end_angle: Optional[float] = None,
+        ranges: Optional[List[Any]] = None,
+        track_color: Optional[str] = None,
+        value_color: Optional[str] = None,
+        needle_color: Optional[str] = None,
+        show_needle: Optional[bool] = None,
+        show_value: Optional[bool] = None,
+        show_min_max: Optional[bool] = None,
+        format: Optional[str] = None,
+        rounding_precision: Optional[int] = None,
+        currency_symbol: Optional[str] = None,
+        unit: Optional[str] = None,
+        colors: Union[str, List[str], None] = None,
+        show_legend: Optional[bool] = None,
+        extra: Optional[Dict[str, Any]] = None,
+        **common: Any,
+    ):
+        """
+        Args:
+            dataset_id: The dataset id.
+            value_column: Column containing the gauge value.
+            row_index: Row index to read the value from (viewer default 0).
+            min_value / max_value: Gauge scale bounds (viewer defaults 0/100).
+            title: Optional title displayed above the gauge.
+            thickness: Arc thickness in px (viewer default 24).
+            start_angle / end_angle: Angles in radians.
+            ranges: Range bands — :class:`~dl2_reports.GaugeRange` shapes or dicts.
+            track_color / value_color / needle_color: Colors.
+            show_needle / show_value / show_min_max / show_legend: Display toggles.
+            format: 'number', 'currency', or 'percent'.
+            rounding_precision: Decimal precision (viewer default 1).
+            currency_symbol: Currency symbol (viewer default '$').
+            unit: Optional unit text below the value.
+            colors: Color palette for ranges (D3 scheme or array).
+        """
+        super().__init__(
+            dataset_id,
+            dict(
+                value_column=value_column,
+                row_index=row_index,
+                min_value=min_value,
+                max_value=max_value,
+                title=title,
+                thickness=thickness,
+                start_angle=start_angle,
+                end_angle=end_angle,
+                ranges=ranges,
+                track_color=track_color,
+                value_color=value_color,
+                needle_color=needle_color,
+                show_needle=show_needle,
+                show_value=show_value,
+                show_min_max=show_min_max,
+                format=format,
+                rounding_precision=rounding_precision,
+                currency_symbol=currency_symbol,
+                unit=unit,
+                colors=colors,
+                show_legend=show_legend,
+            ),
+            extra=extra,
+            **common,
+        )
+
+
+class Boxplot(VisualComponent):
+    """A box plot (``type: "boxplot"``): raw-data mode (``data_column``) or
+    pre-calculated mode (``min/q1/median/q3/max`` columns)."""
+
+    TYPE = "boxplot"
+
+    def __init__(
+        self,
+        dataset_id: str,
+        data_column: Optional[Column] = None,
+        category_column: Optional[Column] = None,
+        min_column: Optional[Column] = None,
+        q1_column: Optional[Column] = None,
+        median_column: Optional[Column] = None,
+        q3_column: Optional[Column] = None,
+        max_column: Optional[Column] = None,
+        mean_column: Optional[Column] = None,
+        direction: Optional[str] = None,
+        show_outliers: Optional[bool] = None,
+        color: Union[str, List[str], None] = None,
+        x_axis_label: Optional[str] = None,
+        y_axis_label: Optional[str] = None,
+        extra: Optional[Dict[str, Any]] = None,
+        **common: Any,
+    ):
+        """
+        Args:
+            dataset_id: The dataset id.
+            data_column: Raw values column (data mode).
+            category_column: Grouping/label column.
+            min_column/q1_column/median_column/q3_column/max_column/mean_column:
+                Pre-calculated stat columns.
+            direction: 'vertical' or 'horizontal'.
+            show_outliers: Whether to show outliers (data mode).
+            color: Fill color, list, or D3 scheme name.
+            x_axis_label / y_axis_label: Axis labels.
+        """
+        super().__init__(
+            dataset_id,
+            dict(
+                data_column=data_column,
+                category_column=category_column,
+                min_column=min_column,
+                q1_column=q1_column,
+                median_column=median_column,
+                q3_column=q3_column,
+                max_column=max_column,
+                mean_column=mean_column,
+                direction=direction,
+                show_outliers=show_outliers,
+                color=color,
+                x_axis_label=x_axis_label,
+                y_axis_label=y_axis_label,
+            ),
+            extra=extra,
+            **common,
+        )
+
+
+class Link(VisualComponent):
+    """A navigation link (``type: "link"``, dl2 0.4+). Requires exactly one of
+    ``target_id`` (in-report navigation) or ``href`` (external URL)."""
+
+    TYPE = "link"
+
+    def __init__(
+        self,
+        target_id: Optional[str] = None,
+        href: Optional[str] = None,
+        label: Optional[str] = None,
+        link_style: Optional[str] = None,
+        extra: Optional[Dict[str, Any]] = None,
+        **common: Any,
+    ):
+        """
+        Args:
+            target_id: Id of a visual to navigate to (switches page/tabs, scrolls, flashes).
+            href: External URL (opens in a new tab).
+            label: Link text (viewer falls back to the target/href).
+            link_style: 'link' (viewer default) or 'button'.
+
+        Raises:
+            ValueError: If neither or both of target_id and href are given.
+        """
+        if (target_id is None) == (href is None):
+            raise ValueError("Link requires exactly one of target_id or href.")
+        super().__init__(
+            None,
+            dict(
+                target_id=target_id,
+                href=href,
+                label=label,
+                link_style=link_style,
+            ),
+            extra=extra,
+            **common,
+        )
+
+
+class ModalButton(VisualComponent):
+    """A button that opens a global modal (``type: "modal"``)."""
+
+    TYPE = "modal"
+
+    def __init__(
+        self,
+        modal_id: str,
+        button_label: Optional[str] = None,
+        extra: Optional[Dict[str, Any]] = None,
+        **common: Any,
+    ):
+        """
+        Args:
+            modal_id: The global modal id to open.
+            button_label: Button label text.
+        """
+        super().__init__(
+            None,
+            dict(id=modal_id, button_label=button_label),
+            extra=extra,
+            **common,
+        )
+
+
 def _protect_total_fns(total_row: Dict[str, Any]) -> Dict[str, Any]:
     """Wraps totalRow's per-column ``fns`` mapping in RawDict so column names used
     as dict keys survive serialization verbatim."""

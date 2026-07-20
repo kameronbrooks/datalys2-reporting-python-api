@@ -236,18 +236,12 @@ class Layout(
         self.children.append(tabs)
         return tabs
 
-    def add_modal_button(self, modal_id: str, button_label: str, **kwargs) -> Optional[Visual]:
-        """Adds a modal trigger button.
+    def add_modal_button(self, *args, **kwargs) -> Optional[Visual]:
+        """Adds a modal trigger button. Legacy helper — see
+        :class:`dl2_reports.ModalButton` for the typed parameter reference."""
+        from .visual_components import ModalButton
 
-        Args:
-            modal_id: The global modal id to open.
-            button_label: Button label text.
-            **kwargs: Additional common visual properties.
-
-        Returns:
-            The created modal trigger visual.
-        """
-        return self.add_visual("modal", id=modal_id, button_label=button_label, **kwargs)
+        return self.add_component(ModalButton, *args, **kwargs)
 
     def to_dict(self) -> Dict[str, Any]:
         """Serializes this layout and its children to a JSON-ready dict."""
