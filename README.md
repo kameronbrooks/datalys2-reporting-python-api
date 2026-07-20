@@ -16,7 +16,7 @@ pip install dl2-reports
 
 ```python
 import pandas as pd
-from dl2_reports import DL2Report
+from dl2_reports import DL2Report, KPI, Table
 
 # Create a report
 report = DL2Report(title="My Report")
@@ -25,13 +25,73 @@ report = DL2Report(title="My Report")
 df = pd.DataFrame({"A": [1, 2], "B": [3, 4]})
 report.add_df("my_data", df, compress=True)
 
-# Add a page and visual
+# Add a page and visuals (typed component API)
 page = report.add_page("Overview")
-page.add_row().add_kpi("my_data", value_column="A", title="Metric A")
+page.add_row(
+    KPI("my_data", value_column="A", title="Metric A"),
+    Table("my_data", page_size=10),
+)
 
 # Save to HTML or show in Jupyter
 report.save("report.html")
 report.show()
+```
+
+## The Typed Component API (v2)
+
+Since 0.5.0 the recommended way to build reports is with **typed component classes** —
+one class per visual, imported from the package root:
+
+`KPI, Table, Card, Pie, Bar, Line, Area, Scatter, Checklist, Histogram, Heatmap, Gauge, Boxplot, Tabs, Link, ModalButton`
+
+plus typed shapes for structured props:
+
+`Threshold, SortSpec, TotalRow, TotalColumn, GaugeRange, AggregateColumn, Tab`
+
+```python
+from dl2_reports import DL2Report, Line, Table, Tabs, Tab, Threshold, TotalRow, SortSpec
+
+page.add_row(
+    Line("sales", x_column="Month", y_columns=["Revenue"],
+         threshold=Threshold(value=5000, mode="above")),
+)
+row = page.add_row()
+row.add(Table("sales",
+              id="orders-table",
+              group_by="Region",
+              default_sort=[SortSpec("Amount", "desc")],
+              total_row=TotalRow(fns={"Units": "sum", "Amount": "avg"})))
+row.add(Tabs(id="views", tabs=[
+    Tab("Chart", children=[Line("sales", x_column="Month", y_columns=["Revenue"])]),
+    Tab("Data",  children=[Table("sales")]),
+]))
+```
+
+Why it's better:
+
+- **Typos fail fast.** `Table("sales", pagesize=20)` raises `TypeError: unknown prop
+  'pagesize' (did you mean 'page_size'?)` at construction — previously it serialized
+  silently and the viewer ignored it.
+- **Autocomplete and type checking** work everywhere (the package ships `py.typed`).
+- **`extra={...}`** passes unmodeled viewer props through explicitly when you need
+  forward compatibility.
+- **`compile()` lints legacy calls too**: props the viewer doesn't know are reported as
+  `[dl2]` warnings with suggestions (`report.compile(strict=True)` turns them into errors).
+
+The legacy `row.add_kpi(...)` helpers keep working unchanged — they now delegate to the
+component classes, and their unknown kwargs still pass through (flagged by the compile
+lint). `add()` returns the component, so chaining (`.add_trend()`, `.get_value()`)
+works as before.
+
+### Migrating existing scripts
+
+A codemod ships with the package (comments and formatting preserved; requires
+`pip install dl2-reports[migrate]`):
+
+```bash
+python -m dl2_reports.migrate my_report.py            # dry run: shows a diff
+python -m dl2_reports.migrate my_report.py --write    # apply
+python -m dl2_reports.migrate notebooks/ --write      # directories & .ipynb work too
 ```
 
 ## Data Compression
@@ -727,7 +787,7 @@ detail_row = page.add_row()
 detail_row.on_condition(show_details).add_table("sales", title="Detail View")
 ```
 
-> **Tip:** Because `on_condition` returns `None` when the condition is `False`, avoid using the return value without a `None` check when the condition may be `False`.
+> **Tip:** Since 0.5.0, `on_condition(False)` returns a falsy `NullComponent` instead of `None` — chained calls like `.add_trend()` are silently absorbed, so no guard is needed. Truthiness checks (`if result:`) keep working; `is None` checks should become truthiness checks.
 
 ## Datalys2 Documentation
 
