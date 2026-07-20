@@ -120,5 +120,69 @@ class TestAddComponentConditional(unittest.TestCase):
         self.assertEqual(w.id, "elem-3")  # report page/row consumed 1-2; no gap from the False branch
 
 
+class TestShapes(unittest.TestCase):
+    def test_threshold_serialization(self):
+        from dl2_reports import Threshold
+        d = Threshold(value=80, mode="above", pass_color="#0f0", blend_width=8).to_dict()
+        self.assertEqual(d, {"value": 80, "mode": "above", "passColor": "#0f0", "blendWidth": 8})
+
+    def test_threshold_invalid_mode(self):
+        from dl2_reports import Threshold
+        with self.assertRaises(ValueError):
+            Threshold(value=80, mode="over")
+
+    def test_sort_spec(self):
+        from dl2_reports import SortSpec
+        self.assertEqual(SortSpec("Amount", "desc").to_dict(), {"column": "Amount", "direction": "desc"})
+        with self.assertRaises(ValueError):
+            SortSpec("Amount", "descending")
+
+    def test_total_row_fns_keys_raw(self):
+        from dl2_reports import TotalRow
+        from dl2_reports.serialization import RawDict
+        d = TotalRow(label="T", fns={"unit_price": "avg"}).to_dict()
+        self.assertIsInstance(d["fns"], RawDict)
+        self.assertEqual(dict(d["fns"]), {"unit_price": "avg"})
+        with self.assertRaises(ValueError):
+            TotalRow(fns={"a": "median"})
+
+    def test_total_column(self):
+        from dl2_reports import TotalColumn
+        self.assertEqual(TotalColumn(columns=["a"]).to_dict(), {"columns": ["a"]})
+
+    def test_gauge_range_from_keyword(self):
+        from dl2_reports import GaugeRange
+        d = GaugeRange(from_=0, to=50, color="red", show_plus=True).to_dict()
+        self.assertEqual(d, {"from": 0, "to": 50, "color": "red", "showPlus": True})
+
+    def test_aggregate_column_as_keyword(self):
+        from dl2_reports import AggregateColumn
+        self.assertEqual(
+            AggregateColumn("Amount", "sum", as_="Total").to_dict(),
+            {"column": "Amount", "fn": "sum", "as": "Total"},
+        )
+        with self.assertRaises(ValueError):
+            AggregateColumn("Amount", "median")
+
+    def test_shape_as_visual_prop_serializes(self):
+        from dl2_reports import Threshold
+        ReportTreeComponent.BASE_ID = 1
+        report = _make_report()
+        row = report.add_page("P").add_row()
+        visual = row.add_line("sales", x_column="region", y_columns=["amount"],
+                              threshold=Threshold(value=1.5, mode="below"))
+        d = visual.to_dict()
+        self.assertEqual(d["threshold"], {"value": 1.5, "mode": "below"})
+
+    def test_total_row_shape_through_add_table(self):
+        from dl2_reports import TotalRow
+        ReportTreeComponent.BASE_ID = 1
+        report = _make_report()
+        row = report.add_page("P").add_row()
+        visual = row.add_table("sales", total_row=TotalRow(label="T", fns={"unit_price": "sum"}))
+        d = visual.to_dict()
+        self.assertEqual(d["totalRow"], {"label": "T", "fns": {"unit_price": "sum"}})
+
+
 if __name__ == "__main__":
     unittest.main()
