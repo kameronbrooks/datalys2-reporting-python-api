@@ -57,7 +57,7 @@ def update_versions():
         content = f.read()
 
     # Regex for: **Version 0.2.6**
-    content = re.sub(
+    new_content = re.sub(
         r'\*\*Version [0-9.]+\*\*',
         f'**Version {pkg_version}**',
         content
@@ -66,9 +66,9 @@ def update_versions():
     new_content = re.sub(
         r'Compatible with dl2 version [0-9.]+',
         f'Compatible with dl2 version {dl2_version}',
-        content
+        new_content
     )
-    
+
     if content != new_content:
         with open(readme_path, 'w', encoding='utf-8') as f:
             f.write(new_content)
@@ -82,7 +82,7 @@ def update_versions():
         content = f.read()
 
     # Regex for: **Version 0.2.5**
-    content = re.sub(
+    new_content = re.sub(
         r'\*\*Version [0-9.]+\*\*',
         f'**Version {pkg_version}**',
         content
@@ -91,7 +91,7 @@ def update_versions():
     new_content = re.sub(
         r'<meta name="dl-version" content="[0-9.]+">',
         f'<meta name="dl-version" content="{dl2_version}">',
-        content
+        new_content
     )
 
     if content != new_content:
