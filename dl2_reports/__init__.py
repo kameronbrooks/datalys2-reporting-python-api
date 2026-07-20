@@ -1,4 +1,5 @@
 from .dl2_reports import DL2Report
+from .components.tabs import Tabs
 from .components.visual_components import (
     Area,
     Bar,
@@ -48,6 +49,7 @@ __all__ = [
     "Pie",
     "Scatter",
     "Table",
+    "Tabs",
     "AggregateColumn",
     "GaugeRange",
     "SortSpec",

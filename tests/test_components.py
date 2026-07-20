@@ -455,5 +455,41 @@ class TestRemainingComponents(unittest.TestCase):
         self.assertEqual(d["valueColumn"], "amount")
 
 
+class TestTabsV2(unittest.TestCase):
+    def setUp(self):
+        ReportTreeComponent.BASE_ID = 1
+        self.report = _make_report()
+        self.row = self.report.add_page("P").add_row()
+
+    def test_tabs_with_tab_shapes(self):
+        from dl2_reports import KPI, Tab, Table, Tabs
+        tabs = self.row.add(Tabs(id="views", tabs=[
+            Tab("KPI", children=[KPI("sales", value_column="amount", row_index=0)]),
+            Tab("Data", children=[Table("sales")]),
+        ]))
+        d = tabs.to_dict()
+        self.assertEqual([t["title"] for t in d["tabs"]], ["KPI", "Data"])
+        self.assertEqual(d["tabs"][0]["layout"]["children"][0]["type"], "kpi")
+        self.assertEqual(d["tabs"][1]["layout"]["children"][0]["type"], "table")
+
+    def test_tab_children_get_report(self):
+        from dl2_reports import KPI, Tab, Tabs
+        kpi = KPI("sales", value_column="amount", row_index=0)
+        self.row.add(Tabs(tabs=[Tab("T", children=[kpi])]))
+        self.assertIs(kpi.get_report(), self.report)
+        self.assertEqual(kpi.get_value(), 1)
+
+    def test_empty_tab_raises(self):
+        from dl2_reports import Tab, Tabs
+        with self.assertRaises(ValueError):
+            Tabs(tabs=[Tab("Empty")])
+
+    def test_incremental_add_tab_still_works(self):
+        from dl2_reports import Tabs
+        tabs = self.row.add(Tabs(id="t"))
+        tabs.add_tab("A").add_table("sales")
+        self.assertEqual(tabs.to_dict()["tabs"][0]["layout"]["children"][0]["type"], "table")
+
+
 if __name__ == "__main__":
     unittest.main()

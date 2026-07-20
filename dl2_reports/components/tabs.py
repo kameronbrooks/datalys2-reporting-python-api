@@ -23,16 +23,28 @@ class Tabs(ReportTreeComponent):
         id: Optional[str] = None,
         default_tab: Optional[int] = None,
         title: Optional[str] = None,
+        tabs: Optional[List[Any]] = None,
         **kwargs,
     ):
         """
         Initializes a new Tabs container.
+
+        Tabs can be declared up front (v2 style) with :class:`dl2_reports.Tab` shapes:
+
+            row.add(Tabs(id="views", tabs=[
+                Tab("Chart", children=[Line("sales", x_column="Month", y_columns=["Revenue"])]),
+                Tab("Data", children=[Table("sales")]),
+            ]))
+
+        or built incrementally with :meth:`add_tab`.
 
         Args:
             id (str, optional): Stable id for the tab group (enables active-tab
                 persistence and link/anchor targeting). Defaults to an auto id.
             default_tab (int, optional): Index of the initially active tab. Defaults to 0.
             title (str, optional): Optional title rendered above the tab strip.
+            tabs (list, optional): :class:`~dl2_reports.Tab` shapes (or equivalent
+                ``{"title", "children"|"layout"}`` dicts) declaring the tabs up front.
             **kwargs: Additional container properties (e.g. padding, margin, border,
                 shadow, flex, persist_state).
         """
@@ -46,6 +58,27 @@ class Tabs(ReportTreeComponent):
             self.props["default_tab"] = default_tab
         if title is not None:
             self.props["title"] = title
+        for tab in tabs or []:
+            self._add_tab_entry(tab)
+
+    def _add_tab_entry(self, tab: Any) -> None:
+        """Normalizes a Tab shape (or equivalent dict) into a tab entry."""
+        title = getattr(tab, "title", None) if not isinstance(tab, dict) else tab.get("title")
+        children = getattr(tab, "children", None) if not isinstance(tab, dict) else tab.get("children")
+        layout = getattr(tab, "layout", None) if not isinstance(tab, dict) else tab.get("layout")
+
+        if layout is not None:
+            if hasattr(layout, "to_dict"):
+                layout.parent = self
+            self.tab_entries.append({"title": title, "layout": layout})
+        elif children is not None:
+            entry_layout = Layout("row")
+            entry_layout.parent = self
+            for child in children:
+                entry_layout.add(child)
+            self.tab_entries.append({"title": title, "layout": entry_layout})
+        else:
+            raise ValueError(f"Tab '{title}' needs children or a layout.")
 
     def add_tab(self, title: str, direction: str = "column", **kwargs) -> Layout:
         """
@@ -72,7 +105,12 @@ class Tabs(ReportTreeComponent):
             "elementType": "visual",
             "id": self.id,
             "tabs": [
-                {"title": entry["title"], "layout": entry["layout"].to_dict()}
+                {
+                    "title": entry["title"],
+                    "layout": entry["layout"].to_dict()
+                    if hasattr(entry["layout"], "to_dict")
+                    else entry["layout"],
+                }
                 for entry in self.tab_entries
             ],
         }
