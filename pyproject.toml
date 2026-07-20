@@ -27,3 +27,6 @@ dependencies = [
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["dl2_reports*"]
+
+[tool.setuptools.package-data]
+dl2_reports = ["py.typed"]
