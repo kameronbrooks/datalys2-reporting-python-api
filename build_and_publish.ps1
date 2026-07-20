@@ -43,7 +43,8 @@ Write-Host "`nStep 4: Uploading to PyPI..." -ForegroundColor Cyan
 try {
     # Upload specifically the newly created files in dist/
     # This requires 'twine' to be installed: pip install twine
-    twine upload dist/*
+    # --skip-existing: don't fail on files already published (e.g. partial re-runs)
+    twine upload --skip-existing dist/*
     if ($LASTEXITCODE -ne 0) { throw "Upload failed." }
     Write-Host "Uploaded to PyPI successfully." -ForegroundColor Green
 }
