@@ -108,8 +108,10 @@ def split_legacy_kwargs(cls: type, kwargs: Dict[str, Any]) -> Dict[str, Any]:
     """
     known = cls.known_props() | {"dataset_id", "extra"}
     extra = dict(kwargs.pop("extra", None) or {})
-    for key in [k for k in kwargs if k not in known]:
+    routed = [k for k in kwargs if k not in known]
+    for key in routed:
         extra[key] = kwargs.pop(key)
     if extra:
         kwargs["extra"] = extra
+    kwargs["_routed_keys"] = routed
     return kwargs

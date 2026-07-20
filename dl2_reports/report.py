@@ -348,16 +348,37 @@ class DL2Report:
         """
         return self.set_meta("report-id", report_id)
 
-    def compile(self) -> str:
+    def compile(self, strict: bool = False) -> str:
         """
         Compiles the report into a complete HTML string.
+
+        Props not modeled by the known visual types are reported as warnings
+        (the JS viewer silently ignores unknown props, so typos are otherwise
+        invisible). Pass ``extra={...}`` on a component to pass unmodeled props
+        through without a warning.
+
+        Args:
+            strict (bool, optional): If True, raise instead of warning when
+                unknown props are found. Defaults to False.
 
         Returns:
             str: The full HTML content of the report.
 
         Raises:
-            ValueError: If a derived dataset references an unknown source dataset.
+            ValueError: If a derived dataset references an unknown source dataset,
+                or (with strict=True) if unknown props are found.
         """
+        from .lint import lint_report
+
+        issues = lint_report(self)
+        if issues:
+            if strict:
+                raise ValueError("Unknown props found:\n" + "\n".join(issues))
+            import warnings as _warnings
+
+            for issue in issues:
+                _warnings.warn(f"[dl2] {issue}", UserWarning, stacklevel=2)
+
         for name, ds in self.datasets.items():
             source = ds.get("source")
             if source is not None and source not in self.datasets:

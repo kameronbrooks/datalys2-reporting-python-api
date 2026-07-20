@@ -91,10 +91,12 @@ class TestSplitLegacyKwargs(unittest.TestCase):
         kwargs = split_legacy_kwargs(_Widget, {"value_column": "a", "custom_thing": 1})
         self.assertEqual(kwargs["value_column"], "a")
         self.assertEqual(kwargs["extra"], {"custom_thing": 1})
+        self.assertEqual(kwargs["_routed_keys"], ["custom_thing"])
 
     def test_known_kwargs_untouched(self):
         kwargs = split_legacy_kwargs(_Widget, {"value_column": "a", "border": True})
         self.assertNotIn("extra", kwargs)
+        self.assertEqual(kwargs["_routed_keys"], [])
 
     def test_merges_with_explicit_extra(self):
         kwargs = split_legacy_kwargs(_Widget, {"extra": {"a": 1}, "custom": 2})
@@ -489,6 +491,68 @@ class TestTabsV2(unittest.TestCase):
         tabs = self.row.add(Tabs(id="t"))
         tabs.add_tab("A").add_table("sales")
         self.assertEqual(tabs.to_dict()["tabs"][0]["layout"]["children"][0]["type"], "table")
+
+
+class TestCompileLint(unittest.TestCase):
+    def setUp(self):
+        ReportTreeComponent.BASE_ID = 1
+        self.report = _make_report()
+        self.page = self.report.add_page("P")
+        self.row = self.page.add_row()
+
+    def test_clean_report_no_issues(self):
+        from dl2_reports.lint import lint_report
+        self.row.add_table("sales", page_size=5)
+        self.assertEqual(lint_report(self.report), [])
+
+    def test_legacy_typo_flagged(self):
+        from dl2_reports.lint import lint_report
+        self.row.add_table("sales", pagesize=20)
+        issues = lint_report(self.report)
+        self.assertEqual(len(issues), 1)
+        self.assertIn("pagesize", issues[0])
+        self.assertIn("pageSize", issues[0])  # did-you-mean
+
+    def test_camel_spelling_not_flagged(self):
+        from dl2_reports.lint import lint_report
+        self.row.add_table("sales", pageSize=20)  # camel spelling works at runtime
+        self.assertEqual(lint_report(self.report), [])
+
+    def test_explicit_extra_not_flagged(self):
+        from dl2_reports import Table
+        from dl2_reports.lint import lint_report
+        self.row.add(Table("sales", extra={"future_viewer_prop": 1}))
+        self.assertEqual(lint_report(self.report), [])
+
+    def test_layout_prop_typo_flagged(self):
+        from dl2_reports.lint import lint_report
+        self.page.add_row(direction="grid", colums=2)
+        issues = lint_report(self.report)
+        self.assertTrue(any("colums" in i and "columns" in i for i in issues))
+
+    def test_generic_add_visual_checked_when_type_known(self):
+        from dl2_reports.lint import lint_report
+        self.row.add_visual("kpi", "sales", value_colum="amount")
+        issues = lint_report(self.report)
+        self.assertTrue(any("value_colum" in i for i in issues))
+
+    def test_generic_add_visual_unknown_type_skipped(self):
+        from dl2_reports.lint import lint_report
+        self.row.add_visual("text", title="Left", anything_goes=1)
+        self.assertEqual(lint_report(self.report), [])
+
+    def test_compile_warns_not_raises(self):
+        import warnings as w
+        self.row.add_table("sales", pagesize=20)
+        with w.catch_warnings(record=True) as caught:
+            w.simplefilter("always")
+            self.report.compile()
+        self.assertTrue(any("pagesize" in str(c.message) for c in caught))
+
+    def test_compile_strict_raises(self):
+        self.row.add_table("sales", pagesize=20)
+        with self.assertRaises(ValueError):
+            self.report.compile(strict=True)
 
 
 if __name__ == "__main__":

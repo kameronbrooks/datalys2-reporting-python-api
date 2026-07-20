@@ -171,7 +171,12 @@ class Layout(
         routed into its ``extra`` passthrough dict for backward compatibility.
         Direct v2 usage constructs the component itself and calls :meth:`add`.
         """
-        comp = cls(*args, **split_legacy_kwargs(cls, dict(kwargs)))
+        kwargs = split_legacy_kwargs(cls, dict(kwargs))
+        routed = kwargs.pop("_routed_keys", [])
+        comp = cls(*args, **kwargs)
+        # Routed (unmodeled) kwargs are flagged by the compile-time lint; explicit
+        # extra={} passthrough is not.
+        comp._legacy_extra_keys = routed
         comp.parent = self
         self.children.append(comp)
         return comp
