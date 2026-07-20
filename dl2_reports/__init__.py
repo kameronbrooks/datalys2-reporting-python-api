@@ -1,7 +1,12 @@
 from .dl2_reports import DL2Report
 from .components.visual_components import (
+    Area,
+    Bar,
     Card,
     KPI,
+    Line,
+    Pie,
+    Scatter,
     Table,
 )
 from .serialization import RawDict
@@ -21,8 +26,13 @@ __all__ = [
     "RawDict",
     "aggregates",
     "filters",
+    "Area",
+    "Bar",
     "Card",
     "KPI",
+    "Line",
+    "Pie",
+    "Scatter",
     "Table",
     "AggregateColumn",
     "GaugeRange",

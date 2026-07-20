@@ -213,6 +213,257 @@ def _protect_total_fns(total_row: Dict[str, Any]) -> Dict[str, Any]:
     return total_row
 
 
+class Pie(VisualComponent):
+    """A pie/donut chart (``type: "pie"``)."""
+
+    TYPE = "pie"
+
+    def __init__(
+        self,
+        dataset_id: str,
+        category_column: Column = None,
+        value_column: Column = None,
+        inner_radius: Optional[int] = None,
+        show_legend: Optional[bool] = None,
+        extra: Optional[Dict[str, Any]] = None,
+        **common: Any,
+    ):
+        """
+        Args:
+            dataset_id: The dataset id.
+            category_column: Column for slice labels.
+            value_column: Column for slice values.
+            inner_radius: Inner radius for donut styling.
+            show_legend: Whether to show the legend.
+        """
+        super().__init__(
+            dataset_id,
+            dict(
+                category_column=category_column,
+                value_column=value_column,
+                inner_radius=inner_radius,
+                show_legend=show_legend,
+            ),
+            extra=extra,
+            **common,
+        )
+
+
+class Bar(VisualComponent):
+    """A clustered or stacked bar chart (``type: "clusteredBar"`` / ``"stackedBar"``,
+    controlled by ``stacked=``)."""
+
+    TYPE = "clusteredBar"
+
+    def __init__(
+        self,
+        dataset_id: str,
+        x_column: Column = None,
+        y_columns: Optional[List[str]] = None,
+        stacked: bool = False,
+        x_axis_label: Optional[str] = None,
+        y_axis_label: Optional[str] = None,
+        show_legend: Optional[bool] = None,
+        show_labels: Optional[bool] = None,
+        horizontal: Optional[bool] = None,
+        threshold: Optional[Any] = None,
+        extra: Optional[Dict[str, Any]] = None,
+        **common: Any,
+    ):
+        """
+        Args:
+            dataset_id: The dataset id.
+            x_column: Column for X-axis categories.
+            y_columns: Series columns for Y values.
+            stacked: If True, uses stacked bars; otherwise clustered.
+            x_axis_label / y_axis_label: Axis labels.
+            show_legend / show_labels: Legend / value-label toggles.
+            horizontal: Whether to render bars horizontally (viewer-dependent).
+            threshold: :class:`~dl2_reports.Threshold` or dict (clustered only).
+        """
+        self.TYPE = "stackedBar" if stacked else "clusteredBar"
+        super().__init__(
+            dataset_id,
+            dict(
+                x_column=x_column,
+                y_columns=y_columns,
+                x_axis_label=x_axis_label,
+                y_axis_label=y_axis_label,
+                threshold=threshold,
+                show_legend=show_legend,
+                show_labels=show_labels,
+                horizontal=horizontal,
+            ),
+            extra=extra,
+            **common,
+        )
+
+
+class Line(VisualComponent):
+    """A line chart (``type: "line"``)."""
+
+    TYPE = "line"
+
+    def __init__(
+        self,
+        dataset_id: str,
+        x_column: Column = None,
+        y_columns: Union[List[str], str, None] = None,
+        smooth: Optional[bool] = None,
+        show_legend: Optional[bool] = None,
+        show_labels: Optional[bool] = None,
+        min_y: Optional[float] = None,
+        max_y: Optional[float] = None,
+        colors: Optional[List[str]] = None,
+        threshold: Optional[Any] = None,
+        x_axis_label: Optional[str] = None,
+        y_axis_label: Optional[str] = None,
+        extra: Optional[Dict[str, Any]] = None,
+        **common: Any,
+    ):
+        """
+        Args:
+            dataset_id: The dataset id.
+            x_column: Column for X values (time or category).
+            y_columns: Column(s) for Y series.
+            smooth: Whether to render smooth curves.
+            show_legend / show_labels: Legend / value-label toggles.
+            min_y / max_y: Optional Y-axis bounds.
+            colors: Optional list of series colors.
+            threshold: :class:`~dl2_reports.Threshold` or dict.
+            x_axis_label / y_axis_label: Axis labels.
+        """
+        super().__init__(
+            dataset_id,
+            dict(
+                x_column=x_column,
+                y_columns=y_columns,
+                smooth=smooth,
+                show_legend=show_legend,
+                show_labels=show_labels,
+                min_y=min_y,
+                max_y=max_y,
+                colors=colors,
+                threshold=threshold,
+                x_axis_label=x_axis_label,
+                y_axis_label=y_axis_label,
+            ),
+            extra=extra,
+            **common,
+        )
+
+
+class Area(VisualComponent):
+    """An area chart (``type: "area"``) — line chart features plus fill options."""
+
+    TYPE = "area"
+
+    def __init__(
+        self,
+        dataset_id: str,
+        x_column: Column = None,
+        y_columns: Union[List[str], str, None] = None,
+        smooth: Optional[bool] = None,
+        show_line: Optional[bool] = None,
+        show_markers: Optional[bool] = None,
+        fill_opacity: Optional[float] = None,
+        show_legend: Optional[bool] = None,
+        show_labels: Optional[bool] = None,
+        min_y: Optional[float] = None,
+        max_y: Optional[float] = None,
+        colors: Optional[List[str]] = None,
+        threshold: Optional[Any] = None,
+        x_axis_label: Optional[str] = None,
+        y_axis_label: Optional[str] = None,
+        extra: Optional[Dict[str, Any]] = None,
+        **common: Any,
+    ):
+        """
+        Args:
+            dataset_id: The dataset id.
+            x_column: Column for X values.
+            y_columns: Column(s) for Y series.
+            smooth: Whether to render smooth curves.
+            show_line: Show line stroke on top of the fill (viewer default True).
+            show_markers: Show interactive marker points (viewer default True).
+            fill_opacity: Area fill opacity 0-1 (viewer default 0.3).
+            show_legend / show_labels: Legend / value-label toggles.
+            min_y / max_y: Optional Y-axis bounds.
+            colors: Optional list of series colors.
+            threshold: :class:`~dl2_reports.Threshold` or dict.
+            x_axis_label / y_axis_label: Axis labels.
+        """
+        if threshold is not None and hasattr(threshold, "to_dict"):
+            threshold = threshold.to_dict()
+        super().__init__(
+            dataset_id,
+            dict(
+                x_column=x_column,
+                y_columns=y_columns,
+                smooth=smooth,
+                show_line=show_line,
+                show_markers=show_markers,
+                fill_opacity=fill_opacity,
+                show_legend=show_legend,
+                show_labels=show_labels,
+                min_y=min_y,
+                max_y=max_y,
+                colors=colors,
+                threshold=threshold,
+                x_axis_label=x_axis_label,
+                y_axis_label=y_axis_label,
+            ),
+            extra=extra,
+            **common,
+        )
+
+
+class Scatter(VisualComponent):
+    """A scatter plot (``type: "scatter"``)."""
+
+    TYPE = "scatter"
+
+    def __init__(
+        self,
+        dataset_id: str,
+        x_column: Column = None,
+        y_column: Column = None,
+        category_column: Optional[Column] = None,
+        show_trendline: Optional[bool] = None,
+        show_correlation: Optional[bool] = None,
+        point_size: Optional[int] = None,
+        x_axis_label: Optional[str] = None,
+        y_axis_label: Optional[str] = None,
+        extra: Optional[Dict[str, Any]] = None,
+        **common: Any,
+    ):
+        """
+        Args:
+            dataset_id: The dataset id.
+            x_column / y_column: Columns for numeric X/Y values.
+            category_column: Optional column for coloring points by category.
+            show_trendline: Whether to show a linear regression trendline.
+            show_correlation: Whether to show correlation stats.
+            point_size: Point size.
+            x_axis_label / y_axis_label: Axis labels.
+        """
+        super().__init__(
+            dataset_id,
+            dict(
+                x_column=x_column,
+                y_column=y_column,
+                category_column=category_column,
+                show_trendline=show_trendline,
+                show_correlation=show_correlation,
+                point_size=point_size,
+                x_axis_label=x_axis_label,
+                y_axis_label=y_axis_label,
+            ),
+            extra=extra,
+            **common,
+        )
+
+
 class Card(VisualComponent):
     """A text card (``type: "card"``). ``title``/``text`` support the viewer's
     ``{{ ... }}`` template syntax (including ``row`` inside row modals)."""

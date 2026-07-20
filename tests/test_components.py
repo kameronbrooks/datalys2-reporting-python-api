@@ -352,5 +352,54 @@ class TestTableComponent(unittest.TestCase):
         self.assertEqual(v1.to_dict(), v2.to_dict())
 
 
+class TestChartComponents(unittest.TestCase):
+    def setUp(self):
+        ReportTreeComponent.BASE_ID = 1
+        self.report = _make_report()
+        self.row = self.report.add_page("P").add_row()
+
+    def test_bar_stacked_type(self):
+        from dl2_reports import Bar
+        clustered = Bar("sales", x_column="region", y_columns=["amount"])
+        stacked = Bar("sales", x_column="region", y_columns=["amount"], stacked=True)
+        self.assertEqual(clustered.to_dict()["type"], "clusteredBar")
+        self.assertEqual(stacked.to_dict()["type"], "stackedBar")
+        self.assertNotIn("stacked", stacked.to_dict())
+
+    def test_line_with_threshold_shape(self):
+        from dl2_reports import Line, Threshold
+        d = Line("sales", x_column="region", y_columns=["amount"],
+                 threshold=Threshold(value=1, mode="above")).to_dict()
+        self.assertEqual(d["threshold"], {"value": 1, "mode": "above"})
+
+    def test_scatter_add_trend_chaining(self):
+        from dl2_reports import Scatter
+        v = self.row.add(Scatter("sales", x_column="amount", y_column="unit_price"))
+        v.add_trend(coefficients=[0, 1])
+        self.assertEqual(v.to_dict()["otherElements"][0]["visualElementType"], "trend")
+
+    def test_area_legacy_threshold_object(self):
+        from dl2_reports.components.visuals.Area import AreaVisual
+        v = self.row.add_area("sales", x_column="region", y_columns=["amount"],
+                              threshold=AreaVisual.Threshold(value=5))
+        self.assertEqual(v.to_dict()["threshold"]["value"], 5)
+        self.assertEqual(v.to_dict()["threshold"]["mode"], "above")
+
+    def test_chart_helpers_parity(self):
+        from dl2_reports import Pie
+        ReportTreeComponent.BASE_ID = 1
+        r1 = _make_report()
+        v1 = r1.add_page("P").add_row().add_pie("sales", "region", "amount", inner_radius=40)
+        ReportTreeComponent.BASE_ID = 1
+        r2 = _make_report()
+        v2 = r2.add_page("P").add_row().add(Pie("sales", "region", "amount", inner_radius=40))
+        self.assertEqual(v1.to_dict(), v2.to_dict())
+
+    def test_chart_typo_raises(self):
+        from dl2_reports import Line
+        with self.assertRaises(TypeError):
+            Line("sales", x_column="region", y_colums=["amount"])
+
+
 if __name__ == "__main__":
     unittest.main()
