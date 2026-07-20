@@ -3,6 +3,18 @@ from __future__ import annotations
 from typing import Any, Dict, Union, List
 import pandas as pd
 
+class RawDict(dict):
+    """A dict whose keys are serialized verbatim (no snake_case → camelCase conversion).
+
+    Use this when dict keys are data (e.g. column names) rather than property names,
+    such as the ``fns`` mapping of a table ``totalRow``:
+
+        total_row={"label": "Totals", "fns": RawDict({"unit_price": "avg"})}
+
+    Values inside a RawDict are still serialized recursively.
+    """
+
+
 def snake_to_camel(key: str) -> str:
     """
     Converts a snake_case string to camelCase.
@@ -27,8 +39,9 @@ def camel_case_dict(d: Dict[str, Any]) -> Dict[str, Any]:
         Dict[str, Any]: A new dictionary with camelCase keys.
     """
     new_d: Dict[str, Any] = {}
+    keep_keys = isinstance(d, RawDict)
     for k, v in d.items():
-        camel_k = snake_to_camel(k)
+        camel_k = k if keep_keys else snake_to_camel(k)
         if isinstance(v, dict):
             new_d[camel_k] = camel_case_dict(v)
         elif isinstance(v, list):

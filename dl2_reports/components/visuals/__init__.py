@@ -11,6 +11,7 @@ from .Histogram import HistogramVisual
 from .Heatmap import HeatmapVisual
 from .Gauge import GaugeVisual
 from .Boxplot import BoxplotVisual
+from .Link import LinkVisual
 
 __ALL__ = [
     KPIVisual,
@@ -25,5 +26,6 @@ __ALL__ = [
     HistogramVisual,
     HeatmapVisual,
     GaugeVisual,
-    BoxplotVisual
+    BoxplotVisual,
+    LinkVisual
 ]

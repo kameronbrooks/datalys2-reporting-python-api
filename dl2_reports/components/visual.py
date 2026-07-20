@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional
 
 import pandas as pd
 
-from ..serialization import camel_case_dict, snake_to_camel
+from ..serialization import RawDict, camel_case_dict, snake_to_camel
 from ..utilities import analytics
 from .base import ReportTreeComponent
 
@@ -25,6 +25,16 @@ class Visual(ReportTreeComponent):
             **kwargs: Additional properties for the visual (e.g., x_column, y_column).
         """
         super().__init__()
+        if "filter" in kwargs and kwargs["filter"] is not None:
+            from ..filters import validate_filter
+            validate_filter(kwargs["filter"])
+        if "aggregate" in kwargs and kwargs["aggregate"] is not None:
+            from ..aggregates import validate_aggregate
+            validate_aggregate(kwargs["aggregate"])
+        if kwargs.get("id"):
+            # A user-provided id becomes the component's real id (stable ids matter
+            # for dl2 0.4 view-state persistence, anchors, and link targets).
+            self.id = kwargs["id"]
         self.type = type
         self.dataset_id = dataset_id
         self.other_elements: List[Dict[str, Any]] = []
@@ -139,6 +149,9 @@ class Visual(ReportTreeComponent):
         def _serialize_object(v: Any) -> Any:
             if hasattr(v, "to_dict") and callable(getattr(v, "to_dict")):
                 return _serialize_object(v.to_dict())
+            elif isinstance(v, RawDict):
+                # Keys are data (e.g. column names) — serialize them verbatim.
+                return {k: _serialize_object(val) for k, val in v.items()}
             elif isinstance(v, dict):
                 return {snake_to_camel(k): _serialize_object(val) for k, val in v.items()}
             elif isinstance(v, list):

@@ -20,6 +20,7 @@ from .visuals import (
     HeatmapVisual,
     GaugeVisual,
     BoxplotVisual,
+    LinkVisual,
 )
 
 
@@ -37,6 +38,7 @@ class CompileTimeConditional(
     HeatmapVisual,
     GaugeVisual,
     BoxplotVisual,
+    LinkVisual,
     ):
     """
     Temporary wrapper returned by ``Layout.on_condition()``.
@@ -59,6 +61,16 @@ class CompileTimeConditional(
             return None
         return self.parent.add_visual(type, dataset_id, visual=visual, **kwargs)
 
+    def add_tabs(self, id: Optional[str] = None, default_tab: Optional[int] = None, title: Optional[str] = None, **kwargs):
+        if not self.condition:
+            return None
+        return self.parent.add_tabs(id=id, default_tab=default_tab, title=title, **kwargs)
+
+    def add_layout(self, direction: str = "row", **kwargs) -> Optional[Layout]:
+        if not self.condition:
+            return None
+        return self.parent.add_layout(direction, **kwargs)
+
 
 
 class Layout(
@@ -76,6 +88,7 @@ class Layout(
     HeatmapVisual,
     GaugeVisual,
     BoxplotVisual,
+    LinkVisual,
     ):
     def __init__(self, direction: str = "row", **kwargs):
         """Initializes a new layout container.
@@ -84,14 +97,17 @@ class Layout(
         are arranged.
 
         Args:
-            direction: Layout direction ('row', 'column', or 'grid' depending on viewer support).
+            direction: Layout direction ('row', 'column', or 'grid').
             **kwargs: Additional layout properties (serialized to JSON):
-                padding, margin, border, shadow, flex, height, gap, columns, etc.
+                padding, margin, border, shadow, flex, height, gap, columns, title, etc.
+                dl2 0.3+ adds: wrap (bool), align (CSS align-items),
+                justify (CSS justify-content) for row/column layouts, and
+                min_child_width (px or CSS size) for responsive grids.
         """
         super().__init__()
         self.type = "layout"
         self.direction = direction
-        self.children: List[Layout | Visual] = []
+        self.children: List[ReportTreeComponent] = []
         self.props = kwargs
 
     def add_visual(self, type: str, dataset_id: Optional[str] = None, visual: Optional[Visual] = None, **kwargs) -> Optional[Visual]:
@@ -147,6 +163,32 @@ class Layout(
         layout.parent = self
         self.children.append(layout)
         return layout
+
+    def add_tabs(self, id: Optional[str] = None, default_tab: Optional[int] = None, title: Optional[str] = None, **kwargs):
+        """Adds a tabs container visual (dl2 0.3+) to this layout.
+
+        Example usage:
+            tabs = row.add_tabs(id="sales-tabs")
+            tabs.add_tab("Chart").add_bar("sales", x_column="Month", y_columns=["Revenue"])
+            tabs.add_tab("Data").add_table("sales")
+
+        Args:
+            id: Stable id for the tab group (enables active-tab persistence in
+                dl2 0.4+ and link/anchor targeting). Defaults to an auto id.
+            default_tab: Index of the initially active tab.
+            title: Optional title rendered above the tab strip.
+            **kwargs: Additional container properties (padding, margin, border,
+                shadow, flex, persist_state, ...).
+
+        Returns:
+            The created :class:`~dl2_reports.components.tabs.Tabs` container.
+        """
+        from .tabs import Tabs  # Local import to avoid a circular dependency
+
+        tabs = Tabs(id=id, default_tab=default_tab, title=title, **kwargs)
+        tabs.parent = self
+        self.children.append(tabs)
+        return tabs
 
     def add_modal_button(self, modal_id: str, button_label: str, **kwargs) -> Optional[Visual]:
         """Adds a modal trigger button.

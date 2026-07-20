@@ -10,10 +10,12 @@ import json
 import os
 import pandas as pd
 
-from .components import Layout, Modal, Page, ReportTreeComponent, Visual
+from .components import Layout, Modal, Page, ReportTreeComponent, Tabs, Visual
+from .filters import validate_filter
+from .aggregates import validate_aggregate
 from .serialization import camel_case_dict, make_dataset_serializable, convert_nan_to_none
 
-DL2_VERSION = "0.2.12"
+DL2_VERSION = "0.4.0"
 
 DEFAULT_CDN = f"https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist"
 JS_URI = f"/datalys2-reports.min.js"
@@ -27,14 +29,16 @@ class DL2Report:
     Layout: ClassVar[type[Layout]]
     Page: ClassVar[type[Page]]
     Modal: ClassVar[type[Modal]]
+    Tabs: ClassVar[type[Tabs]]
 
     def __init__(
-            self, 
-            title: str, 
-            description: str = "", 
-            author: str = "", 
+            self,
+            title: str,
+            description: str = "",
+            author: str = "",
             compress_visuals: bool = True,
             cdn_url: Optional[str] = None,
+            report_id: Optional[str] = None,
             ):
         """
         Initializes a new DL2Report.
@@ -45,6 +49,10 @@ class DL2Report:
             author (str, optional): The author of the report. Defaults to "".
             compress_visuals (bool, optional): Whether to compress the report data. Defaults to True.
             cdn_url (Optional[str], optional): The base URL for the CDN. Defaults to None.
+            report_id (Optional[str], optional): Stable identifier for the report, emitted as
+                <meta name="report-id">. dl2 0.4+ namespaces persisted view state (table
+                sort/columns/grouping, active tabs) by this id; without it the viewer falls
+                back to the title, then the file path. Set it if the title may change.
         """
         base_url = os.environ.get("DL2_CDN_URL", cdn_url or DEFAULT_CDN).rstrip("/")
         css_url = f"{base_url}{CSS_URI}"
@@ -61,6 +69,8 @@ class DL2Report:
         self.js_url = js_url
         self.meta_tags: Dict[str, str] = {}
         self.compress_visuals = compress_visuals
+        if report_id:
+            self.set_report_id(report_id)
 
     # Compatibility: keep these helpers on DL2Report
     @staticmethod
@@ -97,6 +107,12 @@ class DL2Report:
         dataset = self.datasets.get(data_source_name)
         if dataset is None:
             raise ValueError(f"Dataset '{data_source_name}' not found.")
+        if "source" in dataset:
+            raise ValueError(
+                f"Dataset '{data_source_name}' is a derived dataset — it is computed in the "
+                "browser at load time, so its values are not available at compile time. "
+                "Compute the value with pandas from the source DataFrame instead."
+            )
         # Use the stored DataFrame when available (data[] is emptied when compress=True)
         df = dataset.get("_df")
         if df is None:
@@ -226,6 +242,49 @@ class DL2Report:
         self.datasets[name] = dataset_entry
         return self
 
+    def add_derived_dataset(
+        self,
+        name: str,
+        source: str,
+        filter: Optional[Dict[str, Any]] = None,
+        aggregate: Optional[Dict[str, Any]] = None,
+    ) -> DL2Report:
+        """
+        Adds a derived dataset (dl2 0.3+) computed from another dataset in the browser
+        at load time — no extra data is embedded in the HTML.
+
+        Chains are supported (a derived dataset may use another derived dataset as its
+        source). Declaration order does not matter; sources are checked at compile().
+
+        Args:
+            name (str): The unique identifier for the derived dataset.
+            source (str): The id of the dataset to derive from.
+            filter (dict, optional): A filter expression (see :mod:`dl2_reports.filters`)
+                applied to the source rows.
+            aggregate (dict, optional): An aggregate spec (see :mod:`dl2_reports.aggregates`)
+                applied after the filter. Note: without an ``as`` name, aggregate output
+                columns are named ``"{fn}_{column}"`` (e.g. ``sum_amount``).
+
+        Returns:
+            DL2Report: The report instance for method chaining.
+        """
+        if filter is not None:
+            validate_filter(filter)
+        if aggregate is not None:
+            validate_aggregate(aggregate)
+
+        dataset_entry: Dict[str, Any] = {
+            "id": name,
+            "source": source,
+        }
+        if filter is not None:
+            dataset_entry["filter"] = camel_case_dict(filter)
+        if aggregate is not None:
+            dataset_entry["aggregate"] = camel_case_dict(aggregate)
+
+        self.datasets[name] = dataset_entry
+        return self
+
     def add_page(self, title: str, description: Optional[str] = None, last_updated: Optional[str] = None) -> Page:
         """
         Adds a new page to the report.
@@ -274,13 +333,38 @@ class DL2Report:
         self.meta_tags[name] = content
         return self
 
+    def set_report_id(self, report_id: str) -> DL2Report:
+        """
+        Sets the report's stable identifier (<meta name="report-id">).
+
+        dl2 0.4+ uses this to namespace persisted view state in localStorage. Without
+        it, the viewer falls back to the report title, then the file path.
+
+        Args:
+            report_id (str): The stable report identifier.
+
+        Returns:
+            DL2Report: The report instance for method chaining.
+        """
+        return self.set_meta("report-id", report_id)
+
     def compile(self) -> str:
         """
         Compiles the report into a complete HTML string.
 
         Returns:
             str: The full HTML content of the report.
+
+        Raises:
+            ValueError: If a derived dataset references an unknown source dataset.
         """
+        for name, ds in self.datasets.items():
+            source = ds.get("source")
+            if source is not None and source not in self.datasets:
+                raise ValueError(
+                    f"Derived dataset '{name}' references unknown source dataset '{source}'."
+                )
+
         report_data: Dict[str, Any] = {
             "pages": [p.to_dict() for p in self.pages],
             "datasets": {name: self._make_dataset_serializable(ds) for name, ds in self.datasets.items()},
@@ -378,3 +462,4 @@ DL2Report.Visual = Visual
 DL2Report.Layout = Layout
 DL2Report.Page = Page
 DL2Report.Modal = Modal
+DL2Report.Tabs = Tabs

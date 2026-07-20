@@ -12,6 +12,10 @@ class ReportTreeComponent:
 
         self.parent: Optional[Any] = None
 
+    def to_dict(self) -> Any:
+        """Serializes the component to a JSON-ready dict. Implemented by subclasses."""
+        raise NotImplementedError
+
     def get_report(self) -> Any:
         """Walks up the parent chain to find the report."""
 
