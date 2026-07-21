@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Area Showcase</title>
+    <meta name="dl-version" content="0.4.1">
+    <meta name="description" content="Filled line charts with markers and thresholds.">
+    <meta name="author" content="">
+    <meta name="last-updated" content="07-21-2026 18:23:48">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Areas",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "area",
+                            "elementType": "visual",
+                            "id": "elem-73",
+                            "datasetId": "temps",
+                            "xColumn": "Day",
+                            "yColumns": [
+                                "High",
+                                "Low"
+                            ],
+                            "smooth": true,
+                            "showMarkers": true,
+                            "fillOpacity": 0.25,
+                            "showLegend": true,
+                            "yAxisLabel": "\u00b0F"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "area",
+                            "elementType": "visual",
+                            "id": "elem-75",
+                            "datasetId": "temps",
+                            "xColumn": "Day",
+                            "yColumns": [
+                                "High"
+                            ],
+                            "smooth": true,
+                            "fillOpacity": 0.4,
+                            "threshold": {
+                                "value": 75,
+                                "mode": "below",
+                                "showLine": true,
+                                "applyTo": "both"
+                            },
+                            "yAxisLabel": "High (\u00b0F)"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "area",
+                            "elementType": "visual",
+                            "id": "elem-77",
+                            "datasetId": "temps",
+                            "xColumn": "Day",
+                            "yColumns": [
+                                "Low"
+                            ],
+                            "showLine": false,
+                            "showMarkers": false,
+                            "fillOpacity": 0.6
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "temps": {
+            "id": "temps",
+            "format": "records",
+            "columns": [
+                "Day",
+                "High",
+                "Low"
+            ],
+            "dtypes": [
+                "string",
+                "number",
+                "number"
+            ],
+            "data": [
+                {
+                    "Day": "Mon",
+                    "High": 71,
+                    "Low": 55
+                },
+                {
+                    "Day": "Tue",
+                    "High": 74,
+                    "Low": 58
+                },
+                {
+                    "Day": "Wed",
+                    "High": 78,
+                    "Low": 61
+                },
+                {
+                    "Day": "Thu",
+                    "High": 83,
+                    "Low": 66
+                },
+                {
+                    "Day": "Fri",
+                    "High": 79,
+                    "Low": 63
+                },
+                {
+                    "Day": "Sat",
+                    "High": 68,
+                    "Low": 52
+                },
+                {
+                    "Day": "Sun",
+                    "High": 72,
+                    "Low": 54
+                }
+            ]
+        }
+    }
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>

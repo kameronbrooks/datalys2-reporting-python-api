@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Showcase</title>
+    <meta name="dl-version" content="0.4.1">
+    <meta name="description" content="Text, markdown, and computed template cards.">
+    <meta name="author" content="">
+    <meta name="last-updated" content="07-21-2026 18:23:48">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Cards",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "card",
+                            "elementType": "visual",
+                            "id": "elem-34",
+                            "border": true,
+                            "shadow": true,
+                            "title": "Plain text",
+                            "text": "A simple card. Give it a border/shadow like any visual."
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "card",
+                            "elementType": "visual",
+                            "id": "elem-36",
+                            "title": "Markdown",
+                            "text": "**Bold**, *italic*, `code`, and lists:\n\n- bullet one\n- bullet two\n\n| Col A | Col B |\n|---|---|\n| 1 | 2 |",
+                            "contentType": "md"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "card",
+                            "elementType": "visual",
+                            "id": "elem-38",
+                            "title": "Computed values",
+                            "text": "Orders: **{{ count('orders') }}**\n\nTotal: **{{ formatCurrency(sum('orders', 'Amount'), '$', 0) }}**\n\nAverage: **{{ formatCurrency(avg('orders', 'Amount'), '$', 0) }}**",
+                            "contentType": "md"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "card",
+                            "elementType": "visual",
+                            "id": "elem-40",
+                            "title": {
+                                "expr": "'Largest region total: ' + formatCurrency(max('orders', 'Amount'), '$', 0)"
+                            },
+                            "text": "The title above is computed with an `{ \"expr\": ... }` value."
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "orders": {
+            "id": "orders",
+            "format": "records",
+            "columns": [
+                "Region",
+                "Amount"
+            ],
+            "dtypes": [
+                "string",
+                "number"
+            ],
+            "data": [
+                {
+                    "Region": "North",
+                    "Amount": 1200
+                },
+                {
+                    "Region": "South",
+                    "Amount": 950
+                },
+                {
+                    "Region": "East",
+                    "Amount": 1430
+                },
+                {
+                    "Region": "West",
+                    "Amount": 1810
+                }
+            ]
+        }
+    }
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>

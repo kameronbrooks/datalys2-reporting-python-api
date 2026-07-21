@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabs Showcase</title>
+    <meta name="dl-version" content="0.4.1">
+    <meta name="description" content="Every way to build tab groups with the Python API.">
+    <meta name="author" content="dl2 examples">
+    <meta name="last-updated" content="07-21-2026 18:23:48">
+    <meta name="report-id" content="example-tabs">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Tabs",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "tabs",
+                            "elementType": "visual",
+                            "id": "sales-views",
+                            "tabs": [
+                                {
+                                    "title": "Chart",
+                                    "layout": {
+                                        "type": "layout",
+                                        "direction": "column",
+                                        "children": [
+                                            {
+                                                "type": "line",
+                                                "elementType": "visual",
+                                                "id": "elem-5",
+                                                "datasetId": "sales",
+                                                "xColumn": "Month",
+                                                "yColumns": [
+                                                    "Revenue"
+                                                ],
+                                                "smooth": true,
+                                                "yAxisLabel": "Revenue ($)"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "title": "Data",
+                                    "layout": {
+                                        "type": "layout",
+                                        "direction": "column",
+                                        "children": [
+                                            {
+                                                "type": "card",
+                                                "elementType": "visual",
+                                                "id": "elem-7",
+                                                "title": "Raw numbers",
+                                                "text": "The same dataset the chart uses."
+                                            },
+                                            {
+                                                "type": "table",
+                                                "elementType": "visual",
+                                                "id": "sales-table",
+                                                "datasetId": "sales",
+                                                "pageSize": 6
+                                            }
+                                        ],
+                                        "gap": 8
+                                    }
+                                }
+                            ],
+                            "defaultTab": 0,
+                            "title": "Sales Views"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "tabs",
+                            "elementType": "visual",
+                            "id": "breakdown",
+                            "tabs": [
+                                {
+                                    "title": "By Segment",
+                                    "layout": {
+                                        "type": "layout",
+                                        "direction": "row",
+                                        "children": [
+                                            {
+                                                "type": "pie",
+                                                "elementType": "visual",
+                                                "id": "elem-10",
+                                                "datasetId": "share",
+                                                "categoryColumn": "Segment",
+                                                "valueColumn": "Revenue",
+                                                "innerRadius": 60,
+                                                "showLegend": true
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "title": "Notes",
+                                    "layout": {
+                                        "type": "layout",
+                                        "direction": "row",
+                                        "children": [
+                                            {
+                                                "type": "card",
+                                                "elementType": "visual",
+                                                "id": "elem-11",
+                                                "title": "About this view",
+                                                "text": "Tabs built declaratively with `Tabs(tabs=[Tab(...), ...])`."
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "title": "Breakdown"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "tabs",
+                            "elementType": "visual",
+                            "id": "outer-tabs",
+                            "tabs": [
+                                {
+                                    "title": "Overview",
+                                    "layout": {
+                                        "type": "layout",
+                                        "direction": "column",
+                                        "children": [
+                                            {
+                                                "type": "card",
+                                                "elementType": "visual",
+                                                "id": "elem-18",
+                                                "title": "Outer tab",
+                                                "text": "The second tab of this group contains a nested tab group."
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "title": "Details",
+                                    "layout": {
+                                        "type": "layout",
+                                        "direction": "column",
+                                        "children": [
+                                            {
+                                                "type": "tabs",
+                                                "elementType": "visual",
+                                                "id": "inner-tabs",
+                                                "tabs": [
+                                                    {
+                                                        "title": "Units",
+                                                        "layout": {
+                                                            "type": "layout",
+                                                            "direction": "column",
+                                                            "children": [
+                                                                {
+                                                                    "type": "line",
+                                                                    "elementType": "visual",
+                                                                    "id": "elem-22",
+                                                                    "datasetId": "sales",
+                                                                    "xColumn": "Month",
+                                                                    "yColumns": [
+                                                                        "Units"
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        "title": "Revenue",
+                                                        "layout": {
+                                                            "type": "layout",
+                                                            "direction": "column",
+                                                            "children": [
+                                                                {
+                                                                    "type": "line",
+                                                                    "elementType": "visual",
+                                                                    "id": "elem-24",
+                                                                    "datasetId": "sales",
+                                                                    "xColumn": "Month",
+                                                                    "yColumns": [
+                                                                        "Revenue"
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "title": "Nested Tabs"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "link",
+                            "elementType": "visual",
+                            "id": "elem-26",
+                            "targetId": "sales-table",
+                            "label": "Jump to the data table",
+                            "linkStyle": "button"
+                        }
+                    ]
+                }
+            ],
+            "description": "Tab groups in every flavor."
+        }
+    ],
+    "datasets": {
+        "sales": {
+            "id": "sales",
+            "format": "records",
+            "columns": [
+                "Month",
+                "Revenue",
+                "Units"
+            ],
+            "dtypes": [
+                "string",
+                "number",
+                "number"
+            ],
+            "data": [
+                {
+                    "Month": "Jan",
+                    "Revenue": 4200,
+                    "Units": 42
+                },
+                {
+                    "Month": "Feb",
+                    "Revenue": 4800,
+                    "Units": 45
+                },
+                {
+                    "Month": "Mar",
+                    "Revenue": 5100,
+                    "Units": 51
+                },
+                {
+                    "Month": "Apr",
+                    "Revenue": 4700,
+                    "Units": 44
+                },
+                {
+                    "Month": "May",
+                    "Revenue": 5600,
+                    "Units": 55
+                },
+                {
+                    "Month": "Jun",
+                    "Revenue": 6100,
+                    "Units": 60
+                }
+            ]
+        },
+        "share": {
+            "id": "share",
+            "format": "records",
+            "columns": [
+                "Segment",
+                "Revenue"
+            ],
+            "dtypes": [
+                "string",
+                "number"
+            ],
+            "data": [
+                {
+                    "Segment": "Enterprise",
+                    "Revenue": 14200
+                },
+                {
+                    "Segment": "SMB",
+                    "Revenue": 9800
+                },
+                {
+                    "Segment": "Consumer",
+                    "Revenue": 6500
+                }
+            ]
+        }
+    }
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>

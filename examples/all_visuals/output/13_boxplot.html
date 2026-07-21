@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boxplot Showcase</title>
+    <meta name="dl-version" content="0.4.1">
+    <meta name="description" content="Raw-data and pre-calculated box plots.">
+    <meta name="author" content="">
+    <meta name="last-updated" content="07-21-2026 18:23:48">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Boxplots",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "boxplot",
+                            "elementType": "visual",
+                            "id": "elem-97",
+                            "datasetId": "survey",
+                            "dataColumn": "Score",
+                            "categoryColumn": "Department",
+                            "direction": "horizontal",
+                            "showOutliers": true,
+                            "color": "Tableau10",
+                            "xAxisLabel": "Satisfaction score"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "boxplot",
+                            "elementType": "visual",
+                            "id": "elem-99",
+                            "datasetId": "latency",
+                            "categoryColumn": "Metric",
+                            "minColumn": "Min",
+                            "q1Column": "Q1",
+                            "medianColumn": "Median",
+                            "q3Column": "Q3",
+                            "maxColumn": "Max",
+                            "meanColumn": "Mean",
+                            "yAxisLabel": "Milliseconds"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "survey": {
+            "id": "survey",
+            "format": "records",
+            "columns": [
+                "Department",
+                "Score"
+            ],
+            "dtypes": [
+                "string",
+                "number"
+            ],
+            "data": [
+                {
+                    "Department": "Support",
+                    "Score": 72.3
+                },
+                {
+                    "Department": "Support",
+                    "Score": 82.9
+                },
+                {
+                    "Department": "Support",
+                    "Score": 81.8
+                },
+                {
+                    "Department": "Support",
+                    "Score": 67.9
+                },
+                {
+                    "Department": "Support",
+                    "Score": 69.6
+                },
+                {
+                    "Department": "Support",
+                    "Score": 67.8
+                },
+                {
+                    "Department": "Support",
+                    "Score": 76.6
+                },
+                {
+                    "Department": "Support",
+                    "Score": 71.6
+                },
+                {
+                    "Department": "Support",
+                    "Score": 78.0
+                },
+                {
+                    "Department": "Support",
+                    "Score": 57.2
+                },
+                {
+                    "Department": "Support",
+                    "Score": 84.5
+                },
+                {
+                    "Department": "Support",
+                    "Score": 71.2
+                },
+                {
+                    "Department": "Support",
+                    "Score": 77.4
+                },
+                {
+                    "Department": "Support",
+                    "Score": 70.9
+                },
+                {
+                    "Department": "Support",
+                    "Score": 69.0
+                },
+                {
+                    "Department": "Support",
+                    "Score": 75.7
+                },
+                {
+                    "Department": "Support",
+                    "Score": 78.6
+                },
+                {
+                    "Department": "Support",
+                    "Score": 70.4
+                },
+                {
+                    "Department": "Support",
+                    "Score": 70.8
+                },
+                {
+                    "Department": "Support",
+                    "Score": 77.5
+                },
+                {
+                    "Department": "Support",
+                    "Score": 65.0
+                },
+                {
+                    "Department": "Support",
+                    "Score": 59.9
+                },
+                {
+                    "Department": "Support",
+                    "Score": 75.2
+                },
+                {
+                    "Department": "Support",
+                    "Score": 66.6
+                },
+                {
+                    "Department": "Support",
+                    "Score": 56.6
+                },
+                {
+                    "Department": "Support",
+                    "Score": 65.5
+                },
+                {
+                    "Department": "Support",
+                    "Score": 68.3
+                },
+                {
+                    "Department": "Support",
+                    "Score": 62.5
+                },
+                {
+                    "Department": "Support",
+                    "Score": 60.1
+                },
+                {
+                    "Department": "Support",
+                    "Score": 72.3
+                },
+                {
+                    "Department": "Support",
+                    "Score": 79.2
+                },
+                {
+                    "Department": "Support",
+                    "Score": 70.1
+                },
+                {
+                    "Department": "Support",
+                    "Score": 66.1
+                },
+                {
+                    "Department": "Support",
+                    "Score": 75.1
+                },
+                {
+                    "Department": "Support",
+                    "Score": 77.7
+                },
+                {
+                    "Department": "Support",
+                    "Score": 69.6
+                },
+                {
+                    "Department": "Support",
+                    "Score": 76.4
+                },
+                {
+                    "Department": "Support",
+                    "Score": 80.3
+                },
+                {
+                    "Department": "Support",
+                    "Score": 70.3
+                },
+                {
+                    "Department": "Support",
+                    "Score": 65.5
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 80.8
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 80.0
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 86.8
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 67.7
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 72.7
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 71.3
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 64.1
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 79.0
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 82.2
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 72.1
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 89.1
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 84.6
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 83.0
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 81.2
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 85.6
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 67.3
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 82.9
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 82.8
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 63.9
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 80.8
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 76.0
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 84.3
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 74.5
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 77.9
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 80.7
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 71.0
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 82.8
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 77.2
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 81.9
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 73.8
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 86.7
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 82.8
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 76.6
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 83.1
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 88.1
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 92.3
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 65.4
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 85.1
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 81.7
+                },
+                {
+                    "Department": "Sales",
+                    "Score": 77.2
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 75.9
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 94.1
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 73.9
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 88.5
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 94.4
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 71.2
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 81.6
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 73.5
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 86.0
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 96.1
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 100.2
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 69.8
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 79.4
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 89.6
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 96.6
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 87.4
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 78.0
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 86.4
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 83.9
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 82.4
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 78.1
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 87.1
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 86.5
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 83.3
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 82.2
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 73.7
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 80.1
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 93.7
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 82.5
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 72.5
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 94.7
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 88.2
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 100.9
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 84.5
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 80.3
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 72.4
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 94.6
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 104.6
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 77.4
+                },
+                {
+                    "Department": "Engineering",
+                    "Score": 78.8
+                }
+            ]
+        },
+        "latency": {
+            "id": "latency",
+            "format": "records",
+            "columns": [
+                "Metric",
+                "Min",
+                "Q1",
+                "Median",
+                "Q3",
+                "Max",
+                "Mean"
+            ],
+            "dtypes": [
+                "string",
+                "number",
+                "number",
+                "number",
+                "number",
+                "number",
+                "number"
+            ],
+            "data": [
+                {
+                    "Metric": "Latency p50 batch",
+                    "Min": 110,
+                    "Q1": 180,
+                    "Median": 240,
+                    "Q3": 310,
+                    "Max": 520,
+                    "Mean": 252.4
+                },
+                {
+                    "Metric": "Latency p50 online",
+                    "Min": 45,
+                    "Q1": 62,
+                    "Median": 75,
+                    "Q3": 96,
+                    "Max": 160,
+                    "Mean": 82.1
+                }
+            ]
+        }
+    }
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>

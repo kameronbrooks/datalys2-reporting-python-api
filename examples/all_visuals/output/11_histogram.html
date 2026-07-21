@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histogram Showcase</title>
+    <meta name="dl-version" content="0.4.1">
+    <meta name="description" content="Binned distributions.">
+    <meta name="author" content="">
+    <meta name="last-updated" content="07-21-2026 18:23:48">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Histogram",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "histogram",
+                            "elementType": "visual",
+                            "id": "elem-87",
+                            "datasetId": "times",
+                            "column": "ResponseMs",
+                            "bins": 15,
+                            "color": "#6366f1",
+                            "showLabels": true,
+                            "xAxisLabel": "Response time (ms)",
+                            "yAxisLabel": "Requests"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "histogram",
+                            "elementType": "visual",
+                            "id": "elem-89",
+                            "datasetId": "times",
+                            "column": "ResponseMs",
+                            "bins": 6
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "times": {
+            "id": "times",
+            "format": "records",
+            "columns": [
+                "ResponseMs"
+            ],
+            "dtypes": [
+                "number"
+            ],
+            "data": [
+                {
+                    "ResponseMs": 200.0
+                },
+                {
+                    "ResponseMs": 222.0
+                },
+                {
+                    "ResponseMs": 182.0
+                },
+                {
+                    "ResponseMs": 147.0
+                },
+                {
+                    "ResponseMs": 171.0
+                },
+                {
+                    "ResponseMs": 142.0
+                },
+                {
+                    "ResponseMs": 205.0
+                },
+                {
+                    "ResponseMs": 320.0
+                },
+                {
+                    "ResponseMs": 169.0
+                },
+                {
+                    "ResponseMs": 161.0
+                },
+                {
+                    "ResponseMs": 238.0
+                },
+                {
+                    "ResponseMs": 227.0
+                },
+                {
+                    "ResponseMs": 208.0
+                },
+                {
+                    "ResponseMs": 145.0
+                },
+                {
+                    "ResponseMs": 198.0
+                },
+                {
+                    "ResponseMs": 256.0
+                },
+                {
+                    "ResponseMs": 125.0
+                },
+                {
+                    "ResponseMs": 171.0
+                },
+                {
+                    "ResponseMs": 103.0
+                },
+                {
+                    "ResponseMs": 128.0
+                },
+                {
+                    "ResponseMs": 105.0
+                },
+                {
+                    "ResponseMs": 185.0
+                },
+                {
+                    "ResponseMs": 129.0
+                },
+                {
+                    "ResponseMs": 220.0
+                },
+                {
+                    "ResponseMs": 212.0
+                },
+                {
+                    "ResponseMs": 188.0
+                },
+                {
+                    "ResponseMs": 83.0
+                },
+                {
+                    "ResponseMs": 166.0
+                },
+                {
+                    "ResponseMs": 197.0
+                },
+                {
+                    "ResponseMs": 208.0
+                },
+                {
+                    "ResponseMs": 117.0
+                },
+                {
+                    "ResponseMs": 169.0
+                },
+                {
+                    "ResponseMs": 142.0
+                },
+                {
+                    "ResponseMs": 151.0
+                },
+                {
+                    "ResponseMs": 290.0
+                },
+                {
+                    "ResponseMs": 151.0
+                },
+                {
+                    "ResponseMs": 198.0
+                },
+                {
+                    "ResponseMs": 273.0
+                },
+                {
+                    "ResponseMs": 163.0
+                },
+                {
+                    "ResponseMs": 193.0
+                },
+                {
+                    "ResponseMs": 208.0
+                },
+                {
+                    "ResponseMs": 205.0
+                },
+                {
+                    "ResponseMs": 130.0
+                },
+                {
+                    "ResponseMs": 206.0
+                },
+                {
+                    "ResponseMs": 322.0
+                },
+                {
+                    "ResponseMs": 117.0
+                },
+                {
+                    "ResponseMs": 271.0
+                },
+                {
+                    "ResponseMs": 209.0
+                },
+                {
+                    "ResponseMs": 160.0
+                },
+                {
+                    "ResponseMs": 403.0
+                },
+                {
+                    "ResponseMs": 262.0
+                },
+                {
+                    "ResponseMs": 132.0
+                },
+                {
+                    "ResponseMs": 206.0
+                },
+                {
+                    "ResponseMs": 245.0
+                },
+                {
+                    "ResponseMs": 188.0
+                },
+                {
+                    "ResponseMs": 254.0
+                },
+                {
+                    "ResponseMs": 196.0
+                },
+                {
+                    "ResponseMs": 253.0
+                },
+                {
+                    "ResponseMs": 331.0
+                },
+                {
+                    "ResponseMs": 158.0
+                },
+                {
+                    "ResponseMs": 215.0
+                },
+                {
+                    "ResponseMs": 170.0
+                },
+                {
+                    "ResponseMs": 209.0
+                },
+                {
+                    "ResponseMs": 132.0
+                },
+                {
+                    "ResponseMs": 164.0
+                },
+                {
+                    "ResponseMs": 187.0
+                },
+                {
+                    "ResponseMs": 274.0
+                },
+                {
+                    "ResponseMs": 299.0
+                },
+                {
+                    "ResponseMs": 126.0
+                },
+                {
+                    "ResponseMs": 152.0
+                },
+                {
+                    "ResponseMs": 251.0
+                },
+                {
+                    "ResponseMs": 100.0
+                },
+                {
+                    "ResponseMs": 170.0
+                },
+                {
+                    "ResponseMs": 194.0
+                },
+                {
+                    "ResponseMs": 311.0
+                },
+                {
+                    "ResponseMs": 255.0
+                },
+                {
+                    "ResponseMs": 179.0
+                },
+                {
+                    "ResponseMs": 176.0
+                },
+                {
+                    "ResponseMs": 184.0
+                },
+                {
+                    "ResponseMs": 341.0
+                },
+                {
+                    "ResponseMs": 172.0
+                },
+                {
+                    "ResponseMs": 180.0
+                },
+                {
+                    "ResponseMs": 227.0
+                },
+                {
+                    "ResponseMs": 192.0
+                },
+                {
+                    "ResponseMs": 187.0
+                },
+                {
+                    "ResponseMs": 136.0
+                },
+                {
+                    "ResponseMs": 200.0
+                },
+                {
+                    "ResponseMs": 172.0
+                },
+                {
+                    "ResponseMs": 301.0
+                },
+                {
+                    "ResponseMs": 252.0
+                },
+                {
+                    "ResponseMs": 199.0
+                },
+                {
+                    "ResponseMs": 253.0
+                },
+                {
+                    "ResponseMs": 178.0
+                },
+                {
+                    "ResponseMs": 290.0
+                },
+                {
+                    "ResponseMs": 200.0
+                },
+                {
+                    "ResponseMs": 246.0
+                },
+                {
+                    "ResponseMs": 128.0
+                },
+                {
+                    "ResponseMs": 226.0
+                },
+                {
+                    "ResponseMs": 111.0
+                },
+                {
+                    "ResponseMs": 98.0
+                },
+                {
+                    "ResponseMs": 180.0
+                },
+                {
+                    "ResponseMs": 146.0
+                },
+                {
+                    "ResponseMs": 212.0
+                },
+                {
+                    "ResponseMs": 440.0
+                },
+                {
+                    "ResponseMs": 150.0
+                },
+                {
+                    "ResponseMs": 161.0
+                },
+                {
+                    "ResponseMs": 215.0
+                },
+                {
+                    "ResponseMs": 238.0
+                },
+                {
+                    "ResponseMs": 188.0
+                },
+                {
+                    "ResponseMs": 186.0
+                },
+                {
+                    "ResponseMs": 256.0
+                },
+                {
+                    "ResponseMs": 240.0
+                },
+                {
+                    "ResponseMs": 140.0
+                },
+                {
+                    "ResponseMs": 195.0
+                },
+                {
+                    "ResponseMs": 203.0
+                },
+                {
+                    "ResponseMs": 139.0
+                },
+                {
+                    "ResponseMs": 219.0
+                },
+                {
+                    "ResponseMs": 148.0
+                },
+                {
+                    "ResponseMs": 282.0
+                },
+                {
+                    "ResponseMs": 214.0
+                },
+                {
+                    "ResponseMs": 207.0
+                },
+                {
+                    "ResponseMs": 163.0
+                },
+                {
+                    "ResponseMs": 192.0
+                },
+                {
+                    "ResponseMs": 100.0
+                },
+                {
+                    "ResponseMs": 135.0
+                },
+                {
+                    "ResponseMs": 227.0
+                },
+                {
+                    "ResponseMs": 95.0
+                },
+                {
+                    "ResponseMs": 269.0
+                },
+                {
+                    "ResponseMs": 109.0
+                },
+                {
+                    "ResponseMs": 261.0
+                },
+                {
+                    "ResponseMs": 149.0
+                },
+                {
+                    "ResponseMs": 263.0
+                },
+                {
+                    "ResponseMs": 210.0
+                },
+                {
+                    "ResponseMs": 117.0
+                },
+                {
+                    "ResponseMs": 310.0
+                },
+                {
+                    "ResponseMs": 332.0
+                },
+                {
+                    "ResponseMs": 196.0
+                },
+                {
+                    "ResponseMs": 182.0
+                },
+                {
+                    "ResponseMs": 189.0
+                },
+                {
+                    "ResponseMs": 142.0
+                },
+                {
+                    "ResponseMs": 294.0
+                },
+                {
+                    "ResponseMs": 166.0
+                },
+                {
+                    "ResponseMs": 197.0
+                },
+                {
+                    "ResponseMs": 152.0
+                },
+                {
+                    "ResponseMs": 161.0
+                },
+                {
+                    "ResponseMs": 128.0
+                },
+                {
+                    "ResponseMs": 311.0
+                },
+                {
+                    "ResponseMs": 190.0
+                },
+                {
+                    "ResponseMs": 281.0
+                },
+                {
+                    "ResponseMs": 201.0
+                },
+                {
+                    "ResponseMs": 157.0
+                },
+                {
+                    "ResponseMs": 179.0
+                },
+                {
+                    "ResponseMs": 165.0
+                },
+                {
+                    "ResponseMs": 201.0
+                },
+                {
+                    "ResponseMs": 176.0
+                },
+                {
+                    "ResponseMs": 180.0
+                },
+                {
+                    "ResponseMs": 124.0
+                },
+                {
+                    "ResponseMs": 151.0
+                },
+                {
+                    "ResponseMs": 357.0
+                },
+                {
+                    "ResponseMs": 158.0
+                },
+                {
+                    "ResponseMs": 139.0
+                },
+                {
+                    "ResponseMs": 225.0
+                },
+                {
+                    "ResponseMs": 328.0
+                },
+                {
+                    "ResponseMs": 120.0
+                },
+                {
+                    "ResponseMs": 186.0
+                },
+                {
+                    "ResponseMs": 161.0
+                },
+                {
+                    "ResponseMs": 108.0
+                },
+                {
+                    "ResponseMs": 259.0
+                },
+                {
+                    "ResponseMs": 199.0
+                },
+                {
+                    "ResponseMs": 205.0
+                },
+                {
+                    "ResponseMs": 154.0
+                },
+                {
+                    "ResponseMs": 235.0
+                },
+                {
+                    "ResponseMs": 166.0
+                },
+                {
+                    "ResponseMs": 191.0
+                },
+                {
+                    "ResponseMs": 136.0
+                },
+                {
+                    "ResponseMs": 131.0
+                },
+                {
+                    "ResponseMs": 320.0
+                },
+                {
+                    "ResponseMs": 168.0
+                },
+                {
+                    "ResponseMs": 222.0
+                },
+                {
+                    "ResponseMs": 198.0
+                },
+                {
+                    "ResponseMs": 172.0
+                },
+                {
+                    "ResponseMs": 168.0
+                },
+                {
+                    "ResponseMs": 250.0
+                },
+                {
+                    "ResponseMs": 180.0
+                },
+                {
+                    "ResponseMs": 190.0
+                },
+                {
+                    "ResponseMs": 202.0
+                },
+                {
+                    "ResponseMs": 302.0
+                },
+                {
+                    "ResponseMs": 254.0
+                },
+                {
+                    "ResponseMs": 229.0
+                },
+                {
+                    "ResponseMs": 164.0
+                },
+                {
+                    "ResponseMs": 124.0
+                },
+                {
+                    "ResponseMs": 279.0
+                },
+                {
+                    "ResponseMs": 281.0
+                },
+                {
+                    "ResponseMs": 191.0
+                },
+                {
+                    "ResponseMs": 242.0
+                },
+                {
+                    "ResponseMs": 263.0
+                },
+                {
+                    "ResponseMs": 268.0
+                },
+                {
+                    "ResponseMs": 277.0
+                },
+                {
+                    "ResponseMs": 171.0
+                },
+                {
+                    "ResponseMs": 340.0
+                },
+                {
+                    "ResponseMs": 130.0
+                },
+                {
+                    "ResponseMs": 271.0
+                },
+                {
+                    "ResponseMs": 238.0
+                },
+                {
+                    "ResponseMs": 272.0
+                },
+                {
+                    "ResponseMs": 387.0
+                },
+                {
+                    "ResponseMs": 337.0
+                },
+                {
+                    "ResponseMs": 134.0
+                },
+                {
+                    "ResponseMs": 111.0
+                },
+                {
+                    "ResponseMs": 267.0
+                },
+                {
+                    "ResponseMs": 140.0
+                },
+                {
+                    "ResponseMs": 199.0
+                },
+                {
+                    "ResponseMs": 269.0
+                },
+                {
+                    "ResponseMs": 113.0
+                },
+                {
+                    "ResponseMs": 96.0
+                },
+                {
+                    "ResponseMs": 219.0
+                },
+                {
+                    "ResponseMs": 203.0
+                },
+                {
+                    "ResponseMs": 184.0
+                },
+                {
+                    "ResponseMs": 203.0
+                },
+                {
+                    "ResponseMs": 148.0
+                },
+                {
+                    "ResponseMs": 118.0
+                },
+                {
+                    "ResponseMs": 189.0
+                },
+                {
+                    "ResponseMs": 143.0
+                },
+                {
+                    "ResponseMs": 113.0
+                },
+                {
+                    "ResponseMs": 239.0
+                },
+                {
+                    "ResponseMs": 196.0
+                },
+                {
+                    "ResponseMs": 231.0
+                },
+                {
+                    "ResponseMs": 142.0
+                },
+                {
+                    "ResponseMs": 159.0
+                },
+                {
+                    "ResponseMs": 141.0
+                },
+                {
+                    "ResponseMs": 147.0
+                },
+                {
+                    "ResponseMs": 215.0
+                },
+                {
+                    "ResponseMs": 152.0
+                },
+                {
+                    "ResponseMs": 227.0
+                },
+                {
+                    "ResponseMs": 226.0
+                },
+                {
+                    "ResponseMs": 407.0
+                },
+                {
+                    "ResponseMs": 123.0
+                },
+                {
+                    "ResponseMs": 273.0
+                },
+                {
+                    "ResponseMs": 194.0
+                },
+                {
+                    "ResponseMs": 199.0
+                },
+                {
+                    "ResponseMs": 121.0
+                },
+                {
+                    "ResponseMs": 171.0
+                },
+                {
+                    "ResponseMs": 260.0
+                },
+                {
+                    "ResponseMs": 195.0
+                },
+                {
+                    "ResponseMs": 206.0
+                },
+                {
+                    "ResponseMs": 181.0
+                },
+                {
+                    "ResponseMs": 300.0
+                },
+                {
+                    "ResponseMs": 199.0
+                },
+                {
+                    "ResponseMs": 93.0
+                },
+                {
+                    "ResponseMs": 157.0
+                },
+                {
+                    "ResponseMs": 101.0
+                },
+                {
+                    "ResponseMs": 64.0
+                },
+                {
+                    "ResponseMs": 166.0
+                },
+                {
+                    "ResponseMs": 319.0
+                },
+                {
+                    "ResponseMs": 204.0
+                },
+                {
+                    "ResponseMs": 133.0
+                },
+                {
+                    "ResponseMs": 144.0
+                },
+                {
+                    "ResponseMs": 298.0
+                },
+                {
+                    "ResponseMs": 212.0
+                },
+                {
+                    "ResponseMs": 204.0
+                },
+                {
+                    "ResponseMs": 197.0
+                },
+                {
+                    "ResponseMs": 203.0
+                },
+                {
+                    "ResponseMs": 266.0
+                },
+                {
+                    "ResponseMs": 243.0
+                },
+                {
+                    "ResponseMs": 216.0
+                },
+                {
+                    "ResponseMs": 139.0
+                },
+                {
+                    "ResponseMs": 240.0
+                },
+                {
+                    "ResponseMs": 158.0
+                },
+                {
+                    "ResponseMs": 294.0
+                },
+                {
+                    "ResponseMs": 128.0
+                },
+                {
+                    "ResponseMs": 191.0
+                },
+                {
+                    "ResponseMs": 200.0
+                },
+                {
+                    "ResponseMs": 126.0
+                },
+                {
+                    "ResponseMs": 366.0
+                },
+                {
+                    "ResponseMs": 334.0
+                },
+                {
+                    "ResponseMs": 170.0
+                },
+                {
+                    "ResponseMs": 262.0
+                },
+                {
+                    "ResponseMs": 229.0
+                },
+                {
+                    "ResponseMs": 80.0
+                },
+                {
+                    "ResponseMs": 219.0
+                },
+                {
+                    "ResponseMs": 196.0
+                },
+                {
+                    "ResponseMs": 206.0
+                },
+                {
+                    "ResponseMs": 137.0
+                },
+                {
+                    "ResponseMs": 182.0
+                },
+                {
+                    "ResponseMs": 188.0
+                },
+                {
+                    "ResponseMs": 304.0
+                },
+                {
+                    "ResponseMs": 225.0
+                },
+                {
+                    "ResponseMs": 200.0
+                },
+                {
+                    "ResponseMs": 342.0
+                },
+                {
+                    "ResponseMs": 165.0
+                },
+                {
+                    "ResponseMs": 175.0
+                },
+                {
+                    "ResponseMs": 106.0
+                },
+                {
+                    "ResponseMs": 347.0
+                },
+                {
+                    "ResponseMs": 281.0
+                },
+                {
+                    "ResponseMs": 276.0
+                },
+                {
+                    "ResponseMs": 253.0
+                },
+                {
+                    "ResponseMs": 208.0
+                },
+                {
+                    "ResponseMs": 216.0
+                },
+                {
+                    "ResponseMs": 183.0
+                },
+                {
+                    "ResponseMs": 187.0
+                },
+                {
+                    "ResponseMs": 204.0
+                },
+                {
+                    "ResponseMs": 340.0
+                },
+                {
+                    "ResponseMs": 243.0
+                },
+                {
+                    "ResponseMs": 196.0
+                },
+                {
+                    "ResponseMs": 164.0
+                },
+                {
+                    "ResponseMs": 160.0
+                },
+                {
+                    "ResponseMs": 351.0
+                },
+                {
+                    "ResponseMs": 239.0
+                },
+                {
+                    "ResponseMs": 205.0
+                },
+                {
+                    "ResponseMs": 177.0
+                },
+                {
+                    "ResponseMs": 136.0
+                },
+                {
+                    "ResponseMs": 196.0
+                },
+                {
+                    "ResponseMs": 272.0
+                },
+                {
+                    "ResponseMs": 175.0
+                },
+                {
+                    "ResponseMs": 185.0
+                },
+                {
+                    "ResponseMs": 185.0
+                },
+                {
+                    "ResponseMs": 208.0
+                },
+                {
+                    "ResponseMs": 115.0
+                },
+                {
+                    "ResponseMs": 184.0
+                },
+                {
+                    "ResponseMs": 149.0
+                },
+                {
+                    "ResponseMs": 273.0
+                },
+                {
+                    "ResponseMs": 153.0
+                },
+                {
+                    "ResponseMs": 245.0
+                },
+                {
+                    "ResponseMs": 342.0
+                },
+                {
+                    "ResponseMs": 180.0
+                },
+                {
+                    "ResponseMs": 162.0
+                },
+                {
+                    "ResponseMs": 214.0
+                },
+                {
+                    "ResponseMs": 200.0
+                },
+                {
+                    "ResponseMs": 141.0
+                },
+                {
+                    "ResponseMs": 235.0
+                },
+                {
+                    "ResponseMs": 406.0
+                },
+                {
+                    "ResponseMs": 183.0
+                },
+                {
+                    "ResponseMs": 187.0
+                },
+                {
+                    "ResponseMs": 139.0
+                },
+                {
+                    "ResponseMs": 224.0
+                },
+                {
+                    "ResponseMs": 129.0
+                },
+                {
+                    "ResponseMs": 136.0
+                },
+                {
+                    "ResponseMs": 314.0
+                },
+                {
+                    "ResponseMs": 146.0
+                },
+                {
+                    "ResponseMs": 293.0
+                },
+                {
+                    "ResponseMs": 342.0
+                },
+                {
+                    "ResponseMs": 219.0
+                },
+                {
+                    "ResponseMs": 243.0
+                },
+                {
+                    "ResponseMs": 397.0
+                },
+                {
+                    "ResponseMs": 187.0
+                },
+                {
+                    "ResponseMs": 163.0
+                },
+                {
+                    "ResponseMs": 125.0
+                },
+                {
+                    "ResponseMs": 203.0
+                },
+                {
+                    "ResponseMs": 336.0
+                },
+                {
+                    "ResponseMs": 280.0
+                },
+                {
+                    "ResponseMs": 144.0
+                },
+                {
+                    "ResponseMs": 149.0
+                },
+                {
+                    "ResponseMs": 168.0
+                },
+                {
+                    "ResponseMs": 222.0
+                },
+                {
+                    "ResponseMs": 186.0
+                },
+                {
+                    "ResponseMs": 216.0
+                },
+                {
+                    "ResponseMs": 222.0
+                },
+                {
+                    "ResponseMs": 180.0
+                },
+                {
+                    "ResponseMs": 198.0
+                },
+                {
+                    "ResponseMs": 215.0
+                },
+                {
+                    "ResponseMs": 195.0
+                },
+                {
+                    "ResponseMs": 239.0
+                },
+                {
+                    "ResponseMs": 386.0
+                },
+                {
+                    "ResponseMs": 246.0
+                },
+                {
+                    "ResponseMs": 204.0
+                },
+                {
+                    "ResponseMs": 111.0
+                },
+                {
+                    "ResponseMs": 229.0
+                },
+                {
+                    "ResponseMs": 101.0
+                },
+                {
+                    "ResponseMs": 122.0
+                },
+                {
+                    "ResponseMs": 270.0
+                },
+                {
+                    "ResponseMs": 257.0
+                },
+                {
+                    "ResponseMs": 190.0
+                },
+                {
+                    "ResponseMs": 110.0
+                },
+                {
+                    "ResponseMs": 176.0
+                },
+                {
+                    "ResponseMs": 158.0
+                },
+                {
+                    "ResponseMs": 250.0
+                },
+                {
+                    "ResponseMs": 442.0
+                },
+                {
+                    "ResponseMs": 216.0
+                },
+                {
+                    "ResponseMs": 153.0
+                },
+                {
+                    "ResponseMs": 133.0
+                },
+                {
+                    "ResponseMs": 196.0
+                },
+                {
+                    "ResponseMs": 188.0
+                },
+                {
+                    "ResponseMs": 134.0
+                },
+                {
+                    "ResponseMs": 209.0
+                },
+                {
+                    "ResponseMs": 134.0
+                },
+                {
+                    "ResponseMs": 296.0
+                },
+                {
+                    "ResponseMs": 291.0
+                },
+                {
+                    "ResponseMs": 293.0
+                },
+                {
+                    "ResponseMs": 170.0
+                },
+                {
+                    "ResponseMs": 240.0
+                },
+                {
+                    "ResponseMs": 191.0
+                },
+                {
+                    "ResponseMs": 175.0
+                },
+                {
+                    "ResponseMs": 178.0
+                },
+                {
+                    "ResponseMs": 127.0
+                },
+                {
+                    "ResponseMs": 121.0
+                },
+                {
+                    "ResponseMs": 265.0
+                },
+                {
+                    "ResponseMs": 187.0
+                },
+                {
+                    "ResponseMs": 216.0
+                },
+                {
+                    "ResponseMs": 284.0
+                },
+                {
+                    "ResponseMs": 109.0
+                },
+                {
+                    "ResponseMs": 152.0
+                }
+            ]
+        }
+    }
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>

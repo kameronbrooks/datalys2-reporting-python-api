@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scatter Showcase</title>
+    <meta name="dl-version" content="0.4.1">
+    <meta name="description" content="Point clouds, category coloring, and trendlines.">
+    <meta name="author" content="">
+    <meta name="last-updated" content="07-21-2026 18:23:48">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Scatter",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "scatter",
+                            "elementType": "visual",
+                            "id": "elem-80",
+                            "datasetId": "study",
+                            "xColumn": "Hours",
+                            "yColumn": "Score",
+                            "showTrendline": true,
+                            "showCorrelation": true,
+                            "pointSize": 5,
+                            "xAxisLabel": "Hours studied",
+                            "yAxisLabel": "Exam score"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "scatter",
+                            "elementType": "visual",
+                            "id": "elem-82",
+                            "datasetId": "study",
+                            "xColumn": "Hours",
+                            "yColumn": "Score",
+                            "categoryColumn": "Session",
+                            "pointSize": 6
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "scatter",
+                            "elementType": "visual",
+                            "id": "elem-84",
+                            "datasetId": "study",
+                            "otherElements": [
+                                {
+                                    "visualElementType": "trend",
+                                    "coefficients": [
+                                        53.957380952380944,
+                                        5.154761904761903
+                                    ],
+                                    "color": "red",
+                                    "lineStyle": "dashed"
+                                },
+                                {
+                                    "visualElementType": "trend",
+                                    "coefficients": [
+                                        53.957380952380944,
+                                        5.154761904761903
+                                    ],
+                                    "color": "blue"
+                                }
+                            ],
+                            "xColumn": "Hours",
+                            "yColumn": "Score"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "study": {
+            "id": "study",
+            "format": "records",
+            "columns": [
+                "Hours",
+                "Score",
+                "Session"
+            ],
+            "dtypes": [
+                "number",
+                "number",
+                "string"
+            ],
+            "data": [
+                {
+                    "Hours": 6.3,
+                    "Score": 82.6,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 3.8,
+                    "Score": 80.6,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 6.9,
+                    "Score": 80.8,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 5.7,
+                    "Score": 82.6,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 1.2,
+                    "Score": 62.2,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 7.8,
+                    "Score": 99.1,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 6.2,
+                    "Score": 91.5,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 6.4,
+                    "Score": 93.0,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 1.5,
+                    "Score": 60.7,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 3.9,
+                    "Score": 72.5,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 3.3,
+                    "Score": 77.3,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 7.5,
+                    "Score": 92.9,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 5.3,
+                    "Score": 74.9,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 6.7,
+                    "Score": 83.0,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 3.8,
+                    "Score": 69.2,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 2.2,
+                    "Score": 69.4,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 4.7,
+                    "Score": 80.3,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 1.0,
+                    "Score": 64.3,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 6.7,
+                    "Score": 87.3,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 5.2,
+                    "Score": 83.0,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 6.2,
+                    "Score": 91.0,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 3.2,
+                    "Score": 69.8,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 7.8,
+                    "Score": 98.3,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 7.2,
+                    "Score": 88.5,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 6.3,
+                    "Score": 85.6,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 2.0,
+                    "Score": 63.1,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 4.0,
+                    "Score": 68.6,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 0.8,
+                    "Score": 62.1,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 1.7,
+                    "Score": 61.0,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 5.6,
+                    "Score": 84.2,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 6.1,
+                    "Score": 89.6,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 7.8,
+                    "Score": 98.2,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 2.9,
+                    "Score": 74.1,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 3.3,
+                    "Score": 71.6,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 4.0,
+                    "Score": 73.3,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 1.9,
+                    "Score": 64.4,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 1.5,
+                    "Score": 52.7,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 4.1,
+                    "Score": 67.6,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 2.2,
+                    "Score": 58.5,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 5.5,
+                    "Score": 77.6,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 3.8,
+                    "Score": 77.2,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 6.7,
+                    "Score": 84.4,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 5.8,
+                    "Score": 82.9,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 2.8,
+                    "Score": 77.4,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 6.7,
+                    "Score": 87.7,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 6.5,
+                    "Score": 93.2,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 3.4,
+                    "Score": 67.1,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 2.7,
+                    "Score": 67.8,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 5.6,
+                    "Score": 78.4,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 1.5,
+                    "Score": 60.8,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 2.0,
+                    "Score": 70.4,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 0.6,
+                    "Score": 47.8,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 6.4,
+                    "Score": 90.9,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 5.5,
+                    "Score": 85.0,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 5.8,
+                    "Score": 81.6,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 6.4,
+                    "Score": 79.6,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 3.9,
+                    "Score": 75.7,
+                    "Session": "Evening"
+                },
+                {
+                    "Hours": 4.8,
+                    "Score": 76.8,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 1.5,
+                    "Score": 64.2,
+                    "Session": "Morning"
+                },
+                {
+                    "Hours": 1.4,
+                    "Score": 62.4,
+                    "Session": "Morning"
+                }
+            ]
+        }
+    }
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>

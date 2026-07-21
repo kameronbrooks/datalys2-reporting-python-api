@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Links & Modals Showcase</title>
+    <meta name="dl-version" content="0.4.1">
+    <meta name="description" content="Navigation links and overlay modals.">
+    <meta name="author" content="">
+    <meta name="last-updated" content="07-21-2026 18:23:48">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Overview",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "kpi",
+                            "elementType": "visual",
+                            "id": "latest-kpi",
+                            "datasetId": "orders",
+                            "modalId": "region-breakdown",
+                            "valueColumn": "Amount",
+                            "title": "Latest Order",
+                            "rowIndex": -1,
+                            "format": "currency"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "modal",
+                            "elementType": "visual",
+                            "id": "region-breakdown",
+                            "buttonLabel": "View region breakdown"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "table",
+                            "elementType": "visual",
+                            "id": "elem-119",
+                            "datasetId": "orders",
+                            "title": "Double-click a row",
+                            "rowModalId": "order-detail"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "link",
+                            "elementType": "visual",
+                            "id": "elem-121",
+                            "targetId": "all-orders",
+                            "label": "Go to the data page",
+                            "linkStyle": "button"
+                        },
+                        {
+                            "type": "link",
+                            "elementType": "visual",
+                            "id": "elem-122",
+                            "href": "https://github.com/kameronbrooks/datalys2-reporting",
+                            "label": "dl2 on GitHub"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Data",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "table",
+                            "elementType": "visual",
+                            "id": "all-orders",
+                            "datasetId": "orders",
+                            "title": "All Orders"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "link",
+                            "elementType": "visual",
+                            "id": "elem-127",
+                            "targetId": "latest-kpi",
+                            "label": "Back to overview"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "orders": {
+            "id": "orders",
+            "format": "records",
+            "columns": [
+                "Region",
+                "Rep",
+                "Amount"
+            ],
+            "dtypes": [
+                "string",
+                "string",
+                "number"
+            ],
+            "data": [
+                {
+                    "Region": "North",
+                    "Rep": "Ann",
+                    "Amount": 310
+                },
+                {
+                    "Region": "South",
+                    "Rep": "Ben",
+                    "Amount": 95
+                },
+                {
+                    "Region": "East",
+                    "Rep": "Cara",
+                    "Amount": 420
+                },
+                {
+                    "Region": "West",
+                    "Rep": "Dan",
+                    "Amount": 640
+                }
+            ]
+        }
+    },
+    "modals": [
+        {
+            "id": "region-breakdown",
+            "title": "Region Breakdown",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "table",
+                            "elementType": "visual",
+                            "id": "elem-109",
+                            "datasetId": "orders",
+                            "title": "Orders"
+                        }
+                    ]
+                }
+            ],
+            "description": "All orders, by region."
+        },
+        {
+            "id": "order-detail",
+            "title": "Order Details",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "card",
+                            "elementType": "visual",
+                            "id": "elem-112",
+                            "title": "Order \u2014 {{ row.Region }}",
+                            "text": "**Rep:** {{ row.Rep }}\n\n**Amount:** {{ formatCurrency(row.Amount) }}",
+                            "contentType": "md"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>

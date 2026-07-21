@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPI Showcase</title>
+    <meta name="dl-version" content="0.4.1">
+    <meta name="description" content="Headline metrics with comparisons and breach indicators.">
+    <meta name="author" content="">
+    <meta name="last-updated" content="07-21-2026 18:23:48">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "KPIs",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "kpi",
+                            "elementType": "visual",
+                            "id": "elem-29",
+                            "datasetId": "monthly",
+                            "valueColumn": "Revenue",
+                            "title": "Revenue",
+                            "comparisonColumn": "Revenue",
+                            "comparisonRowIndex": -2,
+                            "comparisonText": "vs last month",
+                            "rowIndex": -1,
+                            "format": "currency",
+                            "goodDirection": "higher",
+                            "roundingPrecision": 0
+                        },
+                        {
+                            "type": "kpi",
+                            "elementType": "visual",
+                            "id": "elem-30",
+                            "datasetId": "monthly",
+                            "valueColumn": "ErrorRate",
+                            "title": "Error Rate",
+                            "description": "Share of failed requests this month.",
+                            "comparisonColumn": "ErrorRate",
+                            "comparisonRowIndex": -2,
+                            "comparisonText": "vs last month",
+                            "rowIndex": -1,
+                            "format": "percent",
+                            "goodDirection": "lower",
+                            "breachValue": 0.05,
+                            "warningValue": 0.03,
+                            "roundingPrecision": 1
+                        },
+                        {
+                            "type": "kpi",
+                            "elementType": "visual",
+                            "id": "elem-31",
+                            "datasetId": "monthly",
+                            "valueColumn": "AvgHandleSec",
+                            "title": "Avg Handle Time",
+                            "rowIndex": -1,
+                            "format": "hms",
+                            "goodDirection": "lower"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "monthly": {
+            "id": "monthly",
+            "format": "records",
+            "columns": [
+                "Month",
+                "Revenue",
+                "ErrorRate",
+                "AvgHandleSec"
+            ],
+            "dtypes": [
+                "string",
+                "number",
+                "number",
+                "number"
+            ],
+            "data": [
+                {
+                    "Month": "Apr",
+                    "Revenue": 47000,
+                    "ErrorRate": 0.031,
+                    "AvgHandleSec": 432
+                },
+                {
+                    "Month": "May",
+                    "Revenue": 56000,
+                    "ErrorRate": 0.024,
+                    "AvgHandleSec": 401
+                },
+                {
+                    "Month": "Jun",
+                    "Revenue": 61000,
+                    "ErrorRate": 0.042,
+                    "AvgHandleSec": 388
+                }
+            ]
+        }
+    }
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>

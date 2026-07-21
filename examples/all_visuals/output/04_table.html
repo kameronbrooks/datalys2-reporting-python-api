@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table Showcase</title>
+    <meta name="dl-version" content="0.4.1">
+    <meta name="description" content="Grouping, totals, formatting, and row modals.">
+    <meta name="author" content="">
+    <meta name="last-updated" content="07-21-2026 18:23:48">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Tables",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "table",
+                            "elementType": "visual",
+                            "id": "orders-table",
+                            "datasetId": "orders",
+                            "title": "Orders by Region",
+                            "pageSize": 10,
+                            "tableStyle": "alternating",
+                            "defaultSort": [
+                                {
+                                    "column": "Amount",
+                                    "direction": "desc"
+                                }
+                            ],
+                            "groupBy": "Region",
+                            "groupAggregates": [
+                                {
+                                    "column": "Amount",
+                                    "fn": "sum",
+                                    "as": "Total"
+                                },
+                                {
+                                    "column": "Units",
+                                    "fn": "sum"
+                                }
+                            ],
+                            "exportFileName": "orders.csv",
+                            "maxHeight": 420,
+                            "totalRow": {
+                                "label": "All regions",
+                                "fns": {
+                                    "Units": "sum",
+                                    "Amount": "sum"
+                                }
+                            },
+                            "rowModal": true,
+                            "columnFormats": {
+                                "Amount": {
+                                    "format": "currency",
+                                    "digits": 0
+                                },
+                                "Growth": {
+                                    "format": "percent",
+                                    "digits": 1
+                                },
+                                "Closed": "date"
+                            },
+                            "conditionalFormats": [
+                                {
+                                    "when": {
+                                        "column": "Amount",
+                                        "op": "gte",
+                                        "value": 400
+                                    },
+                                    "style": "success"
+                                },
+                                {
+                                    "when": {
+                                        "column": "Growth",
+                                        "op": "lt",
+                                        "value": 0
+                                    },
+                                    "columns": [
+                                        "Growth"
+                                    ],
+                                    "style": "error"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "table",
+                            "elementType": "visual",
+                            "id": "elem-45",
+                            "datasetId": "orders",
+                            "title": "Static view",
+                            "columns": [
+                                "Region",
+                                "Rep",
+                                "Amount"
+                            ],
+                            "pageSize": 4,
+                            "showSearch": false,
+                            "sortable": false,
+                            "allowColumnHiding": false,
+                            "enableExport": false,
+                            "contextMenu": false
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "table",
+                            "elementType": "visual",
+                            "id": "elem-47",
+                            "datasetId": "orders",
+                            "title": "Big orders (formula datasource)",
+                            "filter": {
+                                "column": "Amount",
+                                "op": "gt",
+                                "value": 250
+                            },
+                            "columns": [
+                                "Region",
+                                "Rep",
+                                "Amount"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "orders": {
+            "id": "orders",
+            "format": "records",
+            "columns": [
+                "Region",
+                "Rep",
+                "Units",
+                "Amount",
+                "Growth",
+                "Closed"
+            ],
+            "dtypes": [
+                "string",
+                "string",
+                "number",
+                "number",
+                "number",
+                "date"
+            ],
+            "data": [
+                {
+                    "Region": "North",
+                    "Rep": "Ann",
+                    "Units": 12,
+                    "Amount": 310,
+                    "Growth": 0.12,
+                    "Closed": "2026-06-02T00:00:00.000000Z"
+                },
+                {
+                    "Region": "South",
+                    "Rep": "Ben",
+                    "Units": 7,
+                    "Amount": 95,
+                    "Growth": -0.04,
+                    "Closed": "2026-06-05T00:00:00.000000Z"
+                },
+                {
+                    "Region": "East",
+                    "Rep": "Cara",
+                    "Units": 15,
+                    "Amount": 420,
+                    "Growth": 0.31,
+                    "Closed": "2026-06-11T00:00:00.000000Z"
+                },
+                {
+                    "Region": "West",
+                    "Rep": "Dan",
+                    "Units": 22,
+                    "Amount": 640,
+                    "Growth": 0.18,
+                    "Closed": "2026-06-14T00:00:00.000000Z"
+                },
+                {
+                    "Region": "North",
+                    "Rep": "Elle",
+                    "Units": 9,
+                    "Amount": 180,
+                    "Growth": 0.02,
+                    "Closed": "2026-06-18T00:00:00.000000Z"
+                },
+                {
+                    "Region": "South",
+                    "Rep": "Finn",
+                    "Units": 14,
+                    "Amount": 260,
+                    "Growth": 0.09,
+                    "Closed": "2026-06-21T00:00:00.000000Z"
+                },
+                {
+                    "Region": "East",
+                    "Rep": "Gia",
+                    "Units": 5,
+                    "Amount": 75,
+                    "Growth": -0.11,
+                    "Closed": "2026-06-25T00:00:00.000000Z"
+                },
+                {
+                    "Region": "West",
+                    "Rep": "Hank",
+                    "Units": 18,
+                    "Amount": 505,
+                    "Growth": 0.25,
+                    "Closed": "2026-06-30T00:00:00.000000Z"
+                }
+            ]
+        }
+    }
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>

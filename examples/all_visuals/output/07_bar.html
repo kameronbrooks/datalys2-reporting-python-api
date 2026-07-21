@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bar Showcase</title>
+    <meta name="dl-version" content="0.4.1">
+    <meta name="description" content="Clustered, stacked, and threshold-colored bars.">
+    <meta name="author" content="">
+    <meta name="last-updated" content="07-21-2026 18:23:48">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Bars",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "clusteredBar",
+                            "elementType": "visual",
+                            "id": "elem-59",
+                            "datasetId": "sales",
+                            "xColumn": "Quarter",
+                            "yColumns": [
+                                "Electronics",
+                                "Clothing",
+                                "Home"
+                            ],
+                            "xAxisLabel": "Quarter",
+                            "yAxisLabel": "Revenue ($)",
+                            "showLegend": true,
+                            "showLabels": true
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "stackedBar",
+                            "elementType": "visual",
+                            "id": "elem-61",
+                            "datasetId": "sales",
+                            "xColumn": "Quarter",
+                            "yColumns": [
+                                "Electronics",
+                                "Clothing",
+                                "Home"
+                            ],
+                            "showLegend": true
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "clusteredBar",
+                            "elementType": "visual",
+                            "id": "elem-63",
+                            "datasetId": "sales",
+                            "xColumn": "Quarter",
+                            "yColumns": [
+                                "Electronics"
+                            ],
+                            "yAxisLabel": "Electronics revenue ($)",
+                            "threshold": {
+                                "value": 5000,
+                                "mode": "above",
+                                "showLine": true
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "sales": {
+            "id": "sales",
+            "format": "records",
+            "columns": [
+                "Quarter",
+                "Electronics",
+                "Clothing",
+                "Home"
+            ],
+            "dtypes": [
+                "string",
+                "number",
+                "number",
+                "number"
+            ],
+            "data": [
+                {
+                    "Quarter": "Q1",
+                    "Electronics": 4200,
+                    "Clothing": 3100,
+                    "Home": 1900
+                },
+                {
+                    "Quarter": "Q2",
+                    "Electronics": 4800,
+                    "Clothing": 2900,
+                    "Home": 2400
+                },
+                {
+                    "Quarter": "Q3",
+                    "Electronics": 5300,
+                    "Clothing": 3600,
+                    "Home": 2100
+                },
+                {
+                    "Quarter": "Q4",
+                    "Electronics": 6100,
+                    "Clothing": 4400,
+                    "Home": 2800
+                }
+            ]
+        }
+    }
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>

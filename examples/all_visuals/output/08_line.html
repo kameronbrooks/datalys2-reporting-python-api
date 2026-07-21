@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Line Showcase</title>
+    <meta name="dl-version" content="0.4.1">
+    <meta name="description" content="Multi-series lines, thresholds, and annotations.">
+    <meta name="author" content="">
+    <meta name="last-updated" content="07-21-2026 18:23:48">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Lines",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "line",
+                            "elementType": "visual",
+                            "id": "elem-66",
+                            "datasetId": "traffic",
+                            "xColumn": "Month",
+                            "yColumns": [
+                                "Web",
+                                "Mobile",
+                                "Partner"
+                            ],
+                            "smooth": true,
+                            "showLegend": true,
+                            "colors": [
+                                "#2563eb",
+                                "#16a34a",
+                                "#f59e0b"
+                            ],
+                            "yAxisLabel": "Sessions"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "line",
+                            "elementType": "visual",
+                            "id": "elem-68",
+                            "datasetId": "traffic",
+                            "xColumn": "Month",
+                            "yColumns": [
+                                "Web"
+                            ],
+                            "threshold": {
+                                "value": 4000,
+                                "mode": "above",
+                                "showLine": true,
+                                "blendWidth": 8
+                            },
+                            "yAxisLabel": "Web sessions"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "line",
+                            "elementType": "visual",
+                            "id": "elem-70",
+                            "datasetId": "traffic",
+                            "otherElements": [
+                                {
+                                    "visualElementType": "yAxis",
+                                    "value": 3000,
+                                    "label": "Target",
+                                    "color": "green",
+                                    "lineStyle": "dashed"
+                                },
+                                {
+                                    "visualElementType": "xAxis",
+                                    "value": "Apr",
+                                    "label": "Campaign launch",
+                                    "color": "#888"
+                                },
+                                {
+                                    "visualElementType": "marker",
+                                    "value": 3900,
+                                    "size": 8,
+                                    "shape": "triangle",
+                                    "color": "red"
+                                },
+                                {
+                                    "visualElementType": "trend",
+                                    "coefficients": [
+                                        2100,
+                                        500
+                                    ],
+                                    "color": "#9333ea",
+                                    "lineStyle": "dotted"
+                                }
+                            ],
+                            "xColumn": "Month",
+                            "yColumns": [
+                                "Mobile"
+                            ],
+                            "showLabels": true
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "traffic": {
+            "id": "traffic",
+            "format": "records",
+            "columns": [
+                "Month",
+                "Web",
+                "Mobile",
+                "Partner"
+            ],
+            "dtypes": [
+                "string",
+                "number",
+                "number",
+                "number"
+            ],
+            "data": [
+                {
+                    "Month": "Jan",
+                    "Web": 3200,
+                    "Mobile": 2100,
+                    "Partner": 900
+                },
+                {
+                    "Month": "Feb",
+                    "Web": 3600,
+                    "Mobile": 2500,
+                    "Partner": 850
+                },
+                {
+                    "Month": "Mar",
+                    "Web": 3400,
+                    "Mobile": 3100,
+                    "Partner": 1100
+                },
+                {
+                    "Month": "Apr",
+                    "Web": 4100,
+                    "Mobile": 3300,
+                    "Partner": 1000
+                },
+                {
+                    "Month": "May",
+                    "Web": 4600,
+                    "Mobile": 3900,
+                    "Partner": 1250
+                },
+                {
+                    "Month": "Jun",
+                    "Web": 5200,
+                    "Mobile": 4700,
+                    "Partner": 1400
+                }
+            ]
+        }
+    }
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>

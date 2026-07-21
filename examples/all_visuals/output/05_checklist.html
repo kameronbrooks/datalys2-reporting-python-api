@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checklist Showcase</title>
+    <meta name="dl-version" content="0.4.1">
+    <meta name="description" content="Task status, due-date warnings, chips, and progress.">
+    <meta name="author" content="">
+    <meta name="last-updated" content="07-21-2026 18:23:48">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Checklist",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "checklist",
+                            "elementType": "visual",
+                            "id": "ops-checklist",
+                            "datasetId": "tasks",
+                            "statusColumn": "Done",
+                            "warningColumn": "Due",
+                            "warningThreshold": 5,
+                            "exportFileName": "tasks.csv",
+                            "rowModal": true,
+                            "columnFormats": {
+                                "Due": "date"
+                            },
+                            "conditionalFormats": [
+                                {
+                                    "when": {
+                                        "column": "Priority",
+                                        "op": "eq",
+                                        "value": "High"
+                                    },
+                                    "columns": [
+                                        "Priority"
+                                    ],
+                                    "style": "warning"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "checklist",
+                            "elementType": "visual",
+                            "id": "elem-52",
+                            "datasetId": "tasks",
+                            "title": "Open work only",
+                            "statusColumn": "Done",
+                            "warningColumn": "Due",
+                            "showProgress": false,
+                            "hideCompleted": true
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "tasks": {
+            "id": "tasks",
+            "format": "records",
+            "columns": [
+                "Task",
+                "Owner",
+                "Priority",
+                "Done",
+                "Due"
+            ],
+            "dtypes": [
+                "string",
+                "string",
+                "string",
+                "boolean",
+                "date"
+            ],
+            "data": [
+                {
+                    "Task": "Draft Q3 forecast",
+                    "Owner": "Ann",
+                    "Priority": "High",
+                    "Done": true,
+                    "Due": "2026-07-11T00:00:00.000000Z"
+                },
+                {
+                    "Task": "Renew TLS certificates",
+                    "Owner": "Ben",
+                    "Priority": "High",
+                    "Done": false,
+                    "Due": "2026-07-19T00:00:00.000000Z"
+                },
+                {
+                    "Task": "Onboard new vendor",
+                    "Owner": "Cara",
+                    "Priority": "Medium",
+                    "Done": false,
+                    "Due": "2026-07-23T00:00:00.000000Z"
+                },
+                {
+                    "Task": "Archive 2024 records",
+                    "Owner": "Dan",
+                    "Priority": "Low",
+                    "Done": true,
+                    "Due": "2026-08-10T00:00:00.000000Z"
+                },
+                {
+                    "Task": "Update runbooks",
+                    "Owner": "Elle",
+                    "Priority": "Medium",
+                    "Done": false,
+                    "Due": "2026-07-25T00:00:00.000000Z"
+                },
+                {
+                    "Task": "Security review",
+                    "Owner": "Finn",
+                    "Priority": "High",
+                    "Done": false,
+                    "Due": "2026-08-05T00:00:00.000000Z"
+                }
+            ]
+        }
+    }
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>

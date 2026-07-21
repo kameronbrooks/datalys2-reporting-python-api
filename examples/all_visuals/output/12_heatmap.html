@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heatmap Showcase</title>
+    <meta name="dl-version" content="0.4.1">
+    <meta name="description" content="Category matrices with color scales.">
+    <meta name="author" content="">
+    <meta name="last-updated" content="07-21-2026 18:23:48">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Heatmap",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "heatmap",
+                            "elementType": "visual",
+                            "id": "elem-92",
+                            "datasetId": "matrix",
+                            "xColumn": "Month",
+                            "yColumn": "Region",
+                            "valueColumn": "Sales",
+                            "showCellLabels": true,
+                            "color": "Viridis",
+                            "xAxisLabel": "Month",
+                            "yAxisLabel": "Region"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "heatmap",
+                            "elementType": "visual",
+                            "id": "elem-94",
+                            "datasetId": "matrix",
+                            "xColumn": "Month",
+                            "yColumn": "Region",
+                            "valueColumn": "Sales",
+                            "showCellLabels": true,
+                            "minValue": 0,
+                            "maxValue": 100,
+                            "color": [
+                                "#fee2e2",
+                                "#b91c1c"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "matrix": {
+            "id": "matrix",
+            "format": "records",
+            "columns": [
+                "Region",
+                "Month",
+                "Sales"
+            ],
+            "dtypes": [
+                "string",
+                "string",
+                "number"
+            ],
+            "data": [
+                {
+                    "Region": "North",
+                    "Month": "Jan",
+                    "Sales": 42
+                },
+                {
+                    "Region": "North",
+                    "Month": "Feb",
+                    "Sales": 51
+                },
+                {
+                    "Region": "North",
+                    "Month": "Mar",
+                    "Sales": 63
+                },
+                {
+                    "Region": "North",
+                    "Month": "Apr",
+                    "Sales": 58
+                },
+                {
+                    "Region": "South",
+                    "Month": "Jan",
+                    "Sales": 35
+                },
+                {
+                    "Region": "South",
+                    "Month": "Feb",
+                    "Sales": 29
+                },
+                {
+                    "Region": "South",
+                    "Month": "Mar",
+                    "Sales": 44
+                },
+                {
+                    "Region": "South",
+                    "Month": "Apr",
+                    "Sales": 50
+                },
+                {
+                    "Region": "East",
+                    "Month": "Jan",
+                    "Sales": 61
+                },
+                {
+                    "Region": "East",
+                    "Month": "Feb",
+                    "Sales": 66
+                },
+                {
+                    "Region": "East",
+                    "Month": "Mar",
+                    "Sales": 72
+                },
+                {
+                    "Region": "East",
+                    "Month": "Apr",
+                    "Sales": 80
+                },
+                {
+                    "Region": "West",
+                    "Month": "Jan",
+                    "Sales": 22
+                },
+                {
+                    "Region": "West",
+                    "Month": "Feb",
+                    "Sales": 31
+                },
+                {
+                    "Region": "West",
+                    "Month": "Mar",
+                    "Sales": 27
+                },
+                {
+                    "Region": "West",
+                    "Month": "Apr",
+                    "Sales": 39
+                }
+            ]
+        }
+    }
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>
