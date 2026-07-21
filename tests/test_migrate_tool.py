@@ -121,6 +121,24 @@ class TestShapeTransforms(unittest.TestCase):
         out, _ = transform_source(src)
         self.assertIn("total_row=True", out)
 
+    def test_conditional_formats_list(self):
+        src = (
+            "row.add_table(\"d\", conditional_formats=["
+            "{\"when\": {\"column\": \"amount\", \"op\": \"gt\", \"value\": 200}, \"style\": \"error\"}])\n"
+        )
+        out, _ = transform_source(src)
+        self.assertIn(
+            'conditional_formats=[ConditionalFormat(when={"column": "amount", "op": "gt", "value": 200}, style="error")]',
+            out,
+        )
+        import_lines = [l for l in out.splitlines() if l.startswith("from dl2_reports import")]
+        self.assertTrue(import_lines and "ConditionalFormat" in import_lines[0])
+
+    def test_column_formats_dict_untouched(self):
+        src = "row.add_table(\"d\", column_formats={\"unit_price\": \"currency\", \"Due\": {\"format\": \"date\"}})\n"
+        out, _ = transform_source(src)
+        self.assertIn('column_formats={"unit_price": "currency", "Due": {"format": "date"}}', out)
+
 
 @unittest.skipUnless(HAS_LIBCST, "libcst not installed")
 class TestImportManagement(unittest.TestCase):

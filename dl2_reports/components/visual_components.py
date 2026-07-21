@@ -124,6 +124,8 @@ class Table(VisualComponent):
         row_modal_id: Optional[str] = None,
         row_modal_columns: Optional[List[str]] = None,
         row_modal_title: Optional[str] = None,
+        column_formats: Optional[Dict[str, Any]] = None,
+        conditional_formats: Optional[List[Any]] = None,
         id: Optional[str] = None,
         persist_state: Optional[bool] = None,
         extra: Optional[Dict[str, Any]] = None,
@@ -161,12 +163,20 @@ class Table(VisualComponent):
                 ``{{ row.Col }}`` templates (0.4+).
             row_modal_columns: Columns listed in the built-in detail modal.
             row_modal_title: Title of the built-in detail modal.
+            column_formats: Per-column display formats (dl2 0.4.1+) — column name →
+                :class:`~dl2_reports.ColumnFormat`, ``{"format", ...}`` dict, or
+                shorthand kind string (``"due": "date"``). Keys are column names
+                and are preserved verbatim. Display-only: CSV export keeps raw values.
+            conditional_formats: Highlight rules (dl2 0.4.1+) — list of
+                :class:`~dl2_reports.ConditionalFormat` or dicts. First matching
+                rule wins per target; the preset field is ``style``, not ``preset``.
             extra: Passthrough props not modeled by this class.
             **common: Common visual props (id enables persistence/link targeting;
                 persist_state opts out).
         """
         if isinstance(total_row, dict):
             total_row = _protect_total_fns(total_row)
+        column_formats = _protect_column_formats(column_formats)
         super().__init__(
             dataset_id,
             dict(
@@ -193,6 +203,8 @@ class Table(VisualComponent):
                 row_modal_id=row_modal_id,
                 row_modal_columns=row_modal_columns,
                 row_modal_title=row_modal_title,
+                column_formats=column_formats,
+                conditional_formats=conditional_formats,
                 id=id,
                 persist_state=persist_state,
             ),
@@ -202,7 +214,11 @@ class Table(VisualComponent):
 
 
 class Checklist(VisualComponent):
-    """A task checklist (``type: "checklist"``) with completion status and due-date warnings."""
+    """A task checklist (``type: "checklist"``) with completion status, due-date
+    warnings, and — since dl2 0.4.1 — full table parity (sorting, column hiding,
+    export, context menus, row modals, persistent state) plus status filter chips
+    and a completion progress bar. Read-only by design: status always comes from
+    the dataset."""
 
     TYPE = "checklist"
 
@@ -215,6 +231,26 @@ class Checklist(VisualComponent):
         columns: Optional[List[str]] = None,
         page_size: Optional[int] = None,
         show_search: Optional[bool] = None,
+        sortable: Optional[bool] = None,
+        default_sort: Optional[List[Any]] = None,
+        hidden_columns: Optional[List[str]] = None,
+        allow_column_hiding: Optional[bool] = None,
+        enable_export: Optional[bool] = None,
+        export_file_name: Optional[str] = None,
+        context_menu: Optional[bool] = None,
+        max_height: Optional[int] = None,
+        sticky_header: Optional[bool] = None,
+        row_modal: Optional[bool] = None,
+        row_modal_id: Optional[str] = None,
+        row_modal_columns: Optional[List[str]] = None,
+        row_modal_title: Optional[str] = None,
+        show_status_filter: Optional[bool] = None,
+        show_progress: Optional[bool] = None,
+        hide_completed: Optional[bool] = None,
+        column_formats: Optional[Dict[str, Any]] = None,
+        conditional_formats: Optional[List[Any]] = None,
+        id: Optional[str] = None,
+        persist_state: Optional[bool] = None,
         extra: Optional[Dict[str, Any]] = None,
         **common: Any,
     ):
@@ -223,11 +259,47 @@ class Checklist(VisualComponent):
             dataset_id: The dataset id.
             status_column: Column containing a truthy completion value.
             warning_column: Optional date column to evaluate for warnings.
-            warning_threshold: Days before due date to trigger warning.
+            warning_threshold: Days before due date to trigger warning (viewer default 3).
             columns: Optional subset of columns to display.
             page_size: Rows per page.
             show_search: Whether to show the search box.
+            sortable: Type-aware sorting; Shift+click multi-sort (viewer default True).
+                The Status header sorts by urgency.
+            default_sort: Initial sort — list of :class:`~dl2_reports.SortSpec` or
+                ``{"column", "direction"}`` dicts. Accepts the special column
+                ``"status"`` (sorts by urgency: overdue → due soon → pending →
+                complete). Viewer default is the urgency sort, then due date.
+            hidden_columns: Columns hidden initially.
+            allow_column_hiding: Runtime Columns menu (viewer default True).
+            enable_export: CSV export / clipboard copy (viewer default True).
+                Exports include a derived ``Status`` column.
+            export_file_name: File name for CSV export.
+            context_menu: Right-click context menus (viewer default True).
+            max_height: Max body height in px (scrollable body + sticky header).
+            sticky_header: Viewer default True when max_height is set.
+            row_modal: Built-in row detail modal on double-click (leads with status).
+            row_modal_id: Open a custom modal instead; cards inside can use
+                ``{{ row.Col }}`` templates.
+            row_modal_columns: Columns listed in the built-in detail modal.
+            row_modal_title: Title of the built-in detail modal.
+            show_status_filter: Status filter chips with counts — All / Pending /
+                Due Soon / Overdue / Complete (viewer default True).
+            show_progress: Completion progress bar next to the "X / Y Completed"
+                summary (viewer default True).
+            hide_completed: Start with completed tasks hidden — the Complete chip
+                toggled off (viewer default False).
+            column_formats: Per-column display formats (dl2 0.4.1+) — column name →
+                :class:`~dl2_reports.ColumnFormat`, ``{"format", ...}`` dict, or
+                shorthand kind string (``"due": "date"``). Keys are column names
+                and are preserved verbatim. Display-only: CSV export keeps raw values.
+            conditional_formats: Highlight rules (dl2 0.4.1+) — list of
+                :class:`~dl2_reports.ConditionalFormat` or dicts. First matching
+                rule wins per target; the preset field is ``style``, not ``preset``.
+            extra: Passthrough props not modeled by this class.
+            **common: Common visual props (id enables persistence/link targeting;
+                persist_state opts out).
         """
+        column_formats = _protect_column_formats(column_formats)
         super().__init__(
             dataset_id,
             dict(
@@ -237,6 +309,26 @@ class Checklist(VisualComponent):
                 columns=columns,
                 page_size=page_size,
                 show_search=show_search,
+                sortable=sortable,
+                default_sort=default_sort,
+                hidden_columns=hidden_columns,
+                allow_column_hiding=allow_column_hiding,
+                enable_export=enable_export,
+                export_file_name=export_file_name,
+                context_menu=context_menu,
+                max_height=max_height,
+                sticky_header=sticky_header,
+                row_modal=row_modal,
+                row_modal_id=row_modal_id,
+                row_modal_columns=row_modal_columns,
+                row_modal_title=row_modal_title,
+                show_status_filter=show_status_filter,
+                show_progress=show_progress,
+                hide_completed=hide_completed,
+                column_formats=column_formats,
+                conditional_formats=conditional_formats,
+                id=id,
+                persist_state=persist_state,
             ),
             extra=extra,
             **common,
@@ -546,6 +638,16 @@ def _protect_total_fns(total_row: Dict[str, Any]) -> Dict[str, Any]:
         protected["fns"] = RawDict(total_row["fns"])
         return protected
     return total_row
+
+
+def _protect_column_formats(column_formats: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    """Wraps a ``column_formats`` mapping in RawDict so column names used as dict
+    keys survive serialization verbatim (values still serialize normally)."""
+    from ..serialization import RawDict
+
+    if isinstance(column_formats, dict) and not isinstance(column_formats, RawDict):
+        return RawDict(column_formats)
+    return column_formats
 
 
 class Pie(VisualComponent):

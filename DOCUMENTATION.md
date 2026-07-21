@@ -1,5 +1,5 @@
 # Datalys2 Reporting Documentation
-**Version 0.5.0**
+**Version 0.6.0**
 
 
 This documentation guides you on how to create HTML reports using the Datalys2 Reporting library.
@@ -25,7 +25,7 @@ You can also use standard HTML meta tags to configure the report header informat
     <meta name="description" content="A brief description of this report">
     <meta name="author" content="Report Author Name">
     <meta name="last-updated" content="2024-01-01">
-    <meta name="dl-version" content="0.4.0">
+    <meta name="dl-version" content="0.4.1">
 
     <!-- Include the library styles -->
     <link rel="stylesheet" href="path/to/dl2-style.css">
@@ -204,8 +204,8 @@ The `rows` array contains layout objects. Layouts can contain other layouts or v
 | `id` | `string` | Optional. Stable element id. Every visual with an id is a DOM anchor (0.4+), can be a link target, and can persist view state. |
 | `padding` | `number` | Padding in pixels (default 0; zero is respected as of 0.3). |
 | `margin` | `number` | Margin in pixels (default 0 as of 0.3 — spacing is owned by layout `gap`). |
-| `border` | `boolean/string` | CSS border or boolean to enable default. |
-| `shadow` | `boolean/string` | CSS box-shadow or boolean to enable default. |
+| `border` | `boolean/string` | CSS border string (e.g. `"2px dashed #f59e0b"`) or boolean to enable the theme default. CSS strings honored on layouts and visuals since 0.4.1. |
+| `shadow` | `boolean/string` | CSS box-shadow string or boolean to enable the theme default. CSS strings honored on layouts and visuals since 0.4.1. |
 | `flex` | `number` | Flex grow value (`flex: 0` is respected as of 0.3). |
 | `modalId` | `string` | Optional. The ID of a modal to open when the element is hovered and the expand icon is clicked. |
 | `filter` | `FilterExpression` | Optional (0.3+). Client-side filter applied to this visual's view of its dataset. See [Filtering & Aggregation](#filtering--aggregation-03). |
@@ -362,12 +362,18 @@ Displays data in a tabular format with sorting, filtering, grouping, export, and
 | `rowModalTitle` | `string` | (0.4+) Title of the built-in detail modal (default 'Details'). |
 | `rowModalId` | `string` | (0.4+) Open a custom modal from `modals` instead; cards inside can use `{{ row.ColumnName }}` templates. Implies `rowModal`. |
 | `persistState` | `boolean` | (0.4+) Persist runtime sort/hidden-columns/grouping to localStorage. Defaults to true when the table has an `id`. |
+| `columnFormats` | `Record<string, ColumnFormat \| string>` | (0.4.1+) Per-column display formats — see [Column & Conditional Formatting](#column--conditional-formatting-041). |
+| `conditionalFormats` | `ConditionalFormat[]` | (0.4.1+) Highlight rules — see [Column & Conditional Formatting](#column--conditional-formatting-041). |
 
 Set `contextMenu: false`, `enableExport: false`, `allowColumnHiding: false`, `sortable: false` to fully restore pre-0.3 behavior.
 
 **7. Checklist (`type: "checklist"`)**
 
-Displays a list of tasks with completion status and due date warnings.
+Displays a list of tasks with completion status and due date warnings. Since 0.4.1 it is
+built on the shared table infrastructure and supports the full table UX (sorting, column
+hiding, export, context menus, sticky header, row modals, persistent state) plus status
+filter chips and a completion progress bar. Read-only by design — status always comes
+from the dataset.
 
 | Property | Type | Description |
 |----------|------|-------------|
@@ -377,6 +383,25 @@ Displays a list of tasks with completion status and due date warnings.
 | `columns` | `string[]` | Optional array of column names to display. |
 | `pageSize` | `number` | Number of rows per page (default 10). |
 | `showSearch` | `boolean` | Whether to show the search bar (default true). |
+| `sortable` | `boolean` | (0.4.1+) Type-aware sorting; Shift+click multi-sort (default true). The Status header sorts by urgency. |
+| `defaultSort` | `{column, direction}[]` | (0.4.1+) Initial sort. Accepts the special column `"status"` (urgency rank: overdue → due soon → pending → complete). Default: urgency, then due date. |
+| `hiddenColumns` | `string[]` | (0.4.1+) Columns hidden initially. |
+| `allowColumnHiding` | `boolean` | (0.4.1+) Runtime Columns menu (default true). |
+| `enableExport` | `boolean` | (0.4.1+) CSV export / clipboard copy (default true). Exports include a derived `Status` column. |
+| `exportFileName` | `string` | (0.4.1+) File name for CSV export. |
+| `contextMenu` | `boolean` | (0.4.1+) Right-click context menus (default true). |
+| `maxHeight` | `number` | (0.4.1+) Max body height in px; enables scrollable body + sticky header. |
+| `stickyHeader` | `boolean` | (0.4.1+) Defaults to true when `maxHeight` is set. |
+| `rowModal` | `boolean` | (0.4.1+) Built-in row detail modal on double-click; leads with the status. |
+| `rowModalId` | `string` | (0.4.1+) Open a custom modal from `modals` instead. Implies `rowModal`. |
+| `rowModalColumns` | `string[]` | (0.4.1+) Columns listed in the built-in detail modal. |
+| `rowModalTitle` | `string` | (0.4.1+) Title of the built-in detail modal (default 'Details'). |
+| `showStatusFilter` | `boolean` | (0.4.1+) Status filter chips with counts — All / Pending / Due Soon / Overdue / Complete (default true). Clicking a chip hides/shows that status (persisted). |
+| `showProgress` | `boolean` | (0.4.1+) Completion progress bar next to the "X / Y Completed" summary (default true). |
+| `hideCompleted` | `boolean` | (0.4.1+) Start with completed tasks hidden — the Complete chip toggled off (default false). |
+| `persistState` | `boolean` | (0.4.1+) Persist view state to localStorage. Defaults to true when the checklist has an `id`. |
+| `columnFormats` | `Record<string, ColumnFormat \| string>` | (0.4.1+) Per-column display formats — see [Column & Conditional Formatting](#column--conditional-formatting-041). |
+| `conditionalFormats` | `ConditionalFormat[]` | (0.4.1+) Highlight rules — see [Column & Conditional Formatting](#column--conditional-formatting-041). |
 
 **8. Histogram (`type: "histogram"`)**
 
@@ -719,9 +744,58 @@ Runtime view changes — table sort / hidden columns / grouping, and the active 
 - Give persisted visuals **stable, unique ids** — duplicate ids break persistence and links (the validator warns).
 - Reset: right-click a visual header → **Reset view**, or the report-wide **Reset view** button in the headbar (appears only when saved customizations exist).
 
+## Column & Conditional Formatting (0.4.1+)
+
+Tables and checklists accept two display-formatting props.
+
+### `columnFormats`
+
+An object mapping **column name** (verbatim — never camelCased) → a format spec or a
+shorthand kind string:
+
+```json
+"columnFormats": {
+    "Amount": { "format": "currency", "digits": 0 },
+    "Growth": { "format": "percent", "digits": 1 },
+    "Due": "date"
+}
+```
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `format` | `'number' \| 'currency' \| 'percent' \| 'date' \| 'hms'` | The format kind. `percent` multiplies by 100 (store ratios); `hms` treats the value as seconds → `HH:MM:SS`. |
+| `digits` | `number` | Optional decimal places (currency default 2, percent default 1). |
+| `symbol` | `string` | Optional currency symbol (default `'$'`; currency only). |
+
+Applies to body cells, total row/column, group aggregates (matched by the aggregate's `as` name), and row detail modals. Display-only: CSV export keeps raw values; clipboard copy matches the formatted view.
+
+### `conditionalFormats`
+
+An array of highlight rules evaluated per data row (raw values, before `columnFormats`):
+
+```json
+"conditionalFormats": [
+    { "when": { "column": "Amount", "op": "gte", "value": 300 }, "style": "success" },
+    { "when": { "column": "Amount", "op": "lt", "value": 100 }, "target": "row", "style": "error" },
+    { "when": { "and": [ { "column": "Region", "op": "eq", "value": "West" },
+                          { "column": "Units", "op": "gt", "value": 10 } ] },
+      "columns": ["Units"], "css": { "fontWeight": 600 } }
+]
+```
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `when` | `FilterExpression` | **Required.** Standard filter grammar (see [FilterExpression](#filterexpression)). |
+| `target` | `'cell' \| 'row'` | Default `'cell'` — styles the matching cell(s); `'row'` styles the whole row. |
+| `columns` | `string[]` | Cell-target columns. Defaults to the `when` condition's own column; **required for compound (`and`/`or`/`not`) conditions**. |
+| `style` | `string` | Named theme-aware preset: `'success'`, `'warning'`, `'error'`, `'info'`, `'muted'`. (Field is `style`, not `preset`.) |
+| `css` | `Record<string, string \| number>` | Inline overrides layered over `style` (camelCase React style keys). |
+
+First matching rule wins per target; one row rule and one cell rule can compose. A rule needs `style` and/or `css`. Totals/aggregate rows are exempt.
+
 ## Config Validation (0.3+)
 
-On load, the config is validated and helpful `[datalys2]` console warnings are emitted for unknown visual types, missing datasets, bad column names, invalid filter ops, empty layouts, duplicate visual ids, unknown `rowModalId` / link `targetId`, malformed tabs, etc. Warnings never block rendering. Opt out with `<meta name="dl2-validate" content="false">`.
+On load, the config is validated and helpful `[datalys2]` console warnings are emitted for unknown visual types, missing datasets, bad column names, invalid filter ops, empty layouts, duplicate visual ids, unknown `rowModalId` / link `targetId`, malformed tabs, etc. Warnings never block rendering. Opt out with `<meta name="dl2-validate" content="false">`. 0.4.1 adds warnings for unknown `columnFormats` columns/kinds, malformed `conditionalFormats` (bad `when`, unknown preset/target, unresolvable columns), and column checks for `statusColumn`/`warningColumn`.
 
 ## Visual Elements
 
@@ -746,6 +820,8 @@ Displays a trend line based on provided coefficients.
 | Property | Type | Description |
 |----------|------|-------------|
 | `coefficients` | `number[]` | Array of coefficients for the trend line equation (e.g., `[intercept, slope]`). |
+
+Since 0.4.1 trends render on `line`, `area`, `stackedBar`, `clusteredBar`, `histogram`, and `scatter` charts (previously only scatter). On categorical X axes the coefficients are evaluated against the 0-based category index; numeric axes (scatter, histogram) use real axis units.
 
 #### 2. Axis Line (`visualElementType: "xAxis" | "yAxis"`)
 

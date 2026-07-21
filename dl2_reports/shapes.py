@@ -154,3 +154,90 @@ class Tab(Shape):
     title: str = ""
     children: Optional[List[Any]] = None
     layout: Optional[Any] = None
+
+
+VALID_COLUMN_FORMATS = frozenset({"number", "currency", "percent", "date", "hms"})
+VALID_CF_STYLES = frozenset({"success", "warning", "error", "info", "muted"})
+VALID_CF_TARGETS = frozenset({"cell", "row"})
+
+
+@dataclass
+class ColumnFormat(Shape):
+    """One entry of a table/checklist ``column_formats`` mapping (dl2 0.4.1+).
+
+    Formatting is display-only: CSV export keeps raw values; clipboard copy
+    matches the formatted view. A bare kind string (``"due": "date"``) is
+    accepted in the mapping as shorthand for ``ColumnFormat("date")``.
+
+    Args:
+        format: 'number', 'currency', 'percent', 'date', or 'hms'.
+            'percent' multiplies by 100 (store ratios like 0.42); 'hms' treats
+            the value as seconds.
+        digits: Decimal places (viewer defaults: currency 2, percent 1).
+        symbol: Currency symbol when format is 'currency' (viewer default '$').
+    """
+
+    format: str = "number"
+    digits: Optional[int] = None
+    symbol: Optional[str] = None
+
+    def __post_init__(self):
+        if self.format not in VALID_COLUMN_FORMATS:
+            raise ValueError(
+                f"ColumnFormat.format '{self.format}' is not valid. "
+                f"Valid formats: {sorted(VALID_COLUMN_FORMATS)}"
+            )
+
+
+@dataclass
+class ConditionalFormat(Shape):
+    """One conditional-format highlight rule for tables/checklists (dl2 0.4.1+).
+
+    Rules are evaluated per data row against raw (unformatted) values; the first
+    matching rule wins per target (one ``row`` rule and one ``cell`` rule can
+    compose). Totals/aggregate rows are exempt.
+
+    Args:
+        when: Filter expression (standard filter grammar — build with the
+            :mod:`dl2_reports.filters` helpers or a plain dict).
+        target: 'cell' (default — styles the matching cell(s)) or 'row'.
+        columns: Cell-target columns to style. Defaults to the ``when``
+            condition's own column; required when ``when`` is a compound
+            (``and``/``or``/``not``) expression.
+        style: Named theme-aware preset: 'success', 'warning', 'error',
+            'info', or 'muted'. (The viewer prop is ``style``, not ``preset``.)
+        css: Inline CSS overrides layered over ``style``. Keys are camelCase
+            React style names; snake_case keys are converted for you
+            (``background_color`` → ``backgroundColor``).
+    """
+
+    when: Dict[str, Any] = None
+    target: Optional[str] = None
+    columns: Optional[List[str]] = None
+    style: Optional[str] = None
+    css: Optional[Dict[str, Any]] = None
+
+    def __post_init__(self):
+        if not self.when:
+            raise ValueError("ConditionalFormat requires a 'when' filter expression.")
+        from .filters import validate_filter
+
+        validate_filter(self.when)
+        if self.target is not None and self.target not in VALID_CF_TARGETS:
+            raise ValueError(
+                f"ConditionalFormat.target must be one of {sorted(VALID_CF_TARGETS)}, got '{self.target}'."
+            )
+        if self.style is not None and self.style not in VALID_CF_STYLES:
+            raise ValueError(
+                f"ConditionalFormat.style '{self.style}' is not valid. "
+                f"Valid styles: {sorted(VALID_CF_STYLES)}"
+            )
+        if self.style is None and not self.css:
+            raise ValueError(
+                "ConditionalFormat requires 'style' and/or 'css' (the viewer skips rules with neither)."
+            )
+        if self.target != "row" and self.columns is None and "column" not in self.when:
+            raise ValueError(
+                "ConditionalFormat with a compound 'when' expression needs explicit "
+                "'columns' for cell targeting (or use target='row')."
+            )

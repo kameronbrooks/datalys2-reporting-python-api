@@ -1,9 +1,9 @@
 # Datalys2 Reporting Python API
-**Version 0.5.0**
+**Version 0.6.0**
 
 A Python library to build and compile interactive HTML reports using the Datalys2 Reporting framework.
 
-**Note:** Compatible with dl2 version 0.4.0
+**Note:** Compatible with dl2 version 0.4.1
 https://github.com/kameronbrooks/datalys2-reporting
 
 ## Installation
@@ -46,7 +46,7 @@ one class per visual, imported from the package root:
 
 plus typed shapes for structured props:
 
-`Threshold, SortSpec, TotalRow, TotalColumn, GaugeRange, AggregateColumn, Tab`
+`Threshold, SortSpec, TotalRow, TotalColumn, GaugeRange, AggregateColumn, Tab, ColumnFormat, ConditionalFormat`
 
 ```python
 from dl2_reports import DL2Report, Line, Table, Tabs, Tab, Threshold, TotalRow, SortSpec
@@ -185,8 +185,8 @@ Common properties supported by the viewer include:
 
 - `padding`: number (px)
 - `margin`: number (px)
-- `border`: bool or CSS border string
-- `shadow`: bool or CSS box-shadow string
+- `border`: bool or CSS border string (e.g. `"2px dashed #f59e0b"`; CSS strings honored by the viewer since dl2 0.4.1)
+- `shadow`: bool or CSS box-shadow string (CSS strings honored by the viewer since dl2 0.4.1)
 - `flex`: number (flex grow)
 - `modal_id`: string (global modal id opened via the expand icon)
 
@@ -278,6 +278,8 @@ Use this when you want to pass through viewer props that don't have a dedicated 
 | `row_modal_id` | `str \| None` | `None` | Open a custom modal instead; cards can use `{{ row.Col }}` templates (dl2 0.4+). |
 | `row_modal_columns` | `list[str] \| None` | `None` | Columns listed in the built-in detail modal. |
 | `row_modal_title` | `str \| None` | `None` | Title of the built-in detail modal. |
+| `column_formats` | `dict \| None` | `None` | Per-column display formats (dl2 0.4.1+) — see [Column Formatting](#column-formatting-dl2-041). |
+| `conditional_formats` | `list \| None` | `None` | Highlight rules (dl2 0.4.1+) — see [Conditional Formatting](#conditional-formatting-dl2-041). |
 | `id` | `str \| None` | `None` | Stable element id (persistence + link targeting). |
 | `persist_state` | `bool \| None` | `None` | Persist sort/columns/grouping (viewer default: true when `id` is set). |
 | `**kwargs` | `Any` | — | Additional common visual properties (e.g. `filter=`, `aggregate=`). |
@@ -373,15 +375,40 @@ Use this when you want to pass through viewer props that don't have a dedicated 
 
 #### Checklist
 
+Since dl2 0.4.1 the checklist has full table parity (type-aware sorting, column hiding,
+CSV export, context menus, sticky header, row detail modals, persistent view state) plus
+status filter chips and a completion progress bar. It remains **read-only by design** —
+status always comes from the dataset.
+
 | Parameter | Type | Default | Description |
 |----------|------|---------|-------------|
 | `dataset_id` | `str` | (required) | The dataset id. |
 | `status_column` | `str` | (required) | Column containing a truthy completion value. |
 | `warning_column` | `str \| None` | `None` | Optional date column to evaluate for warnings. |
-| `warning_threshold` | `int \| None` | `None` | Days before due date to trigger warning. |
+| `warning_threshold` | `int \| None` | `None` | Days before due date to trigger warning (viewer default 3). |
 | `columns` | `list[str] \| None` | `None` | Optional subset of columns to display. |
 | `page_size` | `int \| None` | `None` | Rows per page. |
 | `show_search` | `bool \| None` | `None` | Whether to show the search box. |
+| `sortable` | `bool \| None` | `None` | Type-aware sorting; Shift+click multi-sort (viewer default true). The Status header sorts by urgency (dl2 0.4.1+). |
+| `default_sort` | `list \| None` | `None` | Initial sort — `SortSpec` or dicts. Accepts the special column `"status"` (urgency: overdue → due soon → pending → complete). Viewer default: urgency, then due date (dl2 0.4.1+). |
+| `hidden_columns` | `list[str] \| None` | `None` | Columns hidden initially (dl2 0.4.1+). |
+| `allow_column_hiding` | `bool \| None` | `None` | Runtime Columns menu (viewer default true) (dl2 0.4.1+). |
+| `enable_export` | `bool \| None` | `None` | CSV export / clipboard copy; exports include a derived `Status` column (viewer default true) (dl2 0.4.1+). |
+| `export_file_name` | `str \| None` | `None` | File name for CSV export (dl2 0.4.1+). |
+| `context_menu` | `bool \| None` | `None` | Right-click context menus (viewer default true) (dl2 0.4.1+). |
+| `max_height` | `int \| None` | `None` | Max body height in px (scrollable body + sticky header) (dl2 0.4.1+). |
+| `sticky_header` | `bool \| None` | `None` | Viewer default: true when `max_height` is set (dl2 0.4.1+). |
+| `row_modal` | `bool \| None` | `None` | Built-in row detail modal on double-click; leads with the status (dl2 0.4.1+). |
+| `row_modal_id` | `str \| None` | `None` | Open a custom modal instead; cards can use `{{ row.Col }}` templates (dl2 0.4.1+). |
+| `row_modal_columns` | `list[str] \| None` | `None` | Columns listed in the built-in detail modal (dl2 0.4.1+). |
+| `row_modal_title` | `str \| None` | `None` | Title of the built-in detail modal (dl2 0.4.1+). |
+| `show_status_filter` | `bool \| None` | `None` | Status filter chips with counts — All / Pending / Due Soon / Overdue / Complete (viewer default true) (dl2 0.4.1+). |
+| `show_progress` | `bool \| None` | `None` | Completion progress bar next to the "X / Y Completed" summary (viewer default true) (dl2 0.4.1+). |
+| `hide_completed` | `bool \| None` | `None` | Start with completed tasks hidden — the Complete chip toggled off (dl2 0.4.1+). |
+| `column_formats` | `dict \| None` | `None` | Per-column display formats — see [Column Formatting](#column-formatting-dl2-041) (dl2 0.4.1+). |
+| `conditional_formats` | `list \| None` | `None` | Highlight rules — see [Conditional Formatting](#conditional-formatting-dl2-041) (dl2 0.4.1+). |
+| `id` | `str \| None` | `None` | Stable element id (persistence + link targeting). |
+| `persist_state` | `bool \| None` | `None` | Persist sort/columns/status chips (viewer default: true when `id` is set). |
 | `**kwargs` | `Any` | — | Additional common visual properties. |
 
 #### Histogram
@@ -561,6 +588,59 @@ modal.add_row().add_card(
 
 The column names in `total_row["fns"]` are preserved exactly as written (they are not snake_case→camelCase converted). For your own passthrough props whose dict **keys** are column names, wrap them in `dl2_reports.RawDict` to get the same protection.
 
+### Column Formatting (dl2 0.4.1+)
+
+Give Table and Checklist columns display formats with `column_formats=` — a mapping of
+column name → `ColumnFormat`, dict, or shorthand kind string:
+
+```python
+from dl2_reports import ColumnFormat
+
+page.add_row().add_table(
+    "orders",
+    column_formats={
+        "Amount": ColumnFormat("currency", digits=0),   # or {"format": "currency", "digits": 0}
+        "Growth": ColumnFormat("percent", digits=1),    # raw values are ratios (0.42 → 42.0%)
+        "Due": "date",                                  # shorthand string
+        "Runtime": "hms",                               # seconds → HH:MM:SS
+    },
+)
+```
+
+- Kinds: `'number'`, `'currency'`, `'percent'`, `'date'`, `'hms'`; options: `digits` (currency default 2, percent default 1) and `symbol` (currency only, default `'$'`).
+- Applies to cells, total row/column, group aggregates (matched by the aggregate's `as` name), and row detail modals.
+- **Display-only:** CSV export keeps raw values; clipboard copy matches the formatted view.
+- Column names used as keys are preserved verbatim (no snake_case→camelCase conversion).
+
+### Conditional Formatting (dl2 0.4.1+)
+
+Highlight cells or whole rows with `conditional_formats=` — a list of rules evaluated per
+row using the standard filter grammar:
+
+```python
+from dl2_reports import ConditionalFormat, filters as F
+
+page.add_row().add_table(
+    "orders",
+    conditional_formats=[
+        ConditionalFormat(when=F.gte("Amount", 300), style="success"),
+        ConditionalFormat(when=F.lt("Amount", 100), target="row", style="error"),
+        ConditionalFormat(
+            when=F.and_(F.eq("Region", "West"), F.gt("Units", 10)),
+            columns=["Units"],                       # required for compound `when`
+            css={"font_weight": 600, "background_color": "#fef3c7"},
+        ),
+    ],
+)
+```
+
+- `style` is a named theme-aware preset: `'success'`, `'warning'`, `'error'`, `'info'`, or `'muted'` (note: the field is `style`, not `preset`). `css` layers inline overrides on top; snake_case keys become camelCase React style names.
+- `target` is `'cell'` (default — styles the matching cell(s)) or `'row'`. For cell targets, `columns` defaults to the `when` condition's own column; compound (`and`/`or`/`not`) conditions must set `columns` explicitly (the Python API enforces this).
+- First matching rule wins per target; one row rule and one cell rule can compose. Totals/aggregate rows are exempt. Rules see raw values (before `column_formats`).
+- Every rule needs `style` and/or `css` — `ConditionalFormat` raises `ValueError` otherwise, and validates `when` at construction time.
+
+Both props work identically on `Checklist` (dl2 0.4.1 rebuilt it on the table infrastructure).
+
 ### Persistent View State (dl2 0.4+)
 
 Runtime view changes (table sort/hidden columns/grouping, active tabs) are saved to localStorage per report + visual `id` and restored on reload.
@@ -602,6 +682,9 @@ Add trend lines, markers, and custom axes to your charts.
 
 You can add a trend line using the `.add_trend()` method. It can automatically calculate linear or polynomial regression if you don't provide coefficients.
 
+Supported on `line`, `area`, `scatter`, `clusteredBar`, `stackedBar`, and `histogram`
+visuals (before dl2 0.4.1 the viewer only rendered trends on scatter plots).
+
 ```python
 chart = page.add_row().add_scatter("my_data", "A", "B")
 
@@ -614,6 +697,11 @@ chart.add_trend(coefficients=2, color="blue", line_style="dashed")
 # Manually provide coefficients [intercept, slope, ...]
 chart.add_trend(coefficients=[0, 1.5], color="green")
 ```
+
+> **Units:** on categorical X axes (line, area, bars) the viewer evaluates coefficients
+> against the 0-based category index; numeric axes (scatter, histogram) use real axis
+> units. Auto-calculation needs `x_column` and `y_column` props, so histograms (binned
+> counts) and multi-series charts (`y_columns`) require explicit `coefficients`.
 
 #### Other Elements
 

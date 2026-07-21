@@ -164,7 +164,16 @@ def checklist_report():
         status_column="Completed",
         warning_column="Due",
         warning_threshold=5,
-        columns=["Task", "Due"]
+        columns=["Task", "Due"],
+        # dl2 0.4.1 table parity + checklist UX
+        id="task-checklist",
+        default_sort=[{"column": "status", "direction": "asc"}],
+        max_height=400,
+        hide_completed=True,
+        column_formats={"Due": "date"},
+        conditional_formats=[
+            {"when": F.eq("Task", "Task B"), "style": "warning"},
+        ],
     )
     return report
 
@@ -327,6 +336,11 @@ def table_features_report():
         row_modal_id="order-detail",
         persist_state=True,
         export_file_name="orders.csv",
+        # dl2 0.4.1 formatting
+        column_formats={"Amount": {"format": "currency", "digits": 0}},
+        conditional_formats=[
+            {"when": F.gte("Amount", 300), "columns": ["Amount"], "style": "success"},
+        ],
     )
     return report
 

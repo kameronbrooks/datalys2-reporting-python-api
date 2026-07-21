@@ -8,7 +8,7 @@ from ..serialization import RawDict, camel_case_dict, snake_to_camel
 from ..utilities import analytics
 from .base import ReportTreeComponent
 
-_TREND_ALLOWED_TYPES = frozenset({"line", "scatter", "clusteredBar", "stackedBar"})
+_TREND_ALLOWED_TYPES = frozenset({"line", "area", "scatter", "clusteredBar", "stackedBar", "histogram"})
 
 
 class Visual(ReportTreeComponent):
@@ -72,9 +72,14 @@ class Visual(ReportTreeComponent):
         """
         Adds a trend line element to the visual.
 
-        This method is only supported for 'line', 'scatter', 'clusteredBar', and 'stackedBar' visuals.
+        This method is only supported for 'line', 'area', 'scatter', 'clusteredBar', 'stackedBar',
+        and 'histogram' visuals (dl2 0.4.1+ renders trends on all of them).
         If coefficients are not provided, it attempts to auto-calculate them using the visual's dataset
-        and properties (specifically x_column and y_column).
+        and properties (specifically x_column and y_column) — so histograms (no y_column) and
+        multi-series line/area charts (y_columns) need explicit coefficients.
+
+        Note on units: the viewer evaluates coefficients against the 0-based category index on
+        categorical X axes (line, area, bars); numeric axes (scatter, histogram) use real axis units.
 
         Args:
             coefficients (List[float] | int | None, optional): 
@@ -93,7 +98,8 @@ class Visual(ReportTreeComponent):
 
         if self.type not in _TREND_ALLOWED_TYPES:
             raise ValueError(
-                "Trend elements can only be added to line, scatter, clusteredBar, or stackedBar visuals."
+                "Trend elements can only be added to line, area, scatter, clusteredBar, "
+                "stackedBar, or histogram visuals."
             )
 
         element: Dict[str, Any] = {"visual_element_type": "trend", "coefficients": []}

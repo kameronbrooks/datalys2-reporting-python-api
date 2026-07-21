@@ -370,5 +370,234 @@ class TestReportId(unittest.TestCase):
         self.assertEqual(report.meta_tags["report-id"], "abc")
 
 
+class TestChecklistFeatures(unittest.TestCase):
+    """dl2 0.4.1: checklist parity with tables + checklist-specific UX props."""
+
+    def setUp(self):
+        ReportTreeComponent.BASE_ID = 1
+        self.report = DL2Report("Checklist Test")
+        df = pd.DataFrame({
+            "task": ["A", "B", "C"],
+            "done": [True, False, False],
+            "due_date": ["2026-07-01", "2026-07-25", "2026-08-01"],
+        })
+        self.report.add_df("tasks", df, format="records", compress=False)
+        self.row = self.report.add_page("P").add_row()
+
+    def test_parity_props_camel_cased(self):
+        visual = self.row.add_checklist(
+            "tasks",
+            status_column="done",
+            sortable=True,
+            hidden_columns=["due_date"],
+            allow_column_hiding=False,
+            enable_export=False,
+            export_file_name="tasks.csv",
+            context_menu=False,
+            max_height=400,
+            sticky_header=True,
+            row_modal=True,
+            row_modal_columns=["task", "due_date"],
+            row_modal_title="Task Details",
+        )
+        d = visual.to_dict()
+        self.assertEqual(d["statusColumn"], "done")
+        self.assertEqual(d["hiddenColumns"], ["due_date"])
+        self.assertEqual(d["allowColumnHiding"], False)
+        self.assertEqual(d["enableExport"], False)
+        self.assertEqual(d["exportFileName"], "tasks.csv")
+        self.assertEqual(d["contextMenu"], False)
+        self.assertEqual(d["maxHeight"], 400)
+        self.assertEqual(d["stickyHeader"], True)
+        self.assertEqual(d["rowModal"], True)
+        self.assertEqual(d["rowModalColumns"], ["task", "due_date"])
+        self.assertEqual(d["rowModalTitle"], "Task Details")
+
+    def test_checklist_specific_props(self):
+        d = self.row.add_checklist(
+            "tasks",
+            status_column="done",
+            show_status_filter=False,
+            show_progress=False,
+            hide_completed=True,
+        ).to_dict()
+        self.assertEqual(d["showStatusFilter"], False)
+        self.assertEqual(d["showProgress"], False)
+        self.assertEqual(d["hideCompleted"], True)
+
+    def test_default_sort_special_status_column(self):
+        from dl2_reports import SortSpec
+        d = self.row.add_checklist(
+            "tasks",
+            status_column="done",
+            default_sort=[SortSpec("status", "desc"), SortSpec("due_date")],
+        ).to_dict()
+        self.assertEqual(
+            d["defaultSort"],
+            [{"column": "status", "direction": "desc"}, {"column": "due_date", "direction": "asc"}],
+        )
+
+    def test_row_modal_id(self):
+        d = self.row.add_checklist("tasks", status_column="done", row_modal_id="task-detail").to_dict()
+        self.assertEqual(d["rowModalId"], "task-detail")
+
+    def test_stable_id_and_persist_state(self):
+        visual = self.row.add_checklist(
+            "tasks", status_column="done", id="main-checklist", persist_state=False
+        )
+        self.assertEqual(visual.id, "main-checklist")
+        d = visual.to_dict()
+        self.assertEqual(d["id"], "main-checklist")
+        self.assertEqual(d["persistState"], False)
+
+    def test_typo_kwarg_raises(self):
+        from dl2_reports import Checklist
+        with self.assertRaises(TypeError):
+            Checklist("tasks", status_column="done", show_progres=True)
+
+    def test_new_props_pass_component_lint(self):
+        from dl2_reports.lint import lint_report
+        self.row.add_checklist(
+            "tasks",
+            status_column="done",
+            hide_completed=True,
+            max_height=300,
+            column_formats={"due_date": "date"},
+        )
+        self.assertEqual(lint_report(self.report), [])
+
+
+class TestColumnFormats(unittest.TestCase):
+    """dl2 0.4.1: per-column display formats on tables and checklists."""
+
+    def setUp(self):
+        ReportTreeComponent.BASE_ID = 1
+        self.report = _make_report()
+        self.row = self.report.add_page("P").add_row()
+
+    def test_column_name_keys_not_camel_cased(self):
+        from dl2_reports import ColumnFormat
+        d = self.row.add_table(
+            "sales",
+            column_formats={
+                "unit_price": ColumnFormat("currency", digits=0),
+                "Due Date": "date",
+            },
+        ).to_dict()
+        self.assertEqual(
+            d["columnFormats"],
+            {"unit_price": {"format": "currency", "digits": 0}, "Due Date": "date"},
+        )
+
+    def test_checklist_column_formats(self):
+        d = self.row.add_checklist(
+            "sales",
+            status_column="region",
+            column_formats={"unit_price": {"format": "percent", "digits": 1}},
+        ).to_dict()
+        self.assertEqual(d["columnFormats"], {"unit_price": {"format": "percent", "digits": 1}})
+
+    def test_prewrapped_rawdict_not_double_wrapped(self):
+        from dl2_reports.components.visual_components import _protect_column_formats
+        wrapped = RawDict({"unit_price": "currency"})
+        self.assertIs(_protect_column_formats(wrapped), wrapped)
+        self.assertIsNone(_protect_column_formats(None))
+
+    def test_currency_symbol(self):
+        from dl2_reports import ColumnFormat
+        d = self.row.add_table(
+            "sales", column_formats={"amount": ColumnFormat("currency", symbol="€")}
+        ).to_dict()
+        self.assertEqual(d["columnFormats"]["amount"], {"format": "currency", "symbol": "€"})
+
+    def test_invalid_format_kind_raises(self):
+        from dl2_reports import ColumnFormat
+        with self.assertRaises(ValueError):
+            ColumnFormat("money")
+
+
+class TestConditionalFormats(unittest.TestCase):
+    """dl2 0.4.1: conditional highlight rules on tables and checklists."""
+
+    def setUp(self):
+        ReportTreeComponent.BASE_ID = 1
+        self.report = _make_report()
+        self.row = self.report.add_page("P").add_row()
+
+    def test_rule_serialized(self):
+        from dl2_reports import ConditionalFormat
+        d = self.row.add_table(
+            "sales",
+            conditional_formats=[
+                ConditionalFormat(when=F.gt("amount", 200), style="error"),
+                ConditionalFormat(when=F.eq("region", "West"), target="row", style="muted"),
+            ],
+        ).to_dict()
+        self.assertEqual(
+            d["conditionalFormats"],
+            [
+                {"when": {"column": "amount", "op": "gt", "value": 200}, "style": "error"},
+                {"when": {"column": "region", "op": "eq", "value": "West"}, "target": "row", "style": "muted"},
+            ],
+        )
+
+    def test_css_keys_camel_cased(self):
+        from dl2_reports import ConditionalFormat
+        d = self.row.add_table(
+            "sales",
+            conditional_formats=[
+                ConditionalFormat(
+                    when=F.gt("amount", 100),
+                    css={"background_color": "#fee2e2", "fontWeight": 600},
+                )
+            ],
+        ).to_dict()
+        self.assertEqual(
+            d["conditionalFormats"][0]["css"],
+            {"backgroundColor": "#fee2e2", "fontWeight": 600},
+        )
+
+    def test_plain_dict_rules_pass_through(self):
+        d = self.row.add_table(
+            "sales",
+            conditional_formats=[{"when": {"column": "amount", "op": "gt", "value": 1}, "style": "success"}],
+        ).to_dict()
+        self.assertEqual(d["conditionalFormats"][0]["style"], "success")
+
+    def test_missing_when_raises(self):
+        from dl2_reports import ConditionalFormat
+        with self.assertRaises(ValueError):
+            ConditionalFormat(style="success")
+
+    def test_invalid_when_op_raises(self):
+        from dl2_reports import ConditionalFormat
+        with self.assertRaises(ValueError):
+            ConditionalFormat(when={"column": "amount", "op": "equals", "value": 1}, style="success")
+
+    def test_invalid_target_raises(self):
+        from dl2_reports import ConditionalFormat
+        with self.assertRaises(ValueError):
+            ConditionalFormat(when=F.gt("amount", 1), target="column", style="success")
+
+    def test_invalid_style_raises(self):
+        from dl2_reports import ConditionalFormat
+        with self.assertRaises(ValueError):
+            ConditionalFormat(when=F.gt("amount", 1), style="danger")
+
+    def test_style_or_css_required(self):
+        from dl2_reports import ConditionalFormat
+        with self.assertRaises(ValueError):
+            ConditionalFormat(when=F.gt("amount", 1))
+
+    def test_compound_when_needs_columns_for_cell_target(self):
+        from dl2_reports import ConditionalFormat
+        compound = F.and_(F.gt("amount", 1), F.eq("region", "West"))
+        with self.assertRaises(ValueError):
+            ConditionalFormat(when=compound, style="warning")
+        # OK with explicit columns or a row target
+        ConditionalFormat(when=compound, columns=["amount"], style="warning")
+        ConditionalFormat(when=compound, target="row", style="warning")
+
+
 if __name__ == "__main__":
     unittest.main()

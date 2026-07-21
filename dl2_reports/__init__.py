@@ -20,6 +20,8 @@ from .components.visual_components import (
 from .serialization import RawDict
 from .shapes import (
     AggregateColumn,
+    ColumnFormat,
+    ConditionalFormat,
     GaugeRange,
     SortSpec,
     Tab,
@@ -51,6 +53,8 @@ __all__ = [
     "Table",
     "Tabs",
     "AggregateColumn",
+    "ColumnFormat",
+    "ConditionalFormat",
     "GaugeRange",
     "SortSpec",
     "Tab",

@@ -380,6 +380,24 @@ class TestChartComponents(unittest.TestCase):
         v.add_trend(coefficients=[0, 1])
         self.assertEqual(v.to_dict()["otherElements"][0]["visualElementType"], "trend")
 
+    def test_add_trend_on_area_and_histogram(self):
+        """dl2 0.4.1 renders trends on area and histogram charts too."""
+        from dl2_reports import Area, Histogram
+        a = self.row.add(Area("sales", x_column="region", y_columns=["amount"]))
+        a.add_trend(coefficients=[0, 1])
+        self.assertEqual(a.to_dict()["otherElements"][0]["visualElementType"], "trend")
+        h = self.row.add(Histogram("sales", column="amount"))
+        h.add_trend(coefficients=[5, 0.5])
+        self.assertEqual(h.to_dict()["otherElements"][0]["coefficients"], [5, 0.5])
+
+    def test_add_trend_rejected_on_unsupported_type(self):
+        from dl2_reports import Pie
+        v = self.row.add(Pie("sales", category_column="region", value_column="amount"))
+        with self.assertRaises(ValueError) as ctx:
+            v.add_trend(coefficients=[0, 1])
+        self.assertIn("area", str(ctx.exception))
+        self.assertIn("histogram", str(ctx.exception))
+
     def test_area_legacy_threshold_object(self):
         from dl2_reports.components.visuals.Area import AreaVisual
         v = self.row.add_area("sales", x_column="region", y_columns=["amount"],

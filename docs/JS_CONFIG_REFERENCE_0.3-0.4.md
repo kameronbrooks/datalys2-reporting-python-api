@@ -1,6 +1,7 @@
 # datalys2-reporting 0.3/0.4 — Config Schema Reference
 
-*Extracted 2026-07-20 from the JS/TS source at `../datalys2-reporting` (v0.4.0).
+*Extracted 2026-07-20 from the JS/TS source at `../datalys2-reporting` (v0.4.0; §12 covers
+the 0.4.1 additions, extracted from v0.4.1).
 This is the contract the Python API must emit. Citations are `file:line` in that repo.*
 
 Top-level types: `src/lib/types.ts`. The runtime auto-mounts on script load by reading
@@ -189,6 +190,57 @@ column existence; derived `source` exists; duplicate visual ids; modal trigger /
 link `targetId` referencing nothing; column-name checks for `xColumn, yColumn, valueColumn,
 labelColumn, categoryColumn, groupBy` and list props `yColumns, columns, hiddenColumns,
 rowModalColumns` (skipped when `aggregate` present); tabs shape.
+
+## 12. dl2 0.4.1 additions ("Tables Everywhere")
+
+### Checklist parity (Checklist.tsx:37-93)
+
+`ChecklistProps` gains the full table UX surface: `sortable` (default true), `defaultSort`
+(accepts the special column `"status"`, case-insensitive → urgency rank overdue < due soon <
+pending < complete; default sort is urgency then `warningColumn` asc), `hiddenColumns`,
+`allowColumnHiding` (true), `enableExport` (true; exports prepend a derived `Status` column),
+`exportFileName`, `contextMenu` (true), `maxHeight`, `stickyHeader` (true when `maxHeight`),
+`rowModal`, `rowModalId` (implies `rowModal`), `rowModalColumns`, `rowModalTitle` (`'Details'`),
+`persistState` (true when `id`), `columnFormats`, `conditionalFormats`, plus checklist-only:
+`showStatusFilter` (true — All/Pending/Due Soon/Overdue/Complete chips with counts, toggles
+persisted), `showProgress` (true — completion progress bar), `hideCompleted` (false — starts
+with the Complete chip off). `warningThreshold` default 3. Still read-only.
+
+### `columnFormats` (format-utility.ts) — table + checklist
+
+`Record<column name, ColumnFormat | kind string>`; keys are column names **verbatim**.
+`ColumnFormat = { format: 'number'|'currency'|'percent'|'date'|'hms', digits?, symbol? }`.
+Shorthand: `"Due": "date"`. Defaults: currency digits 2 / symbol `'$'`, percent digits 1
+(multiplies ×100), `hms` = seconds → HH:MM:SS. Applies to cells, totals, group aggregates
+(matched by the aggregate's `as` name), and row modals. Display-only (CSV export keeps raw
+values; clipboard copy is formatted).
+
+### `conditionalFormats` (conditional-format-utility.ts) — table + checklist
+
+Array of `{ when, target?, columns?, style?, css? }`:
+- `when`: required, standard `FilterExpression` (§1), evaluated per row on raw values.
+- `target`: `'cell'` (default) | `'row'`.
+- `columns`: cell-target columns; defaults to the `when` condition's own column — **required
+  for compound (`and`/`or`/`not`) conditions** or the rule styles nothing.
+- `style`: preset `'success'|'warning'|'error'|'info'|'muted'` (CSS class `dl2-cf-<style>`,
+  theme-aware). The field is `style`, **not** `preset`.
+- `css`: camelCase React style keys, layered over `style`.
+
+First matching rule wins per target; one row + one cell rule compose; a rule with neither
+`style` nor valid `css` is skipped; totals/aggregate rows exempt.
+
+### Other 0.4.1 behavior changes
+
+- **Trend elements** (`otherElements`) render on `line`, `area`, `stackedBar`, `clusteredBar`,
+  `histogram`, `scatter` (previously only scatter had the numeric X domain). Categorical X
+  axes evaluate coefficients against the 0-based category index; numeric axes use real units.
+- **`border`/`shadow`** honor CSS string values on layouts and visuals (`true` keeps the theme
+  default) — VisualContainer.tsx:39-40, PageRow.tsx:100-101.
+- `null`/`undefined` cells render empty (not the literal "null") in tables and checklists.
+- Template helpers `sum`/`avg`/`min`/`max` now work on records-format datasets.
+- New validation warnings: unknown `columnFormats` columns/kinds, malformed
+  `conditionalFormats`, column checks for `statusColumn`/`warningColumn`.
+- `elementType` is deprecated in favor of `type` on elements (kept for backward compat).
 
 ## Notes for the Python emitter
 

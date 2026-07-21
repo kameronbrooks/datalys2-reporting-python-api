@@ -26,6 +26,7 @@ PATH may be a .py file, a .ipynb notebook, or a directory (recurses into *.py an
 Known limitations (left unchanged, still supported by the package):
     - generic add_visual("type", ...) calls
     - group_aggregates=/aggregates= dicts ('as' is a Python keyword; use the aggregates.agg builder)
+    - column_formats= dicts (keys are column names, values may be shorthand strings — left as-is)
     - dynamic patterns (helpers called via getattr, **kwargs splats, non-literal dicts)
     - notebook cells that fail to parse as pure Python (e.g. %magics) are skipped
 """
@@ -81,10 +82,13 @@ DICT_PROP_TO_CLASS = {
 LIST_PROP_TO_CLASS = {
     "default_sort": "SortSpec",
     "ranges": "GaugeRange",
+    "conditional_formats": "ConditionalFormat",
 }
 
-# Dict keys whose values must stay plain dicts (data-keyed mappings, not props)
-KEEP_DICT_KEYS = {"fns"}
+# Dict keys whose values must stay plain dicts (data-keyed mappings, not props).
+# column_formats is keyed by column names (and allows shorthand string values),
+# so it must never be converted per-key.
+KEEP_DICT_KEYS = {"fns", "column_formats"}
 
 _NO_SPACE_EQ = cst.AssignEqual(
     whitespace_before=cst.SimpleWhitespace(""),
