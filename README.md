@@ -1,5 +1,5 @@
 # Datalys2 Reporting Python API
-**Version 0.6.0**
+**Version 0.7.0**
 
 A Python library to build and compile interactive HTML reports using the Datalys2 Reporting framework.
 
@@ -551,6 +551,65 @@ row.add_bar(
 Filter shortcuts: `eq, neq, gt, gte, lt, lte, isin, notin, contains, starts_with, ends_with, between, is_null, not_null` (plus generic `where(column, op, ...)`).
 Aggregate fns: `sum, avg, min, max, count, countDistinct, first, last`. Use `A.agg("Amount", "sum", as_="Total")` to name the output column.
 
+### Formula Datasources (0.7.0+)
+
+Anywhere a dataset is referenced as an input — any visual's `dataset_id` or a derived
+dataset's `source` — you can write a **pandas-style formula** instead of building a
+`filter=` dict. Formulas are parsed with Python's `ast` module at construction time and
+compile to the plain dataset id plus the standard filter grammar; nothing new reaches
+the report JSON, and typos fail fast with a `ValueError`.
+
+```python
+# Filter rows (any visual)
+row.add_table("sales[Amount > 200]")
+row.add_bar("sales[Region == 'West' and Amount >= 100]",
+            x_column="Month", y_columns=["Revenue"])
+
+# Select columns with double brackets (table-like visuals)
+row.add_table("sales[['Region', 'Amount']]")
+
+# Chain like pandas — filters AND together, one projection allowed
+row.add_table("sales[Amount > 200][['Region', 'Amount']]")
+
+# Derived datasets accept formula sources too
+report.add_derived_dataset(
+    "big_by_region",
+    "sales[Amount > 100]",
+    aggregate=A.aggregate("Region", A.agg("Amount", "sum", as_="Total")),
+)
+```
+
+Supported inside the brackets:
+
+| Form | Compiles to |
+|------|-------------|
+| `==  !=  >  >=  <  <=` (either operand order) | `eq/neq/gt/gte/lt/lte` |
+| `Region in ['S', 'W']` / `not in` | `in` / `nin` |
+| `100 <= Amount <= 200` | `between` (inclusive) |
+| `Amount == None` / `is None` / `!= None` / `is not None` | `isNull` / `notNull` |
+| `and`, `or`, `not` — or pandas-style `&`, `\|`, `~` | `and` / `or` / `not` groups |
+| `.contains(x)`, `.startswith(x)`, `.endswith(x)`, `.isin([...])`, `.between(lo, hi)`, `.isnull()`/`.isna()`, `.notnull()`/`.notna()` (optional `.str`) | the matching filter op |
+
+Column references are bare names (`Amount`), attribute style (`sales.amount`), or
+subscript style for names that aren't Python identifiers or are keywords:
+`sales[sales["Due Date"] > "2026-01-01"]`.
+
+Notes:
+
+- A formula's filter **AND-combines** with an explicit `filter=` (formula first), so
+  both constraints apply.
+- `[[...]]` projection works on visuals that model `columns` (Table, Checklist) and
+  raises elsewhere — the viewer ignores `columns` on charts, and on derived-dataset
+  sources, which support only filter + aggregate.
+- As in pandas, `&`/`|` bind tighter than comparisons — parenthesize each term:
+  `(Amount > 100) & (Units < 5)`. The unparenthesized form raises rather than
+  mis-filtering.
+- Values must be literals (strings, numbers, booleans, `None`, lists/tuples of those).
+  Interpolate Python variables with an f-string *outside* the formula:
+  `f"sales[Amount > {threshold}]"`.
+- Formula filters run **in the browser** like `filter=` — `report.get_value()` and
+  `add_trend()` auto-coefficients still read the unfiltered source DataFrame.
+
 ### Derived Datasets (dl2 0.3+)
 
 Declare a dataset computed **in the browser** from another dataset — filtered and/or aggregated at load time. Chains are supported and declaration order doesn't matter (sources are checked at `compile()`).
@@ -563,6 +622,13 @@ report.add_derived_dataset(
     aggregate=A.aggregate("Category", A.agg("Amount", "sum", as_="Total")),
 )
 page.add_row().add_table("north_by_category")
+
+# Or equivalently with a formula source (0.7.0+):
+report.add_derived_dataset(
+    "north_by_category",
+    source="sales[Region == 'North']",
+    aggregate=A.aggregate("Category", A.agg("Amount", "sum", as_="Total")),
+)
 ```
 
 Note: derived values are not available to `report.get_value()` at compile time (they only exist in the browser) — compute with pandas if you need them while building.
