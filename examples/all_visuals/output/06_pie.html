@@ -7,7 +7,7 @@
     <meta name="dl-version" content="0.4.1">
     <meta name="description" content="Pie and donut charts.">
     <meta name="author" content="">
-    <meta name="last-updated" content="07-21-2026 18:32:58">
+    <meta name="last-updated" content="07-21-2026 19:20:38">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
 </head>
@@ -26,7 +26,7 @@
                         {
                             "type": "pie",
                             "elementType": "visual",
-                            "id": "elem-55",
+                            "id": "elem-3",
                             "datasetId": "share",
                             "categoryColumn": "Browser",
                             "valueColumn": "Users",
@@ -35,11 +35,86 @@
                         {
                             "type": "pie",
                             "elementType": "visual",
-                            "id": "elem-56",
+                            "id": "elem-4",
                             "datasetId": "share",
                             "categoryColumn": "Browser",
                             "valueColumn": "Users",
                             "innerRadius": 70,
+                            "showLegend": true
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "pie",
+                            "elementType": "visual",
+                            "id": "elem-6",
+                            "datasetId": "orders",
+                            "aggregate": {
+                                "groupBy": [
+                                    "Region"
+                                ],
+                                "aggregates": [
+                                    {
+                                        "column": "Amount",
+                                        "fn": "sum",
+                                        "as": "Total"
+                                    }
+                                ]
+                            },
+                            "categoryColumn": "Region",
+                            "valueColumn": "Total",
+                            "showLegend": true
+                        },
+                        {
+                            "type": "pie",
+                            "elementType": "visual",
+                            "id": "elem-7",
+                            "datasetId": "orders",
+                            "aggregate": {
+                                "groupBy": [
+                                    "Region"
+                                ],
+                                "aggregates": [
+                                    {
+                                        "column": "Region",
+                                        "fn": "count",
+                                        "as": "Orders"
+                                    }
+                                ]
+                            },
+                            "categoryColumn": "Region",
+                            "valueColumn": "Orders",
+                            "innerRadius": 70,
+                            "showLegend": true
+                        },
+                        {
+                            "type": "pie",
+                            "elementType": "visual",
+                            "id": "elem-8",
+                            "datasetId": "orders",
+                            "filter": {
+                                "column": "Amount",
+                                "op": "gte",
+                                "value": 100
+                            },
+                            "aggregate": {
+                                "groupBy": [
+                                    "Region"
+                                ],
+                                "aggregates": [
+                                    {
+                                        "column": "Amount",
+                                        "fn": "sum",
+                                        "as": "Total"
+                                    }
+                                ]
+                            },
+                            "categoryColumn": "Region",
+                            "valueColumn": "Total",
                             "showLegend": true
                         }
                     ]
@@ -79,6 +154,52 @@
                 {
                     "Browser": "Other",
                     "Users": 380
+                }
+            ]
+        },
+        "orders": {
+            "id": "orders",
+            "format": "records",
+            "columns": [
+                "Region",
+                "Amount"
+            ],
+            "dtypes": [
+                "string",
+                "number"
+            ],
+            "data": [
+                {
+                    "Region": "North",
+                    "Amount": 120
+                },
+                {
+                    "Region": "South",
+                    "Amount": 80
+                },
+                {
+                    "Region": "North",
+                    "Amount": 200
+                },
+                {
+                    "Region": "West",
+                    "Amount": 150
+                },
+                {
+                    "Region": "East",
+                    "Amount": 90
+                },
+                {
+                    "Region": "West",
+                    "Amount": 210
+                },
+                {
+                    "Region": "South",
+                    "Amount": 60
+                },
+                {
+                    "Region": "West",
+                    "Amount": 75
                 }
             ]
         }

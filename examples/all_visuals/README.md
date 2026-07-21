@@ -24,7 +24,7 @@ python examples/all_visuals/01_tabs.py
 | [03_card.py](03_card.py) | `card` | Plain text, markdown, `{{ ... }}` template expressions |
 | [04_table.py](04_table.py) | `table` | Grouping + aggregates, totals, column & conditional formats, row modals, formula datasources |
 | [05_checklist.py](05_checklist.py) | `checklist` | Status/warning columns, filter chips, progress bar, `hide_completed` |
-| [06_pie.py](06_pie.py) | `pie` | Pie and donut (`inner_radius`) |
+| [06_pie.py](06_pie.py) | `pie` | Pie and donut (`inner_radius`), client-side `aggregate=` over a raw dataset (sum, count, filter+aggregate) |
 | [07_bar.py](07_bar.py) | `clusteredBar`, `stackedBar` | Clustered vs stacked, labels, threshold coloring |
 | [08_line.py](08_line.py) | `line` | Multi-series, smoothing, thresholds, annotations (`yAxis`/`xAxis`/`marker`), trend lines |
 | [09_area.py](09_area.py) | `area` | Fill opacity, markers, thresholds, fill-only style |
