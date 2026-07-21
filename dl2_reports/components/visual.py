@@ -11,6 +11,15 @@ from .base import ReportTreeComponent
 _TREND_ALLOWED_TYPES = frozenset({"line", "area", "scatter", "clusteredBar", "stackedBar", "histogram"})
 
 
+def _type_models_columns(visual_type: str) -> bool:
+    """Whether a visual type models a ``columns`` prop (the viewer only reads it on
+    table-like visuals). Unknown/custom types are permitted, matching the lint."""
+    from ..lint import _component_registry  # lazy: lint imports this module
+
+    cls = _component_registry().get(visual_type)
+    return cls is None or "columns" in cls.known_props()
+
+
 class Visual(ReportTreeComponent):
     """
     Represents a visualization component in the report.
@@ -21,10 +30,33 @@ class Visual(ReportTreeComponent):
 
         Args:
             type (str): The type of visual (e.g., 'bar', 'line', 'scatter').
-            dataset_id (str, optional): The ID of the dataset this visual will use. Defaults to None.
+            dataset_id (str, optional): The ID of the dataset this visual will use,
+                or a pandas-style formula like ``"sales[Amount > 200][['Region']]"``
+                (see :mod:`dl2_reports.formulas`). A formula's filter AND-combines
+                with an explicit ``filter=``; its ``[[...]]`` projection sets
+                ``columns`` (table-like visuals only). Defaults to None.
             **kwargs: Additional properties for the visual (e.g., x_column, y_column).
         """
         super().__init__()
+        from ..formulas import and_merge, parse_datasource
+        spec = parse_datasource(dataset_id)
+        dataset_id = spec.dataset_id
+        if spec.filter is not None:
+            kwargs["filter"] = and_merge(spec.filter, kwargs.get("filter"))
+        if spec.columns is not None:
+            if kwargs.get("columns") is not None:
+                raise ValueError(
+                    f"Ambiguous column selection for '{type}' visual: the datasource "
+                    f"formula selects {spec.columns} but an explicit columns= was also "
+                    f"provided. Use one or the other."
+                )
+            if not _type_models_columns(type):
+                raise ValueError(
+                    f"Column projection ('[[...]]') is not supported for '{type}' "
+                    f"visuals; the viewer only reads 'columns' on table-like visuals. "
+                    f"Use a filter or a derived dataset instead."
+                )
+            kwargs["columns"] = spec.columns
         if "filter" in kwargs and kwargs["filter"] is not None:
             from ..filters import validate_filter
             validate_filter(kwargs["filter"])

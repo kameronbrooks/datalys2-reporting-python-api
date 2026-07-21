@@ -13,6 +13,7 @@ import pandas as pd
 from .components import Layout, Modal, Page, ReportTreeComponent, Tabs, Visual
 from .filters import validate_filter
 from .aggregates import validate_aggregate
+from .formulas import and_merge, parse_datasource
 from .serialization import camel_case_dict, make_dataset_serializable, convert_nan_to_none
 
 DL2_VERSION = "0.4.1"
@@ -258,7 +259,11 @@ class DL2Report:
 
         Args:
             name (str): The unique identifier for the derived dataset.
-            source (str): The id of the dataset to derive from.
+            source (str): The id of the dataset to derive from, or a pandas-style
+                formula like ``"sales[Region == 'North']"`` (see
+                :mod:`dl2_reports.formulas`); the formula's filter AND-combines
+                with ``filter=``. Column projection (``[[...]]``) is not supported
+                here — derived datasets only support filter + aggregate.
             filter (dict, optional): A filter expression (see :mod:`dl2_reports.filters`)
                 applied to the source rows.
             aggregate (dict, optional): An aggregate spec (see :mod:`dl2_reports.aggregates`)
@@ -268,6 +273,16 @@ class DL2Report:
         Returns:
             DL2Report: The report instance for method chaining.
         """
+        spec = parse_datasource(source)
+        if spec.columns is not None:
+            raise ValueError(
+                f"Derived dataset '{name}': column projection ('[[...]]') is not supported "
+                f"on derived dataset sources; derived datasets support only 'filter' and "
+                f"'aggregate'."
+            )
+        source = spec.dataset_id
+        filter = and_merge(spec.filter, filter)
+
         if filter is not None:
             validate_filter(filter)
         if aggregate is not None:

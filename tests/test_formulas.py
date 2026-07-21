@@ -247,5 +247,154 @@ class TestParseDatasourceErrors(unittest.TestCase):
         self._raises("sales[amount > threshold_var]", "column-to-column")
 
 
+class TestVisualFormulaIntegration(unittest.TestCase):
+    def setUp(self):
+        import pandas as pd
+        from dl2_reports import DL2Report
+        from dl2_reports.components.base import ReportTreeComponent
+
+        ReportTreeComponent.BASE_ID = 1
+        self.report = DL2Report("Formula Test", compress_visuals=False)
+        df = pd.DataFrame({
+            "region": ["North", "South", "West"],
+            "amount": [100, 200, 300],
+            "unit_price": [1.5, 2.5, 3.5],
+        })
+        self.report.add_df("sales", df, format="records", compress=False)
+        self.row = self.report.add_page("P").add_row()
+
+    def test_typed_component_formula(self):
+        from dl2_reports import Table
+        d = self.row.add(Table("sales[amount > 200]")).to_dict()
+        self.assertEqual(d["datasetId"], "sales")
+        self.assertEqual(d["filter"], {"column": "amount", "op": "gt", "value": 200})
+
+    def test_formula_and_explicit_filter_combine(self):
+        from dl2_reports import Table
+        d = self.row.add(Table("sales[amount > 200]", filter=F.eq("region", "West"))).to_dict()
+        self.assertEqual(d["filter"], {"and": [
+            {"column": "amount", "op": "gt", "value": 200},
+            {"column": "region", "op": "eq", "value": "West"},
+        ]})
+
+    def test_projection_sets_columns(self):
+        from dl2_reports import Table
+        d = self.row.add(Table("sales[['region', 'amount']]")).to_dict()
+        self.assertEqual(d["datasetId"], "sales")
+        self.assertEqual(d["columns"], ["region", "amount"])
+
+    def test_projection_with_explicit_columns_raises(self):
+        from dl2_reports import Table
+        with self.assertRaises(ValueError) as ctx:
+            Table("sales[['region']]", columns=["amount"])
+        self.assertIn("Ambiguous", str(ctx.exception))
+
+    def test_projection_on_chart_raises(self):
+        from dl2_reports import Bar
+        with self.assertRaises(ValueError) as ctx:
+            Bar("sales[['region']]", x_column="region", y_columns=["amount"])
+        self.assertIn("table-like", str(ctx.exception))
+
+    def test_filter_on_chart_allowed(self):
+        from dl2_reports import Bar
+        d = self.row.add(Bar("sales[amount > 100]", x_column="region", y_columns=["amount"])).to_dict()
+        self.assertEqual(d["datasetId"], "sales")
+        self.assertEqual(d["filter"], {"column": "amount", "op": "gt", "value": 100})
+
+    def test_projection_on_unknown_custom_type_allowed(self):
+        d = self.row.add_visual("customviz", "sales[['region']]").to_dict()
+        self.assertEqual(d["columns"], ["region"])
+
+    def test_legacy_helper_formula(self):
+        d = self.row.add_table("sales[region == 'West']").to_dict()
+        self.assertEqual(d["datasetId"], "sales")
+        self.assertEqual(d["filter"], {"column": "region", "op": "eq", "value": "West"})
+
+    def test_generic_add_visual_formula(self):
+        d = self.row.add_visual("kpi", "sales[amount > 100]", value_column="amount", row_index=0).to_dict()
+        self.assertEqual(d["datasetId"], "sales")
+        self.assertEqual(d["filter"], {"column": "amount", "op": "gt", "value": 100})
+
+    def test_checklist_projection(self):
+        d = self.row.add_checklist("sales[['region', 'amount']]", status_column="region").to_dict()
+        self.assertEqual(d["columns"], ["region", "amount"])
+
+    def test_copy_round_trips(self):
+        from dl2_reports import Table
+        original = self.row.add(Table("sales[amount > 200]"))
+        copy = original.copy()
+        self.assertEqual(copy.dataset_id, "sales")
+        self.assertEqual(copy.to_dict()["filter"], original.to_dict()["filter"])
+
+    def test_compile_strict_clean_and_resolved(self):
+        from dl2_reports import Table
+        self.row.add(Table("sales[amount > 200][['region', 'amount']]"))
+        html = self.report.compile(strict=True)
+        self.assertIn('"datasetId": "sales"', html)
+        self.assertNotIn("amount > 200", html)
+
+    def test_plain_id_backward_compat(self):
+        from dl2_reports.components.visual import Visual
+        v = Visual("table", "sales")
+        self.assertEqual(v.dataset_id, "sales")
+        self.assertNotIn("filter", v.props)
+        self.assertNotIn("columns", v.props)
+
+
+class TestDerivedDatasetFormulas(unittest.TestCase):
+    def setUp(self):
+        import pandas as pd
+        from dl2_reports import DL2Report
+        from dl2_reports.components.base import ReportTreeComponent
+
+        ReportTreeComponent.BASE_ID = 1
+        self.report = DL2Report("Derived Formula Test")
+        df = pd.DataFrame({"region": ["N", "W"], "amount": [1, 2]})
+        self.report.add_df("sales", df, format="records", compress=False)
+
+    def test_formula_source_resolved_and_filter_stored(self):
+        self.report.add_derived_dataset("west", "sales[region == 'West']")
+        entry = self.report.datasets["west"]
+        self.assertEqual(entry["source"], "sales")
+        self.assertEqual(entry["filter"], {"column": "region", "op": "eq", "value": "West"})
+
+    def test_formula_and_param_filter_combine(self):
+        self.report.add_derived_dataset(
+            "big_west", "sales[region == 'West']", filter=F.gt("amount", 1)
+        )
+        self.assertEqual(self.report.datasets["big_west"]["filter"], {"and": [
+            {"column": "region", "op": "eq", "value": "West"},
+            {"column": "amount", "op": "gt", "value": 1},
+        ]})
+
+    def test_aggregate_passthrough(self):
+        from dl2_reports import aggregates as A
+        self.report.add_derived_dataset(
+            "by_region", "sales[amount > 0]",
+            aggregate=A.aggregate("region", A.agg("amount", "sum")),
+        )
+        entry = self.report.datasets["by_region"]
+        self.assertEqual(entry["source"], "sales")
+        self.assertIn("aggregate", entry)
+
+    def test_projection_source_raises(self):
+        with self.assertRaises(ValueError) as ctx:
+            self.report.add_derived_dataset("proj", "sales[['region']]")
+        self.assertIn("not supported", str(ctx.exception))
+
+    def test_derived_from_derived_formula(self):
+        self.report.add_derived_dataset("west", "sales[region == 'West']")
+        self.report.add_derived_dataset("big_west", "west[amount > 1]")
+        self.assertEqual(self.report.datasets["big_west"]["source"], "west")
+        self.report.add_page("P").add_row().add_table("big_west")
+        self.report.compile()  # source chain resolves
+
+    def test_unknown_source_still_caught_at_compile(self):
+        self.report.add_derived_dataset("bad", "nope[amount > 1]")
+        with self.assertRaises(ValueError) as ctx:
+            self.report.compile()
+        self.assertIn("unknown source", str(ctx.exception))
+
+
 if __name__ == "__main__":
     unittest.main()
