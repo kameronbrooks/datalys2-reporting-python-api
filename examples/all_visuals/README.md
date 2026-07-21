@@ -10,8 +10,8 @@ Build everything at once:
 python examples/all_visuals/build_all.py
 ```
 
-Or run any single script (with `dl2-reports` installed, or from a checkout via
-`build_all.py`):
+Or run any single script — each one bootstraps `sys.path` so it works straight
+from a repo checkout, no `pip install` needed:
 
 ```bash
 python examples/all_visuals/01_tabs.py

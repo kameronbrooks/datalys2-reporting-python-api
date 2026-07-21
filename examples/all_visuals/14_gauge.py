@@ -3,6 +3,13 @@ colored range bands, legend, and number formatting."""
 
 from pathlib import Path
 
+# Allow running from a repo checkout without installing dl2-reports.
+try:
+    import dl2_reports  # noqa: F401
+except ModuleNotFoundError:
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
 import pandas as pd
 
 from dl2_reports import DL2Report, Gauge, GaugeRange

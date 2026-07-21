@@ -7,6 +7,13 @@
 
 from pathlib import Path
 
+# Allow running from a repo checkout without installing dl2-reports.
+try:
+    import dl2_reports  # noqa: F401
+except ModuleNotFoundError:
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
 import numpy as np
 import pandas as pd
 
