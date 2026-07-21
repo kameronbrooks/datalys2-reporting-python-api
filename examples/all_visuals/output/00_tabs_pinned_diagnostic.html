@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabs PINNED-CDN Diagnostic</title>
+    <meta name="dl-version" content="0.4.1">
+    <meta name="description" content="Viewer pinned to commit b9e5cb5 — if tabs work here but not in 01_tabs.html, the browser had a stale cached @latest bundle.">
+    <meta name="author" content="">
+    <meta name="last-updated" content="07-21-2026 18:49:13">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@b9e5cb5/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Diagnostic",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "tabs",
+                            "elementType": "visual",
+                            "id": "diag-tabs",
+                            "tabs": [
+                                {
+                                    "title": "Chart",
+                                    "layout": {
+                                        "type": "layout",
+                                        "direction": "column",
+                                        "children": [
+                                            {
+                                                "type": "line",
+                                                "elementType": "visual",
+                                                "id": "elem-5",
+                                                "datasetId": "sales",
+                                                "xColumn": "Month",
+                                                "yColumns": [
+                                                    "Revenue"
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "title": "Data",
+                                    "layout": {
+                                        "type": "layout",
+                                        "direction": "column",
+                                        "children": [
+                                            {
+                                                "type": "table",
+                                                "elementType": "visual",
+                                                "id": "elem-7",
+                                                "datasetId": "sales"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "title": "Info",
+                                    "layout": {
+                                        "type": "layout",
+                                        "direction": "column",
+                                        "children": [
+                                            {
+                                                "type": "card",
+                                                "elementType": "visual",
+                                                "id": "elem-9",
+                                                "title": "Diagnostic",
+                                                "text": "Pinned CDN build b9e5cb5."
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "title": "If you can click between these tabs, the pinned viewer works"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "sales": {
+            "id": "sales",
+            "format": "records",
+            "columns": [
+                "Month",
+                "Revenue"
+            ],
+            "dtypes": [
+                "string",
+                "number"
+            ],
+            "data": [
+                {
+                    "Month": "Jan",
+                    "Revenue": 100
+                },
+                {
+                    "Month": "Feb",
+                    "Revenue": 150
+                },
+                {
+                    "Month": "Mar",
+                    "Revenue": 200
+                }
+            ]
+        }
+    }
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@b9e5cb5/dist/datalys2-reports.min.js"></script>
+</body>
+</html>
