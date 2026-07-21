@@ -345,6 +345,41 @@ def table_features_report():
     return report
 
 
+def formulas_report():
+    report = DL2Report("Formulas Report")
+    df = pd.DataFrame({
+        "Region": ["North", "South", "East", "West"],
+        "Units": [10, 20, 30, 5],
+        "Amount": [100.0, 250.0, 300.0, 80.0],
+    })
+    report.add_df("sales", df)
+
+    # Derived dataset from a formula source (filter AND-combines with filter=)
+    report.add_derived_dataset(
+        "big_sales",
+        "sales[Amount > 100]",
+        aggregate=A.aggregate("Region", A.agg("Amount", "sum", as_="Total")),
+    )
+
+    page = report.add_page("Formulas")
+    row = page.add_row()
+
+    # Formula with filter + projection on a table
+    row.add_table("sales[Amount > 100][['Region', 'Amount']]", title="Big Sales")
+
+    # Formula filter AND-combined with an explicit filter=
+    row.add_kpi(
+        "sales[Amount > 100]",
+        value_column="Amount",
+        row_index=0,
+        title="First Big Sale",
+        filter=F.neq("Region", "West"),
+    )
+
+    page.add_row().add_bar(dataset_id="big_sales", x_column="Region", y_columns=["Total"])
+    return report
+
+
 scenarios = {
     "simple_kpi": simple_kpi_report,
     "date_types": date_types_report,
@@ -362,5 +397,6 @@ scenarios = {
     "gauge": gauge_report,
     "tabs": tabs_report,
     "filters": filters_report,
-    "table_features": table_features_report
+    "table_features": table_features_report,
+    "formulas": formulas_report
 }
