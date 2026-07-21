@@ -17,6 +17,7 @@ from .components.visual_components import (
     Scatter,
     Table,
 )
+from .formulas import DatasourceSpec, parse_datasource
 from .serialization import RawDict
 from .shapes import (
     AggregateColumn,
@@ -29,13 +30,16 @@ from .shapes import (
     TotalColumn,
     TotalRow,
 )
-from . import aggregates, filters
+from . import aggregates, filters, formulas
 
 __all__ = [
     "DL2Report",
     "RawDict",
     "aggregates",
     "filters",
+    "formulas",
+    "DatasourceSpec",
+    "parse_datasource",
     "Area",
     "Bar",
     "Boxplot",
