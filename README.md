@@ -6,6 +6,21 @@ A Python library to build and compile interactive HTML reports using the Datalys
 **Note:** Compatible with dl2 version 0.4.1
 https://github.com/kameronbrooks/datalys2-reporting
 
+## Documentation
+
+📚 **[Full documentation lives in docs/](docs/README.md)** — organized so
+every visual type and every feature has its own page:
+
+- [Getting started](docs/getting-started.md)
+- [Visuals](docs/README.md#visuals) — one page per visual type (KPI, Table,
+  Pie, Line, Gauge, Tabs, …), each with a parameter table and a runnable
+  example in [examples/all_visuals/](examples/all_visuals/)
+- [Features](docs/README.md#features) — one page per feature (filtering,
+  aggregation, formula datasources, thresholds, modals, persistence, …)
+
+This README keeps a condensed reference below; the raw JSON config the viewer
+consumes is documented in [DOCUMENTATION.md](DOCUMENTATION.md).
+
 ## Installation
 
 ```bash
@@ -945,6 +960,8 @@ detail_row.on_condition(show_details).add_table("sales", title="Detail View")
 
 ## Datalys2 Documentation
 
-For detailed information on available visuals and configuration, see [DOCUMENTATION.md](DOCUMENTATION.md).
+For the organized per-visual / per-feature documentation, see [docs/](docs/README.md).
+
+For detailed information on the underlying JSON configuration, see [DOCUMENTATION.md](DOCUMENTATION.md).
 
 Or see the github repo at https://github.com/kameronbrooks/datalys2-reporting
