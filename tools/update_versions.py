@@ -76,22 +76,16 @@ def update_versions():
     else:
         print(f"No changes needed for {readme_path}")
 
-    # 4. Update DOCUMENTATION.md
-    doc_path = 'DOCUMENTATION.md'
+    # 4. Update docs/README.md
+    doc_path = os.path.join('docs', 'README.md')
     with open(doc_path, 'r', encoding='utf-8') as f:
         content = f.read()
 
-    # Regex for: **Version 0.2.5**
+    # Regex for: **Package version 0.7.0 · targets dl2 viewer 0.4.1**
     new_content = re.sub(
-        r'\*\*Version [0-9.]+\*\*',
-        f'**Version {pkg_version}**',
+        r'\*\*Package version [0-9.]+ · targets dl2 viewer [0-9.]+\*\*',
+        f'**Package version {pkg_version} · targets dl2 viewer {dl2_version}**',
         content
-    )
-    # Regex for: <meta name="dl-version" content="0.2.2">
-    new_content = re.sub(
-        r'<meta name="dl-version" content="[0-9.]+">',
-        f'<meta name="dl-version" content="{dl2_version}">',
-        new_content
     )
 
     if content != new_content:
