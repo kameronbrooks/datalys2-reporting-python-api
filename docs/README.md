@@ -7,8 +7,9 @@ This documentation is organized so that **every visual type and every feature ha
 own page**.
 
 - New here? Start with **[Getting Started](getting-started.md)**.
-- Looking for the raw JSON config the viewer consumes (no Python)? See
-  [DOCUMENTATION.md](../DOCUMENTATION.md) in the repo root.
+- Looking for the raw JSON config the viewer consumes (no Python)? See the
+  **[datalys2-reporting viewer repo](https://github.com/kameronbrooks/datalys2-reporting)** —
+  it documents the full JSON spec.
 - Runnable one-file demos for every visual live in
   [examples/all_visuals/](../examples/all_visuals/).
 

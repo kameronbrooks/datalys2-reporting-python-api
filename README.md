@@ -19,7 +19,8 @@ every visual type and every feature has its own page:
   aggregation, formula datasources, thresholds, modals, persistence, …)
 
 This README keeps a condensed reference below; the raw JSON config the viewer
-consumes is documented in [DOCUMENTATION.md](DOCUMENTATION.md).
+consumes is documented in the
+[datalys2-reporting viewer repo](https://github.com/kameronbrooks/datalys2-reporting).
 
 ## Installation
 
@@ -960,8 +961,8 @@ detail_row.on_condition(show_details).add_table("sales", title="Detail View")
 
 ## Datalys2 Documentation
 
-For the organized per-visual / per-feature documentation, see [docs/](docs/README.md).
+For the organized per-visual / per-feature documentation of this Python API, see [docs/](docs/README.md).
 
-For detailed information on the underlying JSON configuration, see [DOCUMENTATION.md](DOCUMENTATION.md).
-
-Or see the github repo at https://github.com/kameronbrooks/datalys2-reporting
+For the underlying JSON configuration and the viewer itself, see the
+[datalys2-reporting repo](https://github.com/kameronbrooks/datalys2-reporting) —
+it has the full, up-to-date JSON spec.
