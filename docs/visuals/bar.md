@@ -35,6 +35,9 @@ page.add_row(
 | `show_labels` | `bool` | Show value labels on bars. |
 | `horizontal` | `bool` | Render bars horizontally (viewer-dependent). |
 | `threshold` | `Threshold \| dict` | Pass/fail bar coloring — **clustered bars only**. See [Thresholds](../features/thresholds.md). |
+| `enable_export` | `bool` | *(dl2 0.5+)* Right-click **Export PNG** / **Export SVG** image export (viewer default `True`). |
+| `export_file_name` | `str` | *(dl2 0.5+)* Base file name for exported images, no extension (viewer falls back to title → dataset id → chart type). |
+| `context_menu` | `bool` | *(dl2 0.5+)* Right-click context menu (viewer default `True`). |
 | `extra` | `dict` | [Passthrough props](generic-visual.md). |
 | `**common` | | [Common visual properties](../features/common-props.md). |
 
@@ -53,3 +56,4 @@ page.add_row(
 
 - [Histogram](histogram.md) — distribution of one numeric column.
 - [Line](line.md) / [Area](area.md) — trends over ordered X values.
+- [Chart image export](../features/chart-export.md) — PNG/SVG export details *(dl2 0.5+)*.

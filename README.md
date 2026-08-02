@@ -58,7 +58,7 @@ report.show()
 Since 0.5.0 the recommended way to build reports is with **typed component classes** —
 one class per visual, imported from the package root:
 
-`KPI, Table, Card, Pie, Bar, Line, Area, Scatter, Checklist, Histogram, Heatmap, Gauge, Boxplot, Tabs, Link, ModalButton`
+`KPI, Table, Card, Pie, Bar, Line, Area, Scatter, Checklist, Histogram, Heatmap, Gauge, Boxplot, Calendar, Tabs, Link, ModalButton`
 
 plus typed shapes for structured props:
 
@@ -231,6 +231,7 @@ These are the visual types you can add via the `Layout` helpers:
 - `modal` (via `add_modal_button`)
 - `tabs` (via `add_tabs`, dl2 0.3+)
 - `link` (via `add_link`, dl2 0.4+)
+- `calendar` (via `add_calendar`, dl2 0.5+) — month/week/day calendar with spanning multi-day events, category coloring, and event detail modals
 
 You can also add any viewer-supported visual type directly using `add_visual(type=..., ...)`.
 
@@ -317,6 +318,9 @@ Use this when you want to pass through viewer props that don't have a dedicated 
 | `value_column` | `str \| int` | (required) | Column for slice values. |
 | `inner_radius` | `int \| None` | `None` | Inner radius for donut styling. |
 | `show_legend` | `bool \| None` | `None` | Whether to show the legend. |
+| `enable_export` | `bool \| None` | `None` | Right-click image export — Export PNG / Export SVG (viewer default true) (dl2 0.5+). |
+| `export_file_name` | `str \| None` | `None` | Base file name for image export, without extension (dl2 0.5+). |
+| `context_menu` | `bool \| None` | `None` | Right-click context menu (viewer default true) (dl2 0.5+). |
 | `**kwargs` | `Any` | — | Additional common visual properties. |
 
 #### Bar (Clustered / Stacked)
@@ -333,6 +337,9 @@ Use this when you want to pass through viewer props that don't have a dedicated 
 | `show_legend` | `bool \| None` | `None` | Whether to show the legend. |
 | `show_labels` | `bool \| None` | `None` | Whether to show value labels. |
 | `horizontal` | `bool \| None` | `None` | Whether to render bars horizontally (viewer-dependent). |
+| `enable_export` | `bool \| None` | `None` | Right-click image export — Export PNG / Export SVG (viewer default true) (dl2 0.5+). |
+| `export_file_name` | `str \| None` | `None` | Base file name for image export, without extension (dl2 0.5+). |
+| `context_menu` | `bool \| None` | `None` | Right-click context menu (viewer default true) (dl2 0.5+). |
 | `**kwargs` | `Any` | — | Additional common visual properties. |
 
 #### Scatter
@@ -348,6 +355,9 @@ Use this when you want to pass through viewer props that don't have a dedicated 
 | `point_size` | `int \| None` | `None` | Point size. |
 | `x_axis_label` | `str \| None` | `None` | Optional X-axis label. |
 | `y_axis_label` | `str \| None` | `None` | Optional Y-axis label. |
+| `enable_export` | `bool \| None` | `None` | Right-click image export — Export PNG / Export SVG (viewer default true) (dl2 0.5+). |
+| `export_file_name` | `str \| None` | `None` | Base file name for image export, without extension (dl2 0.5+). |
+| `context_menu` | `bool \| None` | `None` | Right-click context menu (viewer default true) (dl2 0.5+). |
 | `**kwargs` | `Any` | — | Additional common visual properties. |
 
 #### Line
@@ -366,6 +376,9 @@ Use this when you want to pass through viewer props that don't have a dedicated 
 | `threshold` | `dict \| None` | `None` | Optional pass/fail coloring (see [Threshold Configuration](#threshold-configuration)). |
 | `x_axis_label` | `str \| None` | `None` | Optional X-axis label. |
 | `y_axis_label` | `str \| None` | `None` | Optional Y-axis label. |
+| `enable_export` | `bool \| None` | `None` | Right-click image export — Export PNG / Export SVG (viewer default true) (dl2 0.5+). |
+| `export_file_name` | `str \| None` | `None` | Base file name for image export, without extension (dl2 0.5+). |
+| `context_menu` | `bool \| None` | `None` | Right-click context menu (viewer default true) (dl2 0.5+). |
 | `**kwargs` | `Any` | — | Additional common visual properties. |
 
 #### Area
@@ -387,6 +400,9 @@ Use this when you want to pass through viewer props that don't have a dedicated 
 | `threshold` | `dict \| None` | `None` | Optional pass/fail coloring (see [Threshold Configuration](#threshold-configuration)). |
 | `x_axis_label` | `str \| None` | `None` | Optional X-axis label. |
 | `y_axis_label` | `str \| None` | `None` | Optional Y-axis label. |
+| `enable_export` | `bool \| None` | `None` | Right-click image export — Export PNG / Export SVG (viewer default true) (dl2 0.5+). |
+| `export_file_name` | `str \| None` | `None` | Base file name for image export, without extension (dl2 0.5+). |
+| `context_menu` | `bool \| None` | `None` | Right-click context menu (viewer default true) (dl2 0.5+). |
 | `**kwargs` | `Any` | — | Additional common visual properties. |
 
 #### Checklist
@@ -438,6 +454,9 @@ status always comes from the dataset.
 | `show_labels` | `bool \| None` | `None` | Whether to show count labels. |
 | `x_axis_label` | `str \| None` | `None` | Optional X-axis label. |
 | `y_axis_label` | `str \| None` | `None` | Optional Y-axis label. |
+| `enable_export` | `bool \| None` | `None` | Right-click image export — Export PNG / Export SVG (viewer default true) (dl2 0.5+). |
+| `export_file_name` | `str \| None` | `None` | Base file name for image export, without extension (dl2 0.5+). |
+| `context_menu` | `bool \| None` | `None` | Right-click context menu (viewer default true) (dl2 0.5+). |
 | `**kwargs` | `Any` | — | Additional common visual properties. |
 
 #### Heatmap
@@ -454,6 +473,9 @@ status always comes from the dataset.
 | `color` | `str \| list[str] \| None` | `None` | D3 interpolator name (e.g., `'Viridis'`) or custom colors. |
 | `x_axis_label` | `str \| None` | `None` | Optional X-axis label. |
 | `y_axis_label` | `str \| None` | `None` | Optional Y-axis label. |
+| `enable_export` | `bool \| None` | `None` | Right-click image export — Export PNG / Export SVG (viewer default true) (dl2 0.5+). |
+| `export_file_name` | `str \| None` | `None` | Base file name for image export, without extension (dl2 0.5+). |
+| `context_menu` | `bool \| None` | `None` | Right-click context menu (viewer default true) (dl2 0.5+). |
 | `**kwargs` | `Any` | — | Additional common visual properties. |
 
 #### Boxplot
@@ -479,6 +501,9 @@ Supports two modes:
 | `color` | `str \| list[str] \| None` | `None` | Fill color or scheme. |
 | `x_axis_label` | `str \| None` | `None` | Optional X-axis label. |
 | `y_axis_label` | `str \| None` | `None` | Optional Y-axis label. |
+| `enable_export` | `bool \| None` | `None` | Right-click image export — Export PNG / Export SVG (viewer default true) (dl2 0.5+). |
+| `export_file_name` | `str \| None` | `None` | Base file name for image export, without extension (dl2 0.5+). |
+| `context_menu` | `bool \| None` | `None` | Right-click context menu (viewer default true) (dl2 0.5+). |
 | `**kwargs` | `Any` | — | Additional common visual properties. |
 
 #### Modal Button
@@ -511,6 +536,18 @@ Color chart elements based on whether values pass or fail a threshold. Applies t
 - `'below'` - Values <= threshold pass
 - `'equals'` - Only exact matches pass
 
+### Chart Image Export (dl2 0.5+)
+
+All 10 SVG chart types (`line`, `area`, `stackedBar`, `clusteredBar`, `pie`, `scatter`, `histogram`, `heatmap`, `boxplot`, `gauge`) support right-click → **Export PNG** / **Export SVG**, using the same prop names as the table's CSV export:
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `enable_export` | `bool` | viewer default true | Enable image export. |
+| `export_file_name` | `str` | title → dataset id → chart type | Base file name, without extension. |
+| `context_menu` | `bool` | viewer default true | Right-click context menu. |
+
+Exports capture the chart `<svg>` only (not titles or containers); PNG renders at 2× scale, and the current theme colors are baked in.
+
 
 
 
@@ -541,6 +578,55 @@ Navigate to any visual with an `id` (switches page, activates containing tabs, s
 row.add_link(target_id="sales-table", label="Jump to data", link_style="button")
 row.add_link(href="https://example.com", label="Docs")
 ```
+
+#### Calendar (dl2 0.5+)
+
+A month/week/day calendar (`type: "calendar"`) with spanning multi-day events, category coloring with a legend, and event detail modals. Available as the `dl2_reports.Calendar` component class or the legacy `row.add_calendar(...)` helper. A dataset is required, plus **exactly one** date mapping: `date_column` (single-date events) or `start_column` (+ optional `end_column` for spanning events).
+
+```python
+from dl2_reports import Calendar
+page.add_row(Calendar("events",
+    start_column="Start", end_column="End",
+    title_column="Task", category_column="Team",
+    default_view="week", time_format="24h", id="team-calendar"))
+```
+
+| Parameter | Type | Default | Description |
+|----------|------|---------|-------------|
+| `dataset_id` | `str` | (required) | The dataset id. |
+| `date_column` | `str \| int \| None` | `None` | Column with the event date (single-date events). Mutually exclusive with `start_column`. |
+| `start_column` | `str \| int \| None` | `None` | Event start column (spanning events). |
+| `end_column` | `str \| int \| None` | `None` | Event end column; only meaningful with `start_column`. |
+| `title_column` | `str \| int \| None` | `None` | Column for event titles (viewer default: first unused dataset column). |
+| `category_column` | `str \| int \| None` | `None` | Column for tag-based coloring with a legend. |
+| `default_view` | `str \| None` | `None` | `'month'`, `'week'`, or `'day'` (viewer default `'month'`). |
+| `default_date` | `str \| None` | `None` | Initial date as an ISO string, e.g. `"2026-08-01"` (viewer default: today, UTC). |
+| `week_starts_on` | `int \| None` | `None` | `0` (Sunday, viewer default) or `1` (Monday). |
+| `show_weekends` | `bool \| None` | `None` | Show Saturday/Sunday columns (viewer default true). |
+| `day_start_hour` | `int \| None` | `None` | First hour shown on the week/day hour grid, 0-23 (viewer default 0). |
+| `day_end_hour` | `int \| None` | `None` | Hour the grid ends at, 1-24 (viewer default 24; must be greater than `day_start_hour`). |
+| `hour_height` | `int \| None` | `None` | Pixel height of one hour row (viewer default 48). |
+| `max_events_per_day` | `int \| None` | `None` | Events shown per month cell before the "+N more" clamp (viewer default 3; released when printing). |
+| `time_format` | `str \| None` | `None` | `'12h'` (viewer default) or `'24h'`. |
+| `max_height` | `int \| None` | `None` | Max height in px of the month grid (viewer default 560). |
+| `empty_label` | `str \| None` | `None` | Text shown when the dataset has no events (viewer default `"No events."`). |
+| `color` | `str \| list[str] \| None` | `None` | Category palette — D3 scheme name, single color, or list (viewer default `'tableau10'`). |
+| `show_legend` | `bool \| None` | `None` | Category legend (viewer default: true when `category_column` is set). |
+| `legend_title` | `str \| None` | `None` | Legend heading. |
+| `row_modal` | `bool \| None` | `None` | Built-in event detail modal on double-click. |
+| `row_modal_id` | `str \| None` | `None` | Open a custom modal instead; cards can use `{{ row.Col }}` templates. |
+| `row_modal_columns` | `list[str] \| None` | `None` | Columns listed in the built-in detail modal. |
+| `row_modal_title` | `str \| None` | `None` | Title of the built-in detail modal. |
+| `context_menu` | `bool \| None` | `None` | Right-click context menu (viewer default true). |
+| `id` | `str \| None` | `None` | Stable element id (persistence + link targeting). |
+| `persist_state` | `bool \| None` | `None` | Persist the active view (viewer default: true when `id` is set). |
+| `**kwargs` | `Any` | — | Additional common visual properties. |
+
+Notes:
+
+- **Dtypes drive event kind:** columns declared `"date"` render as all-day events; `"datetime"` columns render as timed events on the week/day hour grid (see the `add_df` dtype inference under [Date dtypes](#date-dtypes--dtype_overrides-dl2-05)). All calendar math is UTC.
+- The Python class raises `ValueError` on conflicting or missing date mappings and on out-of-range hours/enums.
+- Unlike charts, the calendar has no `width`/`height` props — size it with `max_height` and `flex`.
 
 ### Filtering & Aggregation (dl2 0.3+)
 
@@ -649,6 +735,55 @@ report.add_derived_dataset(
 
 Note: derived values are not available to `report.get_value()` at compile time (they only exist in the browser) — compute with pandas if you need them while building.
 
+### Remote Datasets (dl2 0.5+)
+
+Declare a dataset fetched **in the browser** from a URL at load time — nothing is embedded in the HTML. The report renders immediately; visuals bound to the dataset show a loading placeholder until the fetch settles. The endpoint must be CORS-accessible from wherever the report is opened.
+
+```python
+report.add_remote_dataset(
+    "live_orders",
+    url="https://api.example.com/orders",
+    extract="result.rows",     # rows live inside a JSON wrapper object
+    refresh_interval=60,       # re-fetch every 60 seconds
+    columns=["Region", "Amount", "Updated"],
+    dtypes=["string", "number", "datetime"],
+)
+page.add_row().add_table("live_orders")
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `name` | `str` | (required) | The unique dataset id. |
+| `url` | `str` | (required) | The URL to fetch the data from. |
+| `response_type` | `str \| None` | `None` | `'json'` (viewer default) or `'csv'`. |
+| `extract` | `str \| None` | `None` | Dot-path to the rows inside a JSON wrapper object, e.g. `"result.rows"`. JSON only. |
+| `headers` | `dict \| None` | `None` | HTTP request headers (string values). **Plain text in the HTML** — see below. |
+| `refresh_interval` | `int \| float \| None` | `None` | Re-fetch every N seconds. Omit or `0` to fetch once. |
+| `columns` | `list[str] \| None` | `None` | Declared column names (otherwise inferred from the response). |
+| `dtypes` | `list[str] \| None` | `None` | Declared column dtypes, aligned with `columns`. |
+| `format` | `str \| None` | `None` | Declared data format (`'records'`, `'table'`, `'list'`, or `'record'`; viewer default `'records'`). |
+
+- A JSON response (the default) may be a bare array of rows or a full `{columns, dtypes, format, data}` dataset object — response fields win over the declaration. A CSV response parses into a records dataset with its header row as columns.
+- Declared `dtypes` still drive date conversion — declare `"date"`/`"datetime"` columns so tables, charts, and calendars treat them as dates.
+- Refreshes swap data in place; a failed refresh keeps the last good data.
+- Derived datasets can use a remote dataset as their `source` — derivation waits for the fetch and re-runs on every refresh.
+- **`headers` are embedded as plain text in the compiled HTML** — anyone who can open the report can read them. Only use tokens that are safe to treat as public.
+- `report.get_value()` raises for remote datasets (the data only exists in the browser).
+- Validation mirrors the viewer's remote-dataset warnings: `ValueError` on an empty `url`, `extract` with a CSV response, a negative `refresh_interval`, non-string header values, or a `columns`/`dtypes` length mismatch.
+
+### Date dtypes & `dtype_overrides` (dl2 0.5+)
+
+`add_df()` now declares date-like columns as `"datetime"` when any value carries a time of day, and `"date"` when every value is midnight (previously always `"date"`). This matters for the calendar visual — `"date"` columns render as all-day events, `"datetime"` columns as timed events on the hour grid.
+
+Override the inference per column with the new `dtype_overrides` parameter:
+
+```python
+report.add_df("tasks", df, compress=True,
+              dtype_overrides={"Due": "datetime"})   # force timed events
+```
+
+Keys must be columns of the DataFrame — unknown columns raise `ValueError`.
+
 ### Table Totals & Row Detail Modals (dl2 0.4+)
 
 ```python
@@ -730,6 +865,10 @@ Runtime view changes (table sort/hidden columns/grouping, active tabs) are saved
 - Give tables/tabs a stable `id=` and the viewer persists them automatically; opt out per visual with `persist_state=False`.
 - Set a stable report identity so state survives title changes: `DL2Report(title, report_id="my-report")` or `report.set_report_id("my-report")` (emits `<meta name="report-id">`).
 - Users can reset via right-click → Reset view, or the report-wide Reset view button.
+
+### Printing (dl2 0.5+)
+
+Printing a report (Ctrl+P, or a headless `page.pdf()`) renders the entire report — all pages, tabs flattened, tables and checklists unpaginated, and the calendar's "+N more" clamp released — with a pinned light palette. No configuration is needed from the Python side.
 
 ### Layout Options (dl2 0.3+)
 

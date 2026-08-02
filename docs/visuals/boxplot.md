@@ -47,6 +47,9 @@ page.add_row(
 | `show_outliers` | `bool` | Show outliers as rhombus shapes (data mode only, viewer default `True`). |
 | `color` | `str \| list[str]` | Single color, list of colors, or D3 scheme name (`"Category10"`, `"Tableau10"`, …). Viewer default `#69b3a2`. |
 | `x_axis_label` / `y_axis_label` | `str` | Axis labels. |
+| `enable_export` | `bool` | *(dl2 0.5+)* Right-click **Export PNG** / **Export SVG** image export (viewer default `True`). |
+| `export_file_name` | `str` | *(dl2 0.5+)* Base file name for exported images, no extension (viewer falls back to title → dataset id → chart type). |
+| `context_menu` | `bool` | *(dl2 0.5+)* Right-click context menu (viewer default `True`). |
 | `extra` | `dict` | [Passthrough props](generic-visual.md). |
 | `**common` | | [Common visual properties](../features/common-props.md). |
 
@@ -65,3 +68,4 @@ page.add_row(
 - [Histogram](histogram.md) — full distribution shape of a single group.
 - [Datasets & compression](../features/datasets.md) — if you do ship raw
   values, compress them.
+- [Chart image export](../features/chart-export.md) — PNG/SVG export details *(dl2 0.5+)*.

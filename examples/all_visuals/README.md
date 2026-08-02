@@ -34,6 +34,8 @@ python examples/all_visuals/01_tabs.py
 | [13_boxplot.py](13_boxplot.py) | `boxplot` | Raw-data mode and pre-calculated mode, horizontal orientation |
 | [14_gauge.py](14_gauge.py) | `gauge` | Range bands, legend, percent/currency formats |
 | [15_links_and_modals.py](15_links_and_modals.py) | `link`, `modal` | Cross-page navigation, modal triggers, row-templated modals |
+| [16_calendar.py](16_calendar.py) | `calendar` | Month/week/day views, spanning + timed events, category legend, event modals, view persistence *(dl2 0.5+)* |
+| [17_remote_dataset.py](17_remote_dataset.py) | `table` over remote data | URL-fetched JSON/CSV datasets, `extract`, auto-refresh, derived-from-remote *(dl2 0.5+)* |
 
 Notes:
 

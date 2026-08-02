@@ -38,6 +38,7 @@ to "reset" when it does.
 | [Table](../visuals/table.md) | Sort, hidden columns, grouping. |
 | [Checklist](../visuals/checklist.md) | Sort, hidden columns, status chip toggles. |
 | [Tabs](../visuals/tabs.md) | Active tab. |
+| [Calendar](../visuals/calendar.md) *(dl2 0.5+)* | Active view (month/week/day). |
 
 ## Resetting
 

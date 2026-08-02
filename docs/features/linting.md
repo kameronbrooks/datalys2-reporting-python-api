@@ -59,6 +59,24 @@ warnings — never blocking rendering — for:
 - *(0.4.1+)* unknown `columnFormats` columns/kinds, malformed
   `conditionalFormats` (bad `when`, unknown preset/target, unresolvable
   columns), and column checks for `statusColumn`/`warningColumn`
+- *(0.5+)* **calendar** visuals: missing both date mappings
+  (`dateColumn`/`startColumn`), both `dateColumn` and `startColumn` set,
+  `endColumn` without `startColumn`, a date-mapping column whose dtype is
+  neither `date` nor `datetime`, unknown `defaultView`, unparseable
+  `defaultDate`, `dayStartHour` outside 0–23, `dayEndHour` outside 1–24 or
+  ≤ `dayStartHour`
+- *(0.5+)* **remote datasets**: empty/non-string `url`, both `url` and
+  `source` declared (url wins), unknown `responseType` (expected `"json"` or
+  `"csv"`), `extract` with a CSV response (ignored), `refreshInterval` not a
+  positive number of seconds, `headers` not an object of string values, and
+  remote-only props (`extract`, `responseType`, `headers`, `refreshInterval`)
+  without a `url`
+
+Most of the 0.5 checks are duplicated in Python as construction-time
+`ValueError`s (Calendar mapping/hour/enum errors, `add_remote_dataset` option
+errors), so they rarely reach the viewer. When remote datasets are present,
+viewer validation runs after the fetches settle, so column checks see the
+real response.
 
 Opt out by adding `<meta name="dl2-validate" content="false">`:
 

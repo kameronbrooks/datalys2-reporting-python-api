@@ -29,6 +29,9 @@ page.add_row(
 | `min_value` / `max_value` | `float` | Color-scale bounds (otherwise derived from the data). |
 | `color` | `str \| list[str]` | D3 interpolator name (`"Viridis"`, `"Magma"`, `"YlOrRd"`, …) or a list of colors for custom interpolation. |
 | `x_axis_label` / `y_axis_label` | `str` | Axis labels. |
+| `enable_export` | `bool` | *(dl2 0.5+)* Right-click **Export PNG** / **Export SVG** image export (viewer default `True`). |
+| `export_file_name` | `str` | *(dl2 0.5+)* Base file name for exported images, no extension (viewer falls back to title → dataset id → chart type). |
+| `context_menu` | `bool` | *(dl2 0.5+)* Right-click context menu (viewer default `True`). |
 | `extra` | `dict` | [Passthrough props](generic-visual.md). |
 | `**common` | | [Common visual properties](../features/common-props.md). |
 
@@ -47,3 +50,4 @@ page.add_row(
   — when exact values matter more than the overview.
 - [Aggregation](../features/aggregation.md) — build the (x, y, value) rows
   client-side from raw data.
+- [Chart image export](../features/chart-export.md) — PNG/SVG export details *(dl2 0.5+)*.

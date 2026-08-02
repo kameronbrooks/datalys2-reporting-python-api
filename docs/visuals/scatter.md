@@ -31,6 +31,9 @@ page.add_row(
 | `show_correlation` | `bool` | Show correlation stats (r, r², equation). |
 | `point_size` | `int` | Point size (viewer default 5). |
 | `x_axis_label` / `y_axis_label` | `str` | Axis labels. |
+| `enable_export` | `bool` | *(dl2 0.5+)* Right-click **Export PNG** / **Export SVG** image export (viewer default `True`). |
+| `export_file_name` | `str` | *(dl2 0.5+)* Base file name for exported images, no extension (viewer falls back to title → dataset id → chart type). |
+| `context_menu` | `bool` | *(dl2 0.5+)* Right-click context menu (viewer default `True`). |
 | `extra` | `dict` | [Passthrough props](generic-visual.md). |
 | `**common` | | [Common visual properties](../features/common-props.md). |
 
@@ -56,3 +59,4 @@ page.add_row(
 
 - [Line](line.md) — ordered X values / time series.
 - [Heatmap](heatmap.md) — density over two categorical axes.
+- [Chart image export](../features/chart-export.md) — PNG/SVG export details *(dl2 0.5+)*.

@@ -28,6 +28,9 @@ page.add_row(
 | `value_column` | `str \| int` | Column for slice size. |
 | `inner_radius` | `int` | Inner radius in px — nonzero makes a donut. |
 | `show_legend` | `bool` | Show the legend. |
+| `enable_export` | `bool` | *(dl2 0.5+)* Right-click **Export PNG** / **Export SVG** image export (viewer default `True`). |
+| `export_file_name` | `str` | *(dl2 0.5+)* Base file name for exported images, no extension (viewer falls back to title → dataset id → chart type). |
+| `context_menu` | `bool` | *(dl2 0.5+)* Right-click context menu (viewer default `True`). |
 | `extra` | `dict` | [Passthrough props](generic-visual.md). |
 | `**common` | | [Common visual properties](../features/common-props.md). |
 
@@ -64,3 +67,4 @@ Without `as_`, the output column is named `"{fn}_{column}"` (e.g.
   close.
 - [Aggregation](../features/aggregation.md) — the client-side grouping used
   above.
+- [Chart image export](../features/chart-export.md) — PNG/SVG export details *(dl2 0.5+)*.

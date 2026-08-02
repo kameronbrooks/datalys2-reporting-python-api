@@ -39,7 +39,8 @@ page.add_row(ModalButton("revenue-details", "View Detailed Breakdown"))
 
 Double-clicking a [table](../visuals/table.md) or
 [checklist](../visuals/checklist.md) row (or right-click → *Open details*)
-opens a detail modal.
+opens a detail modal. [Calendar](../visuals/calendar.md) events *(dl2 0.5+)*
+use the same API — double-click an event.
 
 ## Row detail modals
 

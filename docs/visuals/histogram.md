@@ -26,6 +26,9 @@ page.add_row(
 | `color` | `str` | Bar color (viewer default `#69b3a2`). |
 | `show_labels` | `bool` | Show count labels on top of bars. |
 | `x_axis_label` / `y_axis_label` | `str` | Axis labels. |
+| `enable_export` | `bool` | *(dl2 0.5+)* Right-click **Export PNG** / **Export SVG** image export (viewer default `True`). |
+| `export_file_name` | `str` | *(dl2 0.5+)* Base file name for exported images, no extension (viewer falls back to title → dataset id → chart type). |
+| `context_menu` | `bool` | *(dl2 0.5+)* Right-click context menu (viewer default `True`). |
 | `extra` | `dict` | [Passthrough props](generic-visual.md). |
 | `**common` | | [Common visual properties](../features/common-props.md). |
 
@@ -45,3 +48,4 @@ page.add_row(
 
 - [Box plot](boxplot.md) — quartile summary, better for comparing groups.
 - [Bar](bar.md) — categorical counts you computed yourself.
+- [Chart image export](../features/chart-export.md) — PNG/SVG export details *(dl2 0.5+)*.

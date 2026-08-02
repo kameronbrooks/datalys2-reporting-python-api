@@ -51,6 +51,9 @@ page.add_row(
 | `currency_symbol` | `str` | Currency symbol when `format='currency'` (viewer default `'$'`). |
 | `unit` | `str` | Unit text displayed below the value. |
 | `colors` | `str \| list[str]` | Color palette for ranges (D3 scheme name or list) — used when ranges omit explicit colors. |
+| `enable_export` | `bool` | *(dl2 0.5+)* Right-click **Export PNG** / **Export SVG** image export (viewer default `True`). |
+| `export_file_name` | `str` | *(dl2 0.5+)* Base file name for exported images, no extension (viewer falls back to title → dataset id → chart type). |
+| `context_menu` | `bool` | *(dl2 0.5+)* Right-click context menu (viewer default `True`). |
 | `extra` | `dict` | [Passthrough props](generic-visual.md). |
 | `**common` | | [Common visual properties](../features/common-props.md). |
 
@@ -86,3 +89,4 @@ Plain dicts (`{"from": 0, "to": 50, ...}`) are accepted too.
 - [KPI](kpi.md) — the flat-card equivalent with comparisons.
 - [Thresholds](../features/thresholds.md) — pass/fail coloring on charts
   (gauges use `ranges` instead).
+- [Chart image export](../features/chart-export.md) — PNG/SVG export details *(dl2 0.5+)*.

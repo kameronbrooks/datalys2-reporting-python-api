@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remote Datasets Showcase</title>
+    <meta name="dl-version" content="0.4.1">
+    <meta name="description" content="Data fetched by the browser at load time.">
+    <meta name="author" content="">
+    <meta name="last-updated" content="08-02-2026 15:07:39">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Remote data",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "card",
+                            "elementType": "visual",
+                            "id": "elem-3",
+                            "text": "These visuals load their data **after** the report opens. Offline, they show an inline error instead \u2014 the rest of the report is unaffected.",
+                            "contentType": "md"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "table",
+                            "elementType": "visual",
+                            "id": "elem-5",
+                            "datasetId": "remote_json",
+                            "title": "Remote JSON (extract='result.rows')"
+                        },
+                        {
+                            "type": "table",
+                            "elementType": "visual",
+                            "id": "elem-6",
+                            "datasetId": "remote_csv",
+                            "title": "Remote CSV"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "table",
+                            "elementType": "visual",
+                            "id": "elem-8",
+                            "datasetId": "remote_filtered",
+                            "title": "Derived from a remote source"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "remote_json": {
+            "id": "remote_json",
+            "url": "https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/sample-remote-nested.json",
+            "extract": "result.rows",
+            "refreshInterval": 300
+        },
+        "remote_csv": {
+            "id": "remote_csv",
+            "url": "https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/sample-remote.csv",
+            "responseType": "csv"
+        },
+        "remote_filtered": {
+            "id": "remote_filtered",
+            "source": "remote_json"
+        }
+    }
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>

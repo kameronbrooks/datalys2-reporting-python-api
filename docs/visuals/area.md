@@ -35,6 +35,9 @@ page.add_row(
 | `colors` | `list[str]` | Series colors. |
 | `threshold` | `Threshold \| dict` | Pass/fail coloring of areas, lines, and markers — see [Thresholds](../features/thresholds.md). |
 | `x_axis_label` / `y_axis_label` | `str` | Axis labels. |
+| `enable_export` | `bool` | *(dl2 0.5+)* Right-click **Export PNG** / **Export SVG** image export (viewer default `True`). |
+| `export_file_name` | `str` | *(dl2 0.5+)* Base file name for exported images, no extension (viewer falls back to title → dataset id → chart type). |
+| `context_menu` | `bool` | *(dl2 0.5+)* Right-click context menu (viewer default `True`). |
 | `extra` | `dict` | [Passthrough props](generic-visual.md). |
 | `**common` | | [Common visual properties](../features/common-props.md). |
 
@@ -49,3 +52,4 @@ page.add_row(
 
 - [Line](line.md) — the same chart without fill.
 - [Thresholds](../features/thresholds.md) · [Annotations](../features/annotations.md).
+- [Chart image export](../features/chart-export.md) — PNG/SVG export details *(dl2 0.5+)*.

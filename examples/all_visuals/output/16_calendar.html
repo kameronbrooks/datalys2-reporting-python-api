@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar Showcase</title>
+    <meta name="dl-version" content="0.4.1">
+    <meta name="description" content="Month, week, and day views over the same dataset.">
+    <meta name="author" content="">
+    <meta name="last-updated" content="08-02-2026 15:07:39">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Calendar",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "calendar",
+                            "elementType": "visual",
+                            "id": "team-calendar",
+                            "datasetId": "events",
+                            "startColumn": "Start",
+                            "endColumn": "End",
+                            "titleColumn": "Task",
+                            "categoryColumn": "Team",
+                            "defaultView": "month",
+                            "weekStartsOn": 1,
+                            "legendTitle": "Teams",
+                            "rowModalId": "event-detail"
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "calendar",
+                            "elementType": "visual",
+                            "id": "elem-8",
+                            "datasetId": "holidays",
+                            "dateColumn": "Day",
+                            "titleColumn": "Holiday",
+                            "title": "Company days",
+                            "defaultView": "week",
+                            "showWeekends": false,
+                            "dayStartHour": 8,
+                            "dayEndHour": 18,
+                            "timeFormat": "24h"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "events": {
+            "id": "events",
+            "format": "records",
+            "columns": [
+                "Start",
+                "End",
+                "Task",
+                "Team",
+                "Owner"
+            ],
+            "dtypes": [
+                "datetime",
+                "datetime",
+                "string",
+                "string",
+                "string"
+            ],
+            "data": [
+                {
+                    "Start": "2026-07-27T09:00:00.000000Z",
+                    "End": "2026-07-27T10:00:00.000000Z",
+                    "Task": "Standup",
+                    "Team": "Eng",
+                    "Owner": "Ann"
+                },
+                {
+                    "Start": "2026-07-28T13:30:00.000000Z",
+                    "End": "2026-07-28T15:00:00.000000Z",
+                    "Task": "Design review",
+                    "Team": "Design",
+                    "Owner": "Ben"
+                },
+                {
+                    "Start": "2026-07-28T00:00:00.000000Z",
+                    "End": "2026-07-30T00:00:00.000000Z",
+                    "Task": "Offsite",
+                    "Team": "Sales",
+                    "Owner": "Cara"
+                },
+                {
+                    "Start": "2026-07-30T15:00:00.000000Z",
+                    "End": "2026-07-30T16:00:00.000000Z",
+                    "Task": "1:1",
+                    "Team": "Eng",
+                    "Owner": "Dan"
+                },
+                {
+                    "Start": "2026-08-03T00:00:00.000000Z",
+                    "End": "2026-08-05T00:00:00.000000Z",
+                    "Task": "Sprint 42",
+                    "Team": "Eng",
+                    "Owner": "Ann"
+                }
+            ]
+        },
+        "holidays": {
+            "id": "holidays",
+            "format": "records",
+            "columns": [
+                "Day",
+                "Holiday"
+            ],
+            "dtypes": [
+                "date",
+                "string"
+            ],
+            "data": [
+                {
+                    "Day": "2026-07-31T00:00:00.000000Z",
+                    "Holiday": "Team day"
+                },
+                {
+                    "Day": "2026-08-07T00:00:00.000000Z",
+                    "Holiday": "Release day"
+                }
+            ]
+        }
+    },
+    "modals": [
+        {
+            "id": "event-detail",
+            "title": "Event Details",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "card",
+                            "elementType": "visual",
+                            "id": "elem-3",
+                            "title": "{{ row.Task }}",
+                            "text": "**Team:** {{ row.Team }}\n\n**Owner:** {{ row.Owner }}",
+                            "contentType": "md"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>

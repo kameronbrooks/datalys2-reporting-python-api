@@ -36,6 +36,7 @@ One page per visual type. Every visual also accepts the
 | Heatmap | `heatmap` | [visuals/heatmap.md](visuals/heatmap.md) | [12_heatmap.py](../examples/all_visuals/12_heatmap.py) |
 | Box plot | `boxplot` | [visuals/boxplot.md](visuals/boxplot.md) | [13_boxplot.py](../examples/all_visuals/13_boxplot.py) |
 | Gauge | `gauge` | [visuals/gauge.md](visuals/gauge.md) | [14_gauge.py](../examples/all_visuals/14_gauge.py) |
+| Calendar *(dl2 0.5+)* | `calendar` | [visuals/calendar.md](visuals/calendar.md) | [16_calendar.py](../examples/all_visuals/16_calendar.py) |
 | Tabs container | `tabs` | [visuals/tabs.md](visuals/tabs.md) | [01_tabs.py](../examples/all_visuals/01_tabs.py) |
 | Link | `link` | [visuals/link.md](visuals/link.md) | [15_links_and_modals.py](../examples/all_visuals/15_links_and_modals.py) |
 | Modal button | `modal` | [visuals/modal-button.md](visuals/modal-button.md) | [15_links_and_modals.py](../examples/all_visuals/15_links_and_modals.py) |
@@ -53,12 +54,15 @@ One page per visual type. Every visual also accepts the
 | Aggregation (`aggregate=`, the `aggregates` builder module) | [features/aggregation.md](features/aggregation.md) |
 | Formula datasources (`"sales[Amount > 200]"`) *(0.7.0+)* | [features/formula-datasources.md](features/formula-datasources.md) |
 | Derived datasets (`add_derived_dataset`) | [features/derived-datasets.md](features/derived-datasets.md) |
+| Remote datasets (`add_remote_dataset`) *(dl2 0.5+)* | [features/remote-datasets.md](features/remote-datasets.md) |
 | Thresholds (pass/fail coloring) | [features/thresholds.md](features/thresholds.md) |
 | Annotations (trend lines, markers, axis lines, labels) | [features/annotations.md](features/annotations.md) |
 | Column formatting (`column_formats=`) *(dl2 0.4.1+)* | [features/column-formatting.md](features/column-formatting.md) |
 | Conditional formatting (`conditional_formats=`) *(dl2 0.4.1+)* | [features/conditional-formatting.md](features/conditional-formatting.md) |
 | Modals (global overlays, row detail modals) | [features/modals.md](features/modals.md) |
 | Persistent view state *(dl2 0.4+)* | [features/persistent-view-state.md](features/persistent-view-state.md) |
+| Chart image export (PNG/SVG) *(dl2 0.5+)* | [features/chart-export.md](features/chart-export.md) |
+| Printing & PDF *(dl2 0.5+)* | [features/printing.md](features/printing.md) |
 | Reading values back (`get_value`, `visual.copy`) | [features/reading-values.md](features/reading-values.md) |
 | Conditional layout (`on_condition`) | [features/conditional-layout.md](features/conditional-layout.md) |
 | Jupyter notebook support (`show`, auto-render) | [features/jupyter.md](features/jupyter.md) |
