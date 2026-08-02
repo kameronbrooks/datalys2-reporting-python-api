@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, ClassVar, Dict, List, Optional
+from typing import Any, ClassVar, Dict, List, Optional, Union
 
 import base64
 import datetime
@@ -114,6 +114,12 @@ class DL2Report:
                 "browser at load time, so its values are not available at compile time. "
                 "Compute the value with pandas from the source DataFrame instead."
             )
+        if "url" in dataset:
+            raise ValueError(
+                f"Dataset '{data_source_name}' is a remote dataset — it is fetched in the "
+                "browser at load time, so its values are not available at compile time. "
+                "Fetch and inspect the data yourself if you need it while building."
+            )
         # Use the stored DataFrame when available (data[] is emptied when compress=True)
         df = dataset.get("_df")
         if df is None:
@@ -137,9 +143,15 @@ class DL2Report:
         format: str = "records",
         compress: bool = False,
         timestamp_format: str = "iso",
+        dtype_overrides: Optional[Dict[str, str]] = None,
     ) -> DL2Report:
         """
         Adds a pandas DataFrame as a dataset to the report.
+
+        Date-like columns are declared with dtype ``"date"`` when every value is
+        midnight UTC, and ``"datetime"`` when any value carries a time of day
+        (dl2 0.5+ — the calendar visual renders ``"date"`` columns as all-day
+        events and ``"datetime"`` columns as timed events on the hour grid).
 
         Args:
             name (str): The unique identifier for the dataset.
@@ -147,6 +159,10 @@ class DL2Report:
             format (str, optional): The format to serialize the data ('records' or 'values'). Defaults to "records".
             compress (bool, optional): Whether to compress the dataset using Gzip. Defaults to False.
             timestamp_format (str, optional): The format for datetime columns ('iso' or 'epoch'). Defaults to "iso".
+            dtype_overrides (dict, optional): Per-column dtype declarations that
+                override the inference, e.g. ``{"Due": "datetime"}`` to force
+                timed calendar events for a midnight-only column. Keys must be
+                column names of ``df``.
 
         Returns:
             DL2Report: The report instance for method chaining.
@@ -155,6 +171,14 @@ class DL2Report:
         df = df.copy(deep=True)
 
         columns = df.columns.tolist()
+
+        if dtype_overrides:
+            unknown = [col for col in dtype_overrides if col not in df.columns]
+            if unknown:
+                raise ValueError(
+                    f"dtype_overrides references unknown column(s) {unknown} "
+                    f"for dataset '{name}'."
+                )
         
         # Track which columns are dates BEFORE conversion
         date_columns = set()
@@ -184,10 +208,16 @@ class DL2Report:
         for col in df.columns:
             dtype = df[col].dtype
 
-            if pd.api.types.is_bool_dtype(dtype):
+            if dtype_overrides and col in dtype_overrides:
+                dtypes.append(dtype_overrides[col])
+            elif pd.api.types.is_bool_dtype(dtype):
                 dtypes.append("boolean")
             elif col in date_columns:
-                dtypes.append("date")
+                # "datetime" when any value carries a time of day, else "date"
+                # (dl2 0.5+ distinguishes all-day vs timed calendar events)
+                values = pd.to_datetime(df[col]).dropna()
+                has_time = bool((values != values.dt.normalize()).any())
+                dtypes.append("datetime" if has_time else "date")
             elif pd.api.types.is_numeric_dtype(dtype):
                 dtypes.append("number")
             else:
@@ -296,6 +326,131 @@ class DL2Report:
             dataset_entry["filter"] = camel_case_dict(filter)
         if aggregate is not None:
             dataset_entry["aggregate"] = camel_case_dict(aggregate)
+
+        self.datasets[name] = dataset_entry
+        return self
+
+    _REMOTE_RESPONSE_TYPES = ("json", "csv")
+    _REMOTE_FORMATS = ("table", "records", "list", "record")
+
+    def add_remote_dataset(
+        self,
+        name: str,
+        url: str,
+        response_type: Optional[str] = None,
+        extract: Optional[str] = None,
+        headers: Optional[Dict[str, str]] = None,
+        refresh_interval: Union[int, float, None] = None,
+        columns: Optional[List[str]] = None,
+        dtypes: Optional[List[str]] = None,
+        format: Optional[str] = None,
+    ) -> DL2Report:
+        """
+        Adds a remote dataset (dl2 0.5+) fetched from a URL in the browser at load
+        time — no data is embedded in the HTML. The report renders immediately;
+        visuals bound to the dataset show a loading placeholder until the fetch
+        settles. The endpoint must be CORS-accessible from wherever the report is
+        opened.
+
+        A JSON response may be a bare array of rows or a full
+        ``{columns, dtypes, format, data}`` dataset object (response fields win
+        over this declaration). A CSV response always parses into a records
+        dataset with its header row as columns. Declared ``dtypes`` still drive
+        date conversion — declare ``"date"``/``"datetime"`` columns so tables,
+        charts, and calendars treat them as dates.
+
+        Derived datasets (:meth:`add_derived_dataset`) may use a remote dataset
+        as their source; derivation waits for the fetch and re-runs on every
+        refresh.
+
+        Warning:
+            ``headers`` are embedded as plain text in the compiled HTML — anyone
+            who can open the report can read them. Only use tokens that are safe
+            to treat as public.
+
+        Args:
+            name (str): The unique identifier for the dataset.
+            url (str): The URL to fetch the data from.
+            response_type (str, optional): 'json' (viewer default) or 'csv'.
+            extract (str, optional): Dot-path to the rows inside a JSON wrapper
+                object, e.g. ``"result.rows"``. JSON only.
+            headers (dict, optional): HTTP request headers (string values), e.g.
+                ``{"Authorization": "Bearer ..."}``. See the warning above.
+            refresh_interval (int | float, optional): Re-fetch every N seconds.
+                Omit or 0 to fetch once. Refreshes swap data in place and a
+                failed refresh keeps the last good data.
+            columns (list, optional): Declared column names (required for JSON
+                array-of-arrays responses; otherwise inferred from the response).
+            dtypes (list, optional): Declared column dtypes, aligned with
+                ``columns`` (e.g. ``["string", "number", "datetime"]``).
+            format (str, optional): Declared data format ('records', 'table',
+                'list', or 'record'; viewer default 'records').
+
+        Returns:
+            DL2Report: The report instance for method chaining.
+
+        Raises:
+            ValueError: On an empty url or option combinations the viewer would
+                reject (mirrors the viewer's remote-dataset validation warnings).
+        """
+        if not isinstance(url, str) or not url.strip():
+            raise ValueError(f"Remote dataset '{name}': url must be a non-empty string.")
+        if response_type is not None and response_type not in self._REMOTE_RESPONSE_TYPES:
+            raise ValueError(
+                f"Remote dataset '{name}': response_type must be one of "
+                f"{self._REMOTE_RESPONSE_TYPES}, got {response_type!r}."
+            )
+        if extract is not None and response_type == "csv":
+            raise ValueError(
+                f"Remote dataset '{name}': extract only applies to JSON responses."
+            )
+        if refresh_interval is not None:
+            if isinstance(refresh_interval, bool) or not isinstance(refresh_interval, (int, float)):
+                raise ValueError(
+                    f"Remote dataset '{name}': refresh_interval must be a number of "
+                    f"seconds, got {refresh_interval!r}."
+                )
+            if refresh_interval < 0:
+                raise ValueError(
+                    f"Remote dataset '{name}': refresh_interval must be a positive number "
+                    f"of seconds (or 0 to fetch once), got {refresh_interval!r}."
+                )
+        if headers is not None:
+            if not isinstance(headers, dict) or not all(
+                isinstance(k, str) and isinstance(v, str) for k, v in headers.items()
+            ):
+                raise ValueError(
+                    f"Remote dataset '{name}': headers must be a dict of string keys "
+                    f"and string values."
+                )
+        if format is not None and format not in self._REMOTE_FORMATS:
+            raise ValueError(
+                f"Remote dataset '{name}': format must be one of {self._REMOTE_FORMATS}, "
+                f"got {format!r}."
+            )
+        if columns is not None and dtypes is not None and len(columns) != len(dtypes):
+            raise ValueError(
+                f"Remote dataset '{name}': columns ({len(columns)}) and dtypes "
+                f"({len(dtypes)}) must have the same length."
+            )
+
+        # Keys are emitted verbatim (datasets bypass camelCasing at serialization,
+        # so headers keys also survive untouched).
+        dataset_entry: Dict[str, Any] = {"id": name, "url": url}
+        if response_type is not None:
+            dataset_entry["responseType"] = response_type
+        if extract is not None:
+            dataset_entry["extract"] = extract
+        if headers is not None:
+            dataset_entry["headers"] = headers
+        if refresh_interval is not None:
+            dataset_entry["refreshInterval"] = refresh_interval
+        if format is not None:
+            dataset_entry["format"] = format
+        if columns is not None:
+            dataset_entry["columns"] = columns
+        if dtypes is not None:
+            dataset_entry["dtypes"] = dtypes
 
         self.datasets[name] = dataset_entry
         return self

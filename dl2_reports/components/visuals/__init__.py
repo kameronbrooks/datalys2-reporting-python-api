@@ -12,6 +12,7 @@ from .Heatmap import HeatmapVisual
 from .Gauge import GaugeVisual
 from .Boxplot import BoxplotVisual
 from .Link import LinkVisual
+from .Calendar import CalendarVisual
 
 __ALL__ = [
     KPIVisual,
@@ -27,5 +28,6 @@ __ALL__ = [
     HeatmapVisual,
     GaugeVisual,
     BoxplotVisual,
-    LinkVisual
+    LinkVisual,
+    CalendarVisual
 ]

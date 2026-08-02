@@ -349,6 +349,9 @@ class Histogram(VisualComponent):
         show_labels: Optional[bool] = None,
         x_axis_label: Optional[str] = None,
         y_axis_label: Optional[str] = None,
+        enable_export: Optional[bool] = None,
+        export_file_name: Optional[str] = None,
+        context_menu: Optional[bool] = None,
         extra: Optional[Dict[str, Any]] = None,
         **common: Any,
     ):
@@ -360,6 +363,9 @@ class Histogram(VisualComponent):
             color: Bar color.
             show_labels: Whether to show count labels.
             x_axis_label / y_axis_label: Axis labels.
+            enable_export: Right-click PNG/SVG image export (dl2 0.5+, viewer default True).
+            export_file_name: Base file name for exports, no extension (dl2 0.5+).
+            context_menu: Right-click context menu (dl2 0.5+, viewer default True).
         """
         super().__init__(
             dataset_id,
@@ -370,6 +376,9 @@ class Histogram(VisualComponent):
                 show_labels=show_labels,
                 x_axis_label=x_axis_label,
                 y_axis_label=y_axis_label,
+                enable_export=enable_export,
+                export_file_name=export_file_name,
+                context_menu=context_menu,
             ),
             extra=extra,
             **common,
@@ -393,6 +402,9 @@ class Heatmap(VisualComponent):
         color: Union[str, List[str], None] = None,
         x_axis_label: Optional[str] = None,
         y_axis_label: Optional[str] = None,
+        enable_export: Optional[bool] = None,
+        export_file_name: Optional[str] = None,
+        context_menu: Optional[bool] = None,
         extra: Optional[Dict[str, Any]] = None,
         **common: Any,
     ):
@@ -405,6 +417,9 @@ class Heatmap(VisualComponent):
             min_value / max_value: Optional color-scale bounds.
             color: D3 interpolator name (e.g. 'Viridis') or list of colors.
             x_axis_label / y_axis_label: Axis labels.
+            enable_export: Right-click PNG/SVG image export (dl2 0.5+, viewer default True).
+            export_file_name: Base file name for exports, no extension (dl2 0.5+).
+            context_menu: Right-click context menu (dl2 0.5+, viewer default True).
         """
         super().__init__(
             dataset_id,
@@ -418,6 +433,9 @@ class Heatmap(VisualComponent):
                 color=color,
                 x_axis_label=x_axis_label,
                 y_axis_label=y_axis_label,
+                enable_export=enable_export,
+                export_file_name=export_file_name,
+                context_menu=context_menu,
             ),
             extra=extra,
             **common,
@@ -453,6 +471,9 @@ class Gauge(VisualComponent):
         unit: Optional[str] = None,
         colors: Union[str, List[str], None] = None,
         show_legend: Optional[bool] = None,
+        enable_export: Optional[bool] = None,
+        export_file_name: Optional[str] = None,
+        context_menu: Optional[bool] = None,
         extra: Optional[Dict[str, Any]] = None,
         **common: Any,
     ):
@@ -473,6 +494,9 @@ class Gauge(VisualComponent):
             currency_symbol: Currency symbol (viewer default '$').
             unit: Optional unit text below the value.
             colors: Color palette for ranges (D3 scheme or array).
+            enable_export: Right-click PNG/SVG image export (dl2 0.5+, viewer default True).
+            export_file_name: Base file name for exports, no extension (dl2 0.5+).
+            context_menu: Right-click context menu (dl2 0.5+, viewer default True).
         """
         super().__init__(
             dataset_id,
@@ -498,6 +522,9 @@ class Gauge(VisualComponent):
                 unit=unit,
                 colors=colors,
                 show_legend=show_legend,
+                enable_export=enable_export,
+                export_file_name=export_file_name,
+                context_menu=context_menu,
             ),
             extra=extra,
             **common,
@@ -526,6 +553,9 @@ class Boxplot(VisualComponent):
         color: Union[str, List[str], None] = None,
         x_axis_label: Optional[str] = None,
         y_axis_label: Optional[str] = None,
+        enable_export: Optional[bool] = None,
+        export_file_name: Optional[str] = None,
+        context_menu: Optional[bool] = None,
         extra: Optional[Dict[str, Any]] = None,
         **common: Any,
     ):
@@ -540,6 +570,9 @@ class Boxplot(VisualComponent):
             show_outliers: Whether to show outliers (data mode).
             color: Fill color, list, or D3 scheme name.
             x_axis_label / y_axis_label: Axis labels.
+            enable_export: Right-click PNG/SVG image export (dl2 0.5+, viewer default True).
+            export_file_name: Base file name for exports, no extension (dl2 0.5+).
+            context_menu: Right-click context menu (dl2 0.5+, viewer default True).
         """
         super().__init__(
             dataset_id,
@@ -557,6 +590,9 @@ class Boxplot(VisualComponent):
                 color=color,
                 x_axis_label=x_axis_label,
                 y_axis_label=y_axis_label,
+                enable_export=enable_export,
+                export_file_name=export_file_name,
+                context_menu=context_menu,
             ),
             extra=extra,
             **common,
@@ -662,6 +698,9 @@ class Pie(VisualComponent):
         value_column: Column = None,
         inner_radius: Optional[int] = None,
         show_legend: Optional[bool] = None,
+        enable_export: Optional[bool] = None,
+        export_file_name: Optional[str] = None,
+        context_menu: Optional[bool] = None,
         extra: Optional[Dict[str, Any]] = None,
         **common: Any,
     ):
@@ -672,6 +711,9 @@ class Pie(VisualComponent):
             value_column: Column for slice values.
             inner_radius: Inner radius for donut styling.
             show_legend: Whether to show the legend.
+            enable_export: Right-click PNG/SVG image export (dl2 0.5+, viewer default True).
+            export_file_name: Base file name for exports, no extension (dl2 0.5+).
+            context_menu: Right-click context menu (dl2 0.5+, viewer default True).
         """
         super().__init__(
             dataset_id,
@@ -680,6 +722,9 @@ class Pie(VisualComponent):
                 value_column=value_column,
                 inner_radius=inner_radius,
                 show_legend=show_legend,
+                enable_export=enable_export,
+                export_file_name=export_file_name,
+                context_menu=context_menu,
             ),
             extra=extra,
             **common,
@@ -704,6 +749,9 @@ class Bar(VisualComponent):
         show_labels: Optional[bool] = None,
         horizontal: Optional[bool] = None,
         threshold: Optional[Any] = None,
+        enable_export: Optional[bool] = None,
+        export_file_name: Optional[str] = None,
+        context_menu: Optional[bool] = None,
         extra: Optional[Dict[str, Any]] = None,
         **common: Any,
     ):
@@ -717,6 +765,9 @@ class Bar(VisualComponent):
             show_legend / show_labels: Legend / value-label toggles.
             horizontal: Whether to render bars horizontally (viewer-dependent).
             threshold: :class:`~dl2_reports.Threshold` or dict (clustered only).
+            enable_export: Right-click PNG/SVG image export (dl2 0.5+, viewer default True).
+            export_file_name: Base file name for exports, no extension (dl2 0.5+).
+            context_menu: Right-click context menu (dl2 0.5+, viewer default True).
         """
         self.TYPE = "stackedBar" if stacked else "clusteredBar"
         super().__init__(
@@ -730,6 +781,9 @@ class Bar(VisualComponent):
                 show_legend=show_legend,
                 show_labels=show_labels,
                 horizontal=horizontal,
+                enable_export=enable_export,
+                export_file_name=export_file_name,
+                context_menu=context_menu,
             ),
             extra=extra,
             **common,
@@ -755,6 +809,9 @@ class Line(VisualComponent):
         threshold: Optional[Any] = None,
         x_axis_label: Optional[str] = None,
         y_axis_label: Optional[str] = None,
+        enable_export: Optional[bool] = None,
+        export_file_name: Optional[str] = None,
+        context_menu: Optional[bool] = None,
         extra: Optional[Dict[str, Any]] = None,
         **common: Any,
     ):
@@ -769,6 +826,9 @@ class Line(VisualComponent):
             colors: Optional list of series colors.
             threshold: :class:`~dl2_reports.Threshold` or dict.
             x_axis_label / y_axis_label: Axis labels.
+            enable_export: Right-click PNG/SVG image export (dl2 0.5+, viewer default True).
+            export_file_name: Base file name for exports, no extension (dl2 0.5+).
+            context_menu: Right-click context menu (dl2 0.5+, viewer default True).
         """
         super().__init__(
             dataset_id,
@@ -784,6 +844,9 @@ class Line(VisualComponent):
                 threshold=threshold,
                 x_axis_label=x_axis_label,
                 y_axis_label=y_axis_label,
+                enable_export=enable_export,
+                export_file_name=export_file_name,
+                context_menu=context_menu,
             ),
             extra=extra,
             **common,
@@ -812,6 +875,9 @@ class Area(VisualComponent):
         threshold: Optional[Any] = None,
         x_axis_label: Optional[str] = None,
         y_axis_label: Optional[str] = None,
+        enable_export: Optional[bool] = None,
+        export_file_name: Optional[str] = None,
+        context_menu: Optional[bool] = None,
         extra: Optional[Dict[str, Any]] = None,
         **common: Any,
     ):
@@ -829,6 +895,9 @@ class Area(VisualComponent):
             colors: Optional list of series colors.
             threshold: :class:`~dl2_reports.Threshold` or dict.
             x_axis_label / y_axis_label: Axis labels.
+            enable_export: Right-click PNG/SVG image export (dl2 0.5+, viewer default True).
+            export_file_name: Base file name for exports, no extension (dl2 0.5+).
+            context_menu: Right-click context menu (dl2 0.5+, viewer default True).
         """
         if threshold is not None and hasattr(threshold, "to_dict"):
             threshold = threshold.to_dict()
@@ -849,6 +918,9 @@ class Area(VisualComponent):
                 threshold=threshold,
                 x_axis_label=x_axis_label,
                 y_axis_label=y_axis_label,
+                enable_export=enable_export,
+                export_file_name=export_file_name,
+                context_menu=context_menu,
             ),
             extra=extra,
             **common,
@@ -871,6 +943,9 @@ class Scatter(VisualComponent):
         point_size: Optional[int] = None,
         x_axis_label: Optional[str] = None,
         y_axis_label: Optional[str] = None,
+        enable_export: Optional[bool] = None,
+        export_file_name: Optional[str] = None,
+        context_menu: Optional[bool] = None,
         extra: Optional[Dict[str, Any]] = None,
         **common: Any,
     ):
@@ -883,6 +958,9 @@ class Scatter(VisualComponent):
             show_correlation: Whether to show correlation stats.
             point_size: Point size.
             x_axis_label / y_axis_label: Axis labels.
+            enable_export: Right-click PNG/SVG image export (dl2 0.5+, viewer default True).
+            export_file_name: Base file name for exports, no extension (dl2 0.5+).
+            context_menu: Right-click context menu (dl2 0.5+, viewer default True).
         """
         super().__init__(
             dataset_id,
@@ -895,6 +973,9 @@ class Scatter(VisualComponent):
                 point_size=point_size,
                 x_axis_label=x_axis_label,
                 y_axis_label=y_axis_label,
+                enable_export=enable_export,
+                export_file_name=export_file_name,
+                context_menu=context_menu,
             ),
             extra=extra,
             **common,
@@ -926,6 +1007,182 @@ class Card(VisualComponent):
         super().__init__(
             None,
             dict(title=title, text=text, content_type=content_type),
+            extra=extra,
+            **common,
+        )
+
+
+class Calendar(VisualComponent):
+    """A calendar (``type: "calendar"``, dl2 0.5+) with month/week/day views,
+    spanning multi-day events, category coloring, event detail modals, and
+    persistent view state. Requires exactly one date mapping: ``date_column``
+    for single-date events, or ``start_column`` (+ optional ``end_column``)
+    for spanning events. All calendar math is UTC, matching date rendering in
+    tables and charts."""
+
+    TYPE = "calendar"
+
+    _VIEWS = ("month", "week", "day")
+    _TIME_FORMATS = ("12h", "24h")
+
+    def __init__(
+        self,
+        dataset_id: str,
+        date_column: Optional[Column] = None,
+        start_column: Optional[Column] = None,
+        end_column: Optional[Column] = None,
+        title_column: Optional[Column] = None,
+        category_column: Optional[Column] = None,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        default_view: Optional[str] = None,
+        default_date: Optional[str] = None,
+        week_starts_on: Optional[int] = None,
+        show_weekends: Optional[bool] = None,
+        day_start_hour: Optional[int] = None,
+        day_end_hour: Optional[int] = None,
+        hour_height: Optional[int] = None,
+        max_events_per_day: Optional[int] = None,
+        time_format: Optional[str] = None,
+        max_height: Optional[int] = None,
+        empty_label: Optional[str] = None,
+        color: Union[str, List[str], None] = None,
+        show_legend: Optional[bool] = None,
+        legend_title: Optional[str] = None,
+        row_modal: Optional[bool] = None,
+        row_modal_id: Optional[str] = None,
+        row_modal_columns: Optional[List[str]] = None,
+        row_modal_title: Optional[str] = None,
+        context_menu: Optional[bool] = None,
+        id: Optional[str] = None,
+        persist_state: Optional[bool] = None,
+        extra: Optional[Dict[str, Any]] = None,
+        **common: Any,
+    ):
+        """
+        Args:
+            dataset_id: The dataset id.
+            date_column: Column with the event date (single-date events).
+                Mutually exclusive with start_column.
+            start_column: Event start column (spanning events).
+            end_column: Event end column; only meaningful with start_column.
+            title_column: Column for event titles (viewer default: first unused
+                dataset column).
+            category_column: Column for tag-based coloring with a legend; empty
+                values bucket as "(none)".
+            title: Optional calendar title.
+            description: Optional description text.
+            default_view: Initial view — 'month', 'week', or 'day' (viewer
+                default 'month').
+            default_date: Initial date as an ISO string, e.g. "2026-08-01"
+                (viewer default: today, UTC).
+            week_starts_on: 0 (Sunday, viewer default) or 1 (Monday).
+            show_weekends: Whether to show Saturday/Sunday columns (viewer
+                default True).
+            day_start_hour: First hour shown on the week/day hour grid, 0-23
+                (viewer default 0).
+            day_end_hour: Hour the grid ends at, 1-24 (viewer default 24). Must
+                be greater than day_start_hour.
+            hour_height: Pixel height of one hour row (viewer default 48).
+            max_events_per_day: Events shown per month cell before the "+N more"
+                clamp (viewer default 3). Released when printing.
+            time_format: '12h' (viewer default) or '24h'.
+            max_height: Max height in px of the month grid (viewer default 560).
+            empty_label: Text when the dataset has no events (viewer default
+                "No events.").
+            color: Category palette — D3 scheme name, single color, or list
+                (viewer default 'tableau10'), as in other categorical visuals.
+            show_legend: Category legend (viewer default True when
+                category_column is set).
+            legend_title: Legend heading (viewer default "Legend").
+            row_modal: Built-in event detail modal on double-click (0.5+).
+            row_modal_id: Open a custom modal instead; cards inside can use
+                ``{{ row.Col }}`` templates.
+            row_modal_columns: Columns listed in the built-in detail modal.
+            row_modal_title: Title of the built-in detail modal.
+            context_menu: Right-click context menu (viewer default True).
+            extra: Passthrough props not modeled by this class.
+            **common: Common visual props (id enables persistence/link targeting;
+                persist_state opts out).
+
+        Raises:
+            ValueError: On conflicting/missing date mappings or out-of-range
+                view options (the viewer would only warn; this library fails
+                fast — use ``extra`` to bypass).
+
+        Note:
+            Columns with dtype ``"date"`` render as all-day events; dtype
+            ``"datetime"`` places timed events on the week/day hour grid
+            (see ``DL2Report.add_df`` dtype inference).
+        """
+        if date_column is not None and start_column is not None:
+            raise ValueError(
+                "Calendar accepts either date_column or start_column, not both."
+            )
+        if date_column is None and start_column is None:
+            raise ValueError(
+                "Calendar requires a date mapping: date_column or start_column."
+            )
+        if end_column is not None and start_column is None:
+            raise ValueError("Calendar end_column requires start_column.")
+        if default_view is not None and default_view not in self._VIEWS:
+            raise ValueError(
+                f"Calendar default_view must be one of {self._VIEWS}, got {default_view!r}."
+            )
+        if time_format is not None and time_format not in self._TIME_FORMATS:
+            raise ValueError(
+                f"Calendar time_format must be one of {self._TIME_FORMATS}, got {time_format!r}."
+            )
+        if week_starts_on is not None and week_starts_on not in (0, 1):
+            raise ValueError(
+                f"Calendar week_starts_on must be 0 (Sunday) or 1 (Monday), got {week_starts_on!r}."
+            )
+        if day_start_hour is not None and not 0 <= day_start_hour <= 23:
+            raise ValueError(
+                f"Calendar day_start_hour must be between 0 and 23, got {day_start_hour!r}."
+            )
+        if day_end_hour is not None:
+            if not 1 <= day_end_hour <= 24:
+                raise ValueError(
+                    f"Calendar day_end_hour must be between 1 and 24, got {day_end_hour!r}."
+                )
+            if day_start_hour is not None and day_end_hour <= day_start_hour:
+                raise ValueError(
+                    f"Calendar day_end_hour ({day_end_hour}) must be greater than "
+                    f"day_start_hour ({day_start_hour})."
+                )
+        super().__init__(
+            dataset_id,
+            dict(
+                date_column=date_column,
+                start_column=start_column,
+                end_column=end_column,
+                title_column=title_column,
+                category_column=category_column,
+                title=title,
+                description=description,
+                default_view=default_view,
+                default_date=default_date,
+                week_starts_on=week_starts_on,
+                show_weekends=show_weekends,
+                day_start_hour=day_start_hour,
+                day_end_hour=day_end_hour,
+                hour_height=hour_height,
+                max_events_per_day=max_events_per_day,
+                time_format=time_format,
+                max_height=max_height,
+                empty_label=empty_label,
+                color=color,
+                show_legend=show_legend,
+                legend_title=legend_title,
+                row_modal=row_modal,
+                row_modal_id=row_modal_id,
+                row_modal_columns=row_modal_columns,
+                row_modal_title=row_modal_title,
+                context_menu=context_menu,
+                id=id,
+                persist_state=persist_state,
+            ),
             extra=extra,
             **common,
         )

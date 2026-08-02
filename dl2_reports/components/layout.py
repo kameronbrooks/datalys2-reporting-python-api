@@ -53,6 +53,7 @@ from .visuals import (
     GaugeVisual,
     BoxplotVisual,
     LinkVisual,
+    CalendarVisual,
 )
 
 
@@ -71,6 +72,7 @@ class CompileTimeConditional(
     GaugeVisual,
     BoxplotVisual,
     LinkVisual,
+    CalendarVisual,
     ):
     """
     Temporary wrapper returned by ``Layout.on_condition()``.
@@ -131,6 +133,7 @@ class Layout(
     GaugeVisual,
     BoxplotVisual,
     LinkVisual,
+    CalendarVisual,
     ):
     def __init__(self, direction: str = "row", **kwargs):
         """Initializes a new layout container.

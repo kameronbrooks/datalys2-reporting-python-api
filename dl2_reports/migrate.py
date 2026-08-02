@@ -69,6 +69,7 @@ HELPER_TO_CLASS = {
     "add_boxplot": "Boxplot",
     "add_link": "Link",
     "add_modal_button": "ModalButton",
+    "add_calendar": "Calendar",
 }
 
 # Keyword props whose literal-dict values become typed shape constructors
