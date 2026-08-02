@@ -2,7 +2,7 @@
 import pandas as pd
 import datetime
 import numpy as np
-from dl2_reports import DL2Report, aggregates as A, filters as F
+from dl2_reports import DL2Report, Calendar, aggregates as A, filters as F
 
 def simple_kpi_report():
     report = DL2Report("Simple KPI Report", "A test report with a simple KPI", author="Test Bot")
@@ -380,6 +380,116 @@ def formulas_report():
     return report
 
 
+def calendar_report():
+    report = DL2Report("Calendar Report", compress_visuals=False)
+
+    events = pd.DataFrame({
+        "Start": [
+            datetime.datetime(2026, 3, 2, 9, 0),
+            datetime.datetime(2026, 3, 3, 13, 30),
+            datetime.datetime(2026, 3, 9, 0, 0),
+        ],
+        "End": [
+            datetime.datetime(2026, 3, 2, 10, 0),
+            datetime.datetime(2026, 3, 5, 14, 0),
+            datetime.datetime(2026, 3, 11, 0, 0),
+        ],
+        "Task": ["Standup", "Offsite", "Sprint review"],
+        "Team": ["Eng", "Sales", "Eng"],
+    })
+    report.add_df("events", events)
+
+    holidays = pd.DataFrame({
+        "Day": [datetime.date(2026, 3, 4), datetime.date(2026, 3, 18)],
+        "Holiday": ["Founders Day", "Release Day"],
+    })
+    report.add_df("holidays", holidays)
+
+    page = report.add_page("Calendar")
+    page.add_row().add(Calendar(
+        "events",
+        start_column="Start",
+        end_column="End",
+        title_column="Task",
+        category_column="Team",
+        default_view="month",
+        default_date="2026-03-01",
+        week_starts_on=1,
+        day_start_hour=8,
+        day_end_hour=18,
+        time_format="24h",
+        max_events_per_day=2,
+        legend_title="Teams",
+        row_modal=True,
+        row_modal_title="Event details",
+        id="team-calendar",
+    ))
+    # Legacy helper + single-date mapping
+    page.add_row().add_calendar(
+        "holidays",
+        date_column="Day",
+        title_column="Holiday",
+        show_weekends=False,
+        default_date="2026-03-01",
+    )
+    return report
+
+
+def remote_dataset_report():
+    report = DL2Report("Remote Dataset Report", compress_visuals=False)
+
+    report.add_remote_dataset(
+        "live_sales",
+        "https://example.com/api/sales.json",
+        response_type="json",
+        extract="result.rows",
+        headers={"Authorization": "Bearer public-token"},
+        refresh_interval=60,
+        columns=["Region", "Amount"],
+        dtypes=["string", "number"],
+    )
+    report.add_remote_dataset(
+        "weather_csv",
+        "https://example.com/weather.csv",
+        response_type="csv",
+        columns=["Day", "Temp"],
+        dtypes=["date", "number"],
+    )
+    # Derived dataset with a remote source (derivation waits for the fetch)
+    report.add_derived_dataset("north_sales", "live_sales", filter=F.eq("Region", "North"))
+
+    page = report.add_page("Remote")
+    row = page.add_row()
+    row.add_table("live_sales", title="Live sales")
+    row.add_bar(dataset_id="north_sales", x_column="Region", y_columns=["Amount"])
+    page.add_row().add_line("weather_csv", x_column="Day", y_columns=["Temp"])
+    return report
+
+
+def chart_export_report():
+    report = DL2Report("Chart Export Report", compress_visuals=False)
+
+    df = pd.DataFrame({
+        "Month": ["Jan", "Feb", "Mar"],
+        "Revenue": [120.0, 150.0, 90.0],
+        "Cost": [80.0, 95.0, 60.0],
+    })
+    report.add_df("finance", df)
+
+    page = report.add_page("Charts")
+    row = page.add_row()
+    row.add_line("finance", x_column="Month", y_columns=["Revenue", "Cost"], export_file_name="revenue-trend")
+    row.add_bar(dataset_id="finance", x_column="Month", y_columns=["Revenue"], enable_export=False)
+    page.add_row().add_pie(
+        "finance",
+        category_column="Month",
+        value_column="Revenue",
+        context_menu=False,
+        export_file_name="revenue-share",
+    )
+    return report
+
+
 scenarios = {
     "simple_kpi": simple_kpi_report,
     "date_types": date_types_report,
@@ -398,5 +508,8 @@ scenarios = {
     "tabs": tabs_report,
     "filters": filters_report,
     "table_features": table_features_report,
-    "formulas": formulas_report
+    "formulas": formulas_report,
+    "calendar": calendar_report,
+    "remote_dataset": remote_dataset_report,
+    "chart_export": chart_export_report
 }
