@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bar Report</title>
+    <title>Chart Export Report</title>
     <meta name="dl-version" content="0.5.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -17,35 +17,50 @@
     <script id="report-data" type="application/json">{
     "pages": [
         {
-            "title": "Bar",
+            "title": "Charts",
             "rows": [
                 {
                     "type": "layout",
                     "direction": "row",
                     "children": [
                         {
-                            "type": "clusteredBar",
+                            "type": "line",
                             "elementType": "visual",
                             "id": "elem-3",
                             "datasetId": "finance",
-                            "title": "Clustered",
                             "xColumn": "Month",
                             "yColumns": [
-                                "Sales",
+                                "Revenue",
                                 "Cost"
-                            ]
+                            ],
+                            "exportFileName": "revenue-trend"
                         },
                         {
-                            "type": "stackedBar",
+                            "type": "clusteredBar",
                             "elementType": "visual",
                             "id": "elem-4",
                             "datasetId": "finance",
-                            "title": "Stacked",
                             "xColumn": "Month",
                             "yColumns": [
-                                "Sales",
-                                "Cost"
-                            ]
+                                "Revenue"
+                            ],
+                            "enableExport": false
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "pie",
+                            "elementType": "visual",
+                            "id": "elem-6",
+                            "datasetId": "finance",
+                            "categoryColumn": "Month",
+                            "valueColumn": "Revenue",
+                            "exportFileName": "revenue-share",
+                            "contextMenu": false
                         }
                     ]
                 }
@@ -58,7 +73,7 @@
             "format": "records",
             "columns": [
                 "Month",
-                "Sales",
+                "Revenue",
                 "Cost"
             ],
             "dtypes": [
@@ -69,18 +84,18 @@
             "data": [
                 {
                     "Month": "Jan",
-                    "Sales": 100,
-                    "Cost": 80
+                    "Revenue": 120.0,
+                    "Cost": 80.0
                 },
                 {
                     "Month": "Feb",
-                    "Sales": 150,
-                    "Cost": 100
+                    "Revenue": 150.0,
+                    "Cost": 95.0
                 },
                 {
                     "Month": "Mar",
-                    "Sales": 200,
-                    "Cost": 120
+                    "Revenue": 90.0,
+                    "Cost": 60.0
                 }
             ]
         }

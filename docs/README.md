@@ -1,6 +1,6 @@
 # Datalys2 Reporting Python API — Documentation
 
-**Package version 0.7.0 · targets dl2 viewer 0.4.1**
+**Package version 0.8.0 · targets dl2 viewer 0.5.0**
 
 `dl2-reports` builds self-contained interactive HTML reports from pandas DataFrames.
 This documentation is organized so that **every visual type and every feature has its
@@ -14,7 +14,7 @@ own page**.
   [examples/all_visuals/](../examples/all_visuals/).
 
 > Version tags like *(dl2 0.3+)* refer to the **viewer** (JS) version a feature
-> requires; the compiled HTML pins `dl-version 0.4.1`.
+> requires; the compiled HTML pins `dl-version 0.5.0`.
 
 ## Visuals
 

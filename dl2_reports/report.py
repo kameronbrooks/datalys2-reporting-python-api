@@ -16,7 +16,7 @@ from .aggregates import validate_aggregate
 from .formulas import and_merge, parse_datasource
 from .serialization import camel_case_dict, make_dataset_serializable, convert_nan_to_none
 
-DL2_VERSION = "0.4.1"
+DL2_VERSION = "0.5.0"
 
 DEFAULT_CDN = f"https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist"
 JS_URI = f"/datalys2-reports.min.js"

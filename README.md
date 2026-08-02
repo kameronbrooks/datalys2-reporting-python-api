@@ -1,9 +1,9 @@
 # Datalys2 Reporting Python API
-**Version 0.7.0**
+**Version 0.8.0**
 
 A Python library to build and compile interactive HTML reports using the Datalys2 Reporting framework.
 
-**Note:** Compatible with dl2 version 0.4.1
+**Note:** Compatible with dl2 version 0.5.0
 https://github.com/kameronbrooks/datalys2-reporting
 
 ## Documentation

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remote Dataset Report</title>
+    <meta name="dl-version" content="0.5.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="last-updated" content="01-01-2024 12:00:00">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/dl2-style.css">
+</head>
+<body>
+
+    <div id="root"></div>
+    <script id="report-data" type="application/json">{
+    "pages": [
+        {
+            "title": "Remote",
+            "rows": [
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "table",
+                            "elementType": "visual",
+                            "id": "elem-3",
+                            "datasetId": "live_sales",
+                            "title": "Live sales"
+                        },
+                        {
+                            "type": "clusteredBar",
+                            "elementType": "visual",
+                            "id": "elem-4",
+                            "datasetId": "north_sales",
+                            "xColumn": "Region",
+                            "yColumns": [
+                                "Amount"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "layout",
+                    "direction": "row",
+                    "children": [
+                        {
+                            "type": "line",
+                            "elementType": "visual",
+                            "id": "elem-6",
+                            "datasetId": "weather_csv",
+                            "xColumn": "Day",
+                            "yColumns": [
+                                "Temp"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "datasets": {
+        "live_sales": {
+            "id": "live_sales",
+            "url": "https://example.com/api/sales.json",
+            "responseType": "json",
+            "extract": "result.rows",
+            "headers": {
+                "Authorization": "Bearer public-token"
+            },
+            "refreshInterval": 60,
+            "columns": [
+                "Region",
+                "Amount"
+            ],
+            "dtypes": [
+                "string",
+                "number"
+            ]
+        },
+        "weather_csv": {
+            "id": "weather_csv",
+            "url": "https://example.com/weather.csv",
+            "responseType": "csv",
+            "columns": [
+                "Day",
+                "Temp"
+            ],
+            "dtypes": [
+                "date",
+                "number"
+            ]
+        },
+        "north_sales": {
+            "id": "north_sales",
+            "source": "live_sales",
+            "filter": {
+                "column": "Region",
+                "op": "eq",
+                "value": "North"
+            }
+        }
+    }
+}</script>
+    <script src="https://cdn.jsdelivr.net/gh/kameronbrooks/datalys2-reporting@latest/dist/datalys2-reports.min.js"></script>
+</body>
+</html>
